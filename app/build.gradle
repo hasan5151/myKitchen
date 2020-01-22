@@ -15,15 +15,21 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+ 
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "API_URL", '\"http://localhost/\"'
+            buildConfigField "String", "AUTH_PASS", '\" QWxhZGRpbjpPcGVuU2VzYW1l/\"'
+        }
+        debug {
+            buildConfigField "String", "API_URL", '\"http://localhost/\"'
+            buildConfigField "String", "AUTH_PASS", '\" QWxhZGRpbjpPcGVuU2VzYW1l/\"'
         }
     }
 }
-
-
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
