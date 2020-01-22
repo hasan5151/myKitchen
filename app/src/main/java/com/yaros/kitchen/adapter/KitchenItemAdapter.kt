@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -33,10 +34,13 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
         val subTitle= itemView.subTitle
         val orderTime =  itemView.orderTime
         val elapsedTime=  itemView.elapsedTime
+        val constraint=  itemView.constraint
     }
 
     override fun onBindViewHolder(holder: KitchenItemVH, position: Int) {
         val item = items!!.get(position)
+
+//        holder.line.setOnClickListener({System.out.println("anani sikerim artik ha click")})
 
         holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.timecolor))
 
@@ -105,14 +109,22 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
         holder.elapsedTime.text= item.reqTime
         //TODO use here countTimer
 
-        holder.itemView.setOnClickListener {
+        holder.title.setOnClickListener({
+            System.out.println("title clicked !!! ")
+        })
+        holder.constraint.setOnClickListener({
+            System.out.println("constraint clicked !!! ")
+        })
+
+        holder.constraint.setOnClickListener {
+            Toast.makeText(context,"click me!!!",Toast.LENGTH_LONG).show()
             System.out.println("click me !!!!")
             val dialog  = DialogUtil.bottomConstraint(R.layout.meal_ready_popup,context)
             val title: TextView = dialog!!.findViewById(R.id.title)
-            val description: TextView = dialog!!.findViewById(R.id.description)
-            val badge: TextView = dialog!!.findViewById(R.id.badge)
-            val cancel: TextView = dialog!!.findViewById(R.id.cancel)
-            val ok: TextView = dialog!!.findViewById(R.id.ok)
+            val description: TextView = dialog.findViewById(R.id.description)
+            val badge: TextView = dialog.findViewById(R.id.badge)
+            val cancel: TextView = dialog.findViewById(R.id.cancel)
+            val ok: TextView = dialog.findViewById(R.id.ok)
             title.text = item.title
             dialog.show()
 
@@ -124,16 +136,7 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
                 holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.red))
                 holder.elapsedTime.text=""
                 dialog.dismiss()
-
-                object : CountDownTimer(2000, 1000) {
-                    override fun onFinish() {
-                        removeItem(position)
-                    }
-
-                    override fun onTick(millisUntilFinished: Long) {
-                        println("%$millisUntilFinished")
-                    }
-                }.start()
+                countDown(position)
             }
 
             ok.setOnClickListener({
@@ -142,17 +145,7 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
                 holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.green))
                 holder.elapsedTime.text=""
                 dialog.dismiss()
-
-                object : CountDownTimer(2000, 1000) {
-                    override fun onFinish() {
-                        removeItem(position)
-                    }
-
-                    override fun onTick(millisUntilFinished: Long) {
-                        println("%$millisUntilFinished")
-                    }
-                }.start()
-
+                countDown(position)
             })
 
         }
@@ -168,6 +161,18 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
         if (str != null && !str.isEmpty())
             return false
         return true
+    }
+
+    fun countDown(position: Int){
+        object : CountDownTimer(2000, 1000) {
+            override fun onFinish() {
+                removeItem(position)
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+                println("%$millisUntilFinished")
+            }
+        }.start()
     }
 
     abstract fun ItemSize(itemSize : Int)

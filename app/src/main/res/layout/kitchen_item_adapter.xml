@@ -1,73 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:padding="24dp"
-    android:layout_marginTop="24dp"
-    android:background="@android:color/white"
-    android:focusable="true"
+    android:layout_height="wrap_content"
+    android:id="@+id/line"
+    android:descendantFocusability="blocksDescendants"
     android:focusableInTouchMode="true"
-     android:layout_height="wrap_content">
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:padding="24dp"
+        android:layout_marginTop="24dp"
+        android:background="@android:color/white"
+        android:descendantFocusability="blocksDescendants"
+        android:focusableInTouchMode="true"
+        android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/badge"
+            android:duplicateParentState="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="1"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/badge_circle"
+            />
 
-    <TextView
-        android:id="@+id/badge"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:text="1"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/badge_circle"
-        />
+        <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/badge"
+            android:duplicateParentState="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_marginLeft="16dp"
+            android:textSize="24sp"
+            android:id="@+id/title"
+            android:textColor="@color/popupcolor"
+            android:text="salat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp" />
 
-    <TextView
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/badge"
-        android:layout_marginLeft="16dp"
-        android:textSize="24sp"
-        android:id="@+id/title"
-        android:textColor="@color/popupcolor"
-        android:text="salat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp" />
+        <TextView
+            android:layout_marginTop="16dp"
+            android:duplicateParentState="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="teset"
+            android:textColor="@color/timecolor"
+            android:id="@+id/subTitle"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/title"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:text="teset"
-        android:textColor="@color/timecolor"
-        android:id="@+id/subTitle"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="16dp"
+            android:duplicateParentState="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:id="@+id/orderTime"
+            android:text="11:21  |   "
+            android:textColor="@color/timecolor"
+            app:layout_constraintTop_toBottomOf="@id/subTitle"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:layout_marginTop="16dp"
-        android:id="@+id/orderTime"
-        android:text="11:21  |   "
-        android:textColor="@color/timecolor"
-        app:layout_constraintTop_toBottomOf="@id/subTitle"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:textSize="20sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:text="09:21"
+            android:id="@+id/elapsedTime"
+            android:duplicateParentState="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textColor="@color/popupcolor"
+            android:layout_marginTop="16dp"
+            android:textSize="20sp"
+            app:layout_constraintLeft_toRightOf="@id/orderTime"
+            app:layout_constraintTop_toBottomOf="@id/subTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:text="09:21"
-        android:id="@+id/elapsedTime"
-        android:textColor="@color/popupcolor"
-        android:layout_marginTop="16dp"
-        android:textSize="20sp"
-        app:layout_constraintLeft_toRightOf="@id/orderTime"
-        app:layout_constraintTop_toBottomOf="@id/subTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

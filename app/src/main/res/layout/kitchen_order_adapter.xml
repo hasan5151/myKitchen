@@ -32,16 +32,19 @@
             android:id="@+id/workerName"
             android:text="Elena"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_toEndOf="@id/orderId" />
 
         <androidx.recyclerview.widget.RecyclerView
-             android:layout_marginBottom="24dp"
+            android:layout_marginBottom="24dp"
             android:layout_marginRight="24dp"
             android:layout_below="@+id/orderId"
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp" />
 
     </RelativeLayout>
 
