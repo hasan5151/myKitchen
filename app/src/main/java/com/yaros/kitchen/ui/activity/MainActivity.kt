@@ -1,7 +1,8 @@
 package com.yaros.kitchen.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -11,9 +12,10 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.yaros.kitchen.R
 import com.yaros.kitchen.ui.fragment.BaseFragment
-import com.yaros.kitchen.ui.fragment.ReadyOrdersFragment
 import com.yaros.kitchen.ui.fragment.OrderFragment
+import com.yaros.kitchen.ui.fragment.ReadyOrdersFragment
 import com.yaros.kitchen.ui.fragment.SentOrdersFragment
+import io.reactivex.disposables.CompositeDisposable
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewPager: ViewPager
@@ -24,9 +26,21 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val compositeDisposable = CompositeDisposable()
         init()
         setViewPagerAdapter()
         setTabLayout()
+
+        //Test
+        /*Api.getApi()?.getToken(1,"1232",null,null,null,null)?.subscribe({
+
+        },{
+
+        })*/
+        /*.subscribe{result->
+            run{
+            result?.data?.waiter_token
+        }}*/
     }
 
     private fun init() {

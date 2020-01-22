@@ -1,16 +1,15 @@
 package com.yaros.kitchen.models;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class KitchenOrderModel {
     private Integer id;
-    private String workerName;
+    private String waiterName;
     private ArrayList<KitchenItemModel> orderItemsModelList;
 
     public KitchenOrderModel(Integer id, String workerName, ArrayList<KitchenItemModel> orderItemsModelList) {
         this.id = id;
-        this.workerName = workerName;
+        this.waiterName = workerName;
         this.orderItemsModelList = orderItemsModelList;
     }
 
@@ -22,12 +21,12 @@ public class KitchenOrderModel {
         this.id = id;
     }
 
-    public String getWorkerName() {
-        return workerName;
+    public String getWaiterName() {
+        return waiterName;
     }
 
-    public void setWorkerName(String workerName) {
-        this.workerName = workerName;
+    public void setWaiterName(String waiterName) {
+        this.waiterName = waiterName;
     }
 
      public ArrayList<KitchenItemModel> getOrderItemsModelList() {

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
-import com.yaros.kitchen.models.Address
 import com.yaros.kitchen.models.KitchenOrderModel
 import com.yaros.kitchen.models.OrderModel
 import kotlinx.android.synthetic.main.kitchen_order_adapter.view.*
@@ -25,11 +24,11 @@ class KitchenOrderAdapter(val orders: ArrayList<KitchenOrderModel>,val context: 
     override fun onBindViewHolder(holder: KitchenVH, position: Int) {
         val order: KitchenOrderModel = orders.get(position)
         holder.orderId.text ="№ ${order.id}"
-        holder.workerName.text = order.workerName
+        holder.workerName.text = order.waiterName
 
         val orderModel = OrderModel()
         orderModel.id = order.id
-        orderModel.workerName = order.workerName
+        orderModel.workerName = order.waiterName
 
         if (order.orderItemsModelList!=null) {
             val kitchenItemAdapter = object :

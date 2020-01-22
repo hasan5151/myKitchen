@@ -1,5 +1,6 @@
 package com.yaros.kitchen
 
+import android.util.Base64
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -13,6 +14,15 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+    }
+
+    @Test
+    fun base64Test() {
+        val ps = "techPass"
+        ps.toByteArray().let {
+            System.out.println(Base64.encodeToString(it, Base64.DEFAULT))
+        }
+
     }
 
     interface Base {
