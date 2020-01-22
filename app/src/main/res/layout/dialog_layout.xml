@@ -14,7 +14,7 @@
         android:gravity="center"
         android:textSize="18sp"
         android:textColor="@android:color/white"
-        android:text="@string/offday" />
+        android:text="test" />
 
     <ImageView
         android:layout_marginTop="17dp"
@@ -30,7 +30,7 @@
         android:gravity="center"
         android:textSize="18sp"
         android:textColor="@android:color/white"
-        android:text="@string/oversleep" />
+        android:text="test2" />
 
     <ImageView
         android:layout_marginTop="17dp"
@@ -46,7 +46,7 @@
         android:textSize="18sp"
         android:id="@+id/sick"
         android:textColor="@android:color/white"
-        android:text="@string/sick" />
+        android:text="test3" />
 
     <ImageView
         android:layout_marginTop="17dp"
@@ -64,7 +64,7 @@
         android:gravity="center"
         android:textSize="18sp"
         android:textColor="@android:color/white"
-        android:text="@string/writeComment" />
+        android:text="test4" />
 
 
 </LinearLayout>

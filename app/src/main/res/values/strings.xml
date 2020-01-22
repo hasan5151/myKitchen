@@ -1,50 +1,9 @@
 <resources>
-    <string name="app_name">Office Time</string>
-    <string name="enterTxt">Войти</string>
-    <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
-    <string translatable="false"  name="navigation_drawer_open">Open navigation drawer</string>
-    <string translatable="false"  name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="name">Имя</string>
-    <string name="phone">Телефон</string>
-    <string name="more">Далее</string>
-    <string name="position">должность</string>
-    <string name="group">Группа</string>
-    <string name="takePhoto">Сделать Фото</string>
-    <string name="again">Повторить</string>
-    <string name="add">Добавить</string>
-    <string name="startTime">Начало рабочего дня</string>
-    <string name="finishTime">Конец Рабочего Дня</string>
-    <string name="lateTime">Возможные минуты опоздания или раннего ухода</string>
-    <string name="news">Журнал</string>
-    <string name="recognize">Разпознать</string>
-    <string name="workerSearching">Поиск Сотрудника</string>
-    <string name="recordcoming">записать приход</string>
-    <string name="ok">ОК</string>
-    <string name="recordexit">Записать уход</string>
-    <string name="enterrecorded">Ваш приход записан</string>
-    <string name="exitrecorded">Ваш уход записан</string>
-    <string name="reason">Укажите причину</string>
-    <string name="offday">Отгул</string>
-    <string name="oversleep">Проспал</string>
-    <string name="sick">Больничный</string>
-    <string name="writeComment">Оставить комментарий</string>
-    <string name="holiday">Отпуск</string>
-    <string name="enterComment">Введите комментарий</string>
-    <string name="lateReason">кратко опишите причину опоздания</string>
-    <string name="leavingReason">кратко опишите причину опоздания</string>
-    <string name="send">Отправить</string>
-    <string name="atplace">На Месте</string>
-    <string name="absent">Отсутствуют</string>
-    <string name="refresh">Повториить</string>
+    <string name="app_name">Kitchen</string>
+    <string name="selectKitchen">Выберите Кухню</string>
+    <string name="select">Выбрать</string>
+    <string name="mealReady">Блюдо готово</string>
     <string name="cancel">Отмена</string>
-    <string name="errorText">Ошибка Идентификации</string>
-    <string name="enterWithSms">Войти через SMS-код</string>
-    <string name="sendsms">Отправить Код</string>
-    <string name="couldntrecognize">Office Time не может вас распознать</string>
-    <string name="smsinfo">Вы можете войти и сделать запись через SMS-код который будет отправлен на ваш номер телефона</string>
-    <string name="entercode">Введите проверочный код</string>
-    <string name="codeSent">Код был отправлен на номер +99655555555</string>
-    <string name="codeAtSMS">Код из SMS</string>
-    <string name="codeactivetime">Код будет действителен 0:59</string>
-
+    <string name="cancelled">Отменено</string>
+    <string name="ready">Готово</string>
 </resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_marginTop="24dp"
+    app:cardBackgroundColor="#c5c5c5"
+    app:cardMaxElevation="10dp"
+    card_view:cardElevation="0dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:background="#c5c5c5"
+        android:layout_width="match_parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp">
+
+        <TextView
+            android:id="@+id/orderId"
+            android:text="No:2"
+            android:textColor="@color/text"
+            android:textSize="24sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_toRightOf="@id/orderId"
+            android:layout_marginLeft="24dp"
+            android:textSize="24sp"
+            android:id="@+id/workerName"
+            android:text="Elena"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+             android:layout_marginBottom="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_below="@+id/orderId"
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

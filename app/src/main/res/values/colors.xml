@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#042447</color>
-    <color name="colorPrimaryDark">#042447</color>
-    <color name="colorAccent">#16FAFC</color>
+    <color name="colorPrimary">#3783DC</color>
+    <color name="colorPrimaryDark">#3783DC</color>
+    <color name="colorPrimaryLight">#F2F7FC</color>
+    <color name="chip">#1E4777</color>
+    <color name="colorAccent">#fff</color>
     <color name="hover">#0E9394</color>
-</resources>
+    <color name="popupcolor">#2E3945</color>
+    <color name="timecolor">#979CA2</color>
+    <color name="text">#969BA1</color>
+    <color name="red">#EB5757</color>
+    <color name="green">#0E9394</color>
+ </resources>
