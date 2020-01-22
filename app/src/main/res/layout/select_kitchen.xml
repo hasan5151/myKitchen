@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:gravity="center"
     android:background="@drawable/dialog_gradient"
-    android:layout_height="380dp">
+    android:layout_height="385dp">
 
     <TextView
         android:textSize="24sp"
