@@ -1,7 +1,9 @@
 package com.yaros.kitchen.ui.activity
 
+import android.os.Build
 import android.os.Bundle
-
+import android.provider.Settings
+import android.provider.Settings.Secure
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -17,6 +19,7 @@ import com.yaros.kitchen.ui.fragment.ReadyOrdersFragment
 import com.yaros.kitchen.ui.fragment.SentOrdersFragment
 import io.reactivex.disposables.CompositeDisposable
 
+
 class MainActivity : AppCompatActivity() {
     lateinit var viewPager: ViewPager
     lateinit var tabLayout: TabLayout
@@ -30,6 +33,10 @@ class MainActivity : AppCompatActivity() {
         init()
         setViewPagerAdapter()
         setTabLayout()
+        System.out.println("${Build.MODEL} huloooooooooog2")
+
+        val deviceId= Secure.getString(contentResolver!!, Secure.ANDROID_ID);
+        System.out.println("${deviceId} huloooooooooog32")
 
         //Test
         /*Api.getApi()?.getToken(1,"1232",null,null,null,null)?.subscribe({

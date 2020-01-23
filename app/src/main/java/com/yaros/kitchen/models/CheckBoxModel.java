@@ -1,9 +1,9 @@
 package com.yaros.kitchen.models;
 
 public class CheckBoxModel {
-    int id;
-    String name;
-    boolean isChecked;
+    private int id;
+    private String name;
+    private boolean isChecked= false;
 
 
     public int getId() {

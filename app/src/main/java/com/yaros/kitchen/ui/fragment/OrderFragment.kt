@@ -12,7 +12,6 @@ import com.yaros.kitchen.R
 import com.yaros.kitchen.adapter.CheckBoxAdapter
 import com.yaros.kitchen.adapter.ChipAdapter
 import com.yaros.kitchen.adapter.KitchenOrderAdapter
-import com.yaros.kitchen.models.Address
 import com.yaros.kitchen.models.CheckBoxModel
 import com.yaros.kitchen.models.KitchenOrderModel
 import com.yaros.kitchen.models.KitchenItemModel
@@ -23,15 +22,12 @@ import kotlin.collections.List
 import kotlin.collections.arrayListOf
 import kotlin.collections.distinct
 import kotlin.collections.listOf
-import kotlin.collections.toMutableList
-
 
 class OrderFragment : BaseFragment(){
 
     lateinit var kitchen : RecyclerView
     lateinit var empty : TextView
     lateinit var chips : RecyclerView
-     var selectedKitchens = arrayListOf<String>()
     val checkBoxHash:HashMap<Int,CheckBoxModel> = HashMap()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,9 +40,13 @@ class OrderFragment : BaseFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         chips  = view.findViewById(R.id.chips)
-         kitchen  = view.findViewById(R.id.kitchen)
+        kitchen  = view.findViewById(R.id.kitchen)
         empty = view.findViewById(R.id.empty)
+        setTypeOfKitchens()
+        setChipAdapter(getListOfChips(listOf(checkBoxAdd())))
+    }
 
+    private fun setTypeOfKitchens() {
         val checkBoxModel = CheckBoxModel()
         checkBoxModel.isChecked=false
         checkBoxModel.id= 0
@@ -62,18 +62,9 @@ class OrderFragment : BaseFragment(){
         checkBoxModel3.id= 2
         checkBoxModel3.name = "Test3"
 
-
         checkBoxHash.put(0,checkBoxModel)
         checkBoxHash.put(1,checkBoxModel2)
         checkBoxHash.put(2,checkBoxModel3)
-
-
-        val checkBoxModel4 = CheckBoxModel()
-        checkBoxModel4.isChecked=false
-        checkBoxModel4.id= -1
-        checkBoxModel4.name = "add"
-
-        setChipAdapter(getListOfChips(listOf(checkBoxModel4)))
     }
 
     private fun setChipAdapter(string : List<CheckBoxModel>) {
@@ -98,13 +89,13 @@ class OrderFragment : BaseFragment(){
 
         val mLayoutManager =
             LinearLayoutManager(context!!, LinearLayoutManager.HORIZONTAL, false)
-
         chips.layoutManager = mLayoutManager
         chips.adapter = chipAdapter
     }
 
     fun showKitchenItems(): ArrayList<KitchenOrderModel>{
         val item1 = KitchenItemModel(
+            "1",
             "Salat",
             "ris",
             "14:25",
@@ -114,6 +105,7 @@ class OrderFragment : BaseFragment(){
         val order1 = KitchenOrderModel(1,"Айжамал", arrayListOf(item1))
 
         val item2 = KitchenItemModel(
+            "2",
             "Salat2",
             "",
             "04:05",
@@ -121,19 +113,25 @@ class OrderFragment : BaseFragment(){
             1
         )
         val item3 = KitchenItemModel(
+            "3",
             "Salat3",
             "ris3", //
-            "11:25",
+            "21:25",
             "11:18",
             2
         )
+        val item4 = KitchenItemModel(
+            "4",
+            "Salat4",
+            "ris3", //
+            "17:25",
+            "11:18",
+            5
+        )
 
-
-        val order2 = KitchenOrderModel(2,"Елена", arrayListOf(item2,item3))
-
+        val order2 = KitchenOrderModel(2,"Елена", arrayListOf(item2,item3,item4))
 
         return arrayListOf(order1,order2)
-
     }
 
     private fun selectKitchens(){
@@ -162,36 +160,17 @@ class OrderFragment : BaseFragment(){
         }
 
         button.setOnClickListener {
-            System.out.println("hullooogg ${checkBoxHash.values}")
-            val valueList:List<CheckBoxModel> = ArrayList(checkBoxHash.values).filter { x->x.isChecked }
-            val checkBoxModel = CheckBoxModel()
-            checkBoxModel.isChecked = false
-            checkBoxModel.id = -1
-            checkBoxModel.name= "add"
-
-            valueList.toMutableList().add(checkBoxModel)
-
-            val vale = valueList + listOf(checkBoxModel)
-
-            setChipAdapter(vale.distinct())
-            showEmpty(vale.size>1,resources.getString(R.string.selectKitchen))
-
-            System.out.println("selected all items  ${selectedKitchens}")
+            ArrayList(checkBoxHash.values).filter { x->x.isChecked }.plus(checkBoxAdd()).let {
+                setChipAdapter(it.distinct())
+                showEmpty(it.size>1,resources.getString(R.string.selectKitchen))
+            }
             dialog.dismiss()
         }
-
         recyclerView.adapter = check
         dialog.show()
     }
 
     private fun getListOfChips(string : List<CheckBoxModel>): List<CheckBoxModel> {
-        /*val checkBoxModel = CheckBoxModel()
-        checkBoxModel.isChecked = false
-        checkBoxModel.id = -1
-        checkBoxModel.name= "add"
-
-        string.toMutableList().add(checkBoxModel)*/
-
         System.out.println("list Size ${string.size}")
         showEmpty(string.size>1,resources.getString(R.string.selectKitchen))
         return string
@@ -213,4 +192,12 @@ class OrderFragment : BaseFragment(){
 
     override fun getName(): String = "Заказы"
     override fun getDrawable(): Int = R.drawable.order
+
+    fun  checkBoxAdd() : CheckBoxModel{
+        val checkBoxModel = CheckBoxModel()
+        checkBoxModel.isChecked = false
+        checkBoxModel.id = -1
+        checkBoxModel.name= "add"
+        return  checkBoxModel
+    }
 }

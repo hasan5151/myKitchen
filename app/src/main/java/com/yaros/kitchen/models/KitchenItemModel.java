@@ -1,14 +1,17 @@
 package com.yaros.kitchen.models;
 
 public class KitchenItemModel {
+    private String id;
     private String title;
     private String subTitle;
     private String reqTime;
     private String orderTime;
     private Integer badge;
+    private Boolean countDown=false;
 
 
-    public KitchenItemModel(String title, String subTitle, String reqTime, String orderTime, Integer badge) {
+    public KitchenItemModel(String id,String title, String subTitle, String reqTime, String orderTime, Integer badge) {
+        this.id=id;
         this.title = title;
         this.subTitle = subTitle;
         this.reqTime = reqTime;
@@ -54,5 +57,21 @@ public class KitchenItemModel {
 
     public void setOrderTime(String orderTime) {
         this.orderTime = orderTime;
+    }
+
+    public Boolean getCountDown() {
+        return countDown;
+    }
+
+    public void setCountDown(Boolean countDown) {
+        this.countDown = countDown;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

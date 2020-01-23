@@ -24,7 +24,7 @@ class KitchenOrderAdapter(val orders: ArrayList<KitchenOrderModel>,val context: 
     override fun onBindViewHolder(holder: KitchenVH, position: Int) {
         val order: KitchenOrderModel = orders.get(position)
         holder.orderId.text ="№ ${order.id}"
-        holder.workerName.text = order.waiterName
+        holder.waiterName.text = order.waiterName
 
         val orderModel = OrderModel()
         orderModel.id = order.id
@@ -41,22 +41,21 @@ class KitchenOrderAdapter(val orders: ArrayList<KitchenOrderModel>,val context: 
             }
             holder.recyclerView.adapter = kitchenItemAdapter
         }
-
     }
 
     private fun removeItem(position: Int) {
-        orders?.removeAt(position)
-        notifyDataSetChanged()
-
+        if(orders.size==1){
+            orders.removeAt(orders.size-1)
+            notifyDataSetChanged()
+        }else {
+            orders.removeAt(position)
+            notifyDataSetChanged()
+        }
     }
-
-
 
     class KitchenVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val orderId = itemView.orderId
-        val workerName = itemView.workerName
+        val waiterName = itemView.waiterName
         val recyclerView = itemView.recyclerView
     }
-
-
 }

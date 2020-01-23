@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.chip_adapter.view.*
 
 abstract class ChipAdapter (val string : List<CheckBoxModel>) : RecyclerView.Adapter<ChipAdapter.MyChipAdapter>() {
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyChipAdapter {
         val view: View = LayoutInflater.from(parent.getContext())
             .inflate(R.layout.chip_adapter, parent, false)
@@ -19,6 +18,7 @@ abstract class ChipAdapter (val string : List<CheckBoxModel>) : RecyclerView.Ada
     }
 
     override fun onBindViewHolder(holder: MyChipAdapter, position: Int) {
+        System.out.println("size of string ${string}")
         if (string.size==1){
             holder.button.text = "Выберите кухню"
             holder.button.setOnClickListener( {showDialog()  })
@@ -38,9 +38,8 @@ abstract class ChipAdapter (val string : List<CheckBoxModel>) : RecyclerView.Ada
             holder.button.text = string.get(position).name
     }
 
-    override fun getItemCount(): Int {
-        return string.size
-    }
+    override fun getItemCount(): Int = string.size
+
 
     class MyChipAdapter(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val button = itemView.button
