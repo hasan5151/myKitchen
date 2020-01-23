@@ -40,8 +40,6 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
     override fun onBindViewHolder(holder: KitchenItemVH, position: Int) {
         val item = items!!.get(position)
 
-//        holder.line.setOnClickListener({System.out.println("anani sikerim artik ha click")})
-
         holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.timecolor))
 
         if(item.badge!=null)
