@@ -22,7 +22,7 @@ class Api(val user : String,val password : String,val context : Context) {
     val SUCCESS = "SUCCESS"
     val FAILED= "FAILED"
 
-    fun getApi(): ApiService? {
+    fun getApi(): ApiService {
         //   Credentials.basic("","")
 
         val client = OkHttpClient.Builder()

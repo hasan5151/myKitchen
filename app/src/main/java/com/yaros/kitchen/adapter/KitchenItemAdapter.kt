@@ -8,13 +8,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
 import com.yaros.kitchen.models.KitchenItemModel
 import com.yaros.kitchen.models.OrderModel
 import com.yaros.kitchen.utils.DialogUtil
-import com.yaros.kitchen.viewModel.CountDownVM
 import kotlinx.android.synthetic.main.kitchen_item_adapter.view.*
 import java.util.*
 
@@ -102,8 +100,9 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
             holder.elapsedTime.setLayoutParams(paramsElapsedTime)
         }
 
+
         //TODO use here countTimer
-        if(!item.countDown) {
+  /*      if(!item.countDown) {
             countDownMeal(
                 item,
                 item.reqTime.replace(":", "").toLong(),
@@ -117,7 +116,7 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
 
         } else{
             holder.elapsedTime.text =item.reqTime
-        }
+        }*/
 
         holder.constraint.setOnClickListener {
             System.out.println("click me !!!!")

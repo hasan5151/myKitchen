@@ -6,16 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
 import com.yaros.kitchen.adapter.CheckBoxAdapter
 import com.yaros.kitchen.adapter.ChipAdapter
 import com.yaros.kitchen.adapter.KitchenOrderAdapter
+import com.yaros.kitchen.api.Api
+import com.yaros.kitchen.api.RxSingleSchedulers
 import com.yaros.kitchen.models.CheckBoxModel
 import com.yaros.kitchen.models.KitchenOrderModel
 import com.yaros.kitchen.models.KitchenItemModel
+import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.utils.DialogUtil
+import com.yaros.kitchen.viewModel.PaginationFactory
+import com.yaros.kitchen.viewModel.PaginationVM
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.List
@@ -29,6 +35,7 @@ class OrderFragment : BaseFragment(){
     lateinit var empty : TextView
     lateinit var chips : RecyclerView
     val checkBoxHash:HashMap<Int,CheckBoxModel> = HashMap()
+    lateinit var paginationVM: PaginationVM
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,6 +49,16 @@ class OrderFragment : BaseFragment(){
         chips  = view.findViewById(R.id.chips)
         kitchen  = view.findViewById(R.id.kitchen)
         empty = view.findViewById(R.id.empty)
+        val paginationFactory = PaginationFactory(RoomDb(context!!), RxSingleSchedulers.DEFAULT,
+            Api("","",context!!).getApi()
+        )
+        paginationVM = ViewModelProviders.of(this,paginationFactory).get(PaginationVM::class.java)
+
+        paginationVM.loadOrders()
+        paginationVM.order.observe(this, androidx.lifecycle.Observer {
+            System.out.println("sdfsdf")
+        })
+
         setTypeOfKitchens()
         setChipAdapter(getListOfChips(listOf(checkBoxAdd())))
     }
@@ -187,7 +204,6 @@ class OrderFragment : BaseFragment(){
             kitchen.visibility = View.INVISIBLE
             empty.visibility = View.VISIBLE
         }
-
     }
 
     override fun getName(): String = "Заказы"
