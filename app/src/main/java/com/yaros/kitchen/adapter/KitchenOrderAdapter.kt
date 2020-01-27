@@ -11,7 +11,7 @@ import com.yaros.kitchen.models.OrderModel
 import kotlinx.android.synthetic.main.kitchen_order_adapter.view.*
 
 
-class KitchenOrderAdapter(val orders: ArrayList<KitchenOrderModel>,val context: Context): RecyclerView.Adapter<KitchenOrderAdapter.KitchenVH>() {
+open class KitchenOrderAdapter(val orders: ArrayList<KitchenOrderModel>, val context: Context): RecyclerView.Adapter<KitchenOrderAdapter.KitchenVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KitchenVH {
         val view: View = LayoutInflater.from(parent.getContext())

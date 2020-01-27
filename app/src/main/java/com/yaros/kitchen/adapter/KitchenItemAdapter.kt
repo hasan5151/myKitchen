@@ -24,6 +24,7 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
         val view: View = LayoutInflater.from(parent.getContext())
             .inflate(R.layout.kitchen_item_adapter, parent, false)
         return KitchenItemVH(view)
+
     }
 
     override fun getItemCount(): Int = items!!.size
@@ -39,11 +40,12 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
 
     override fun onBindViewHolder(holder: KitchenItemVH, position: Int) {
         val item = items!!.get(position)
+
+
+
         holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.timecolor))
         holder.orderTime.text= "${item.orderTime}    |    "
-
         holder.elapsedTime.text= item.reqTime
-
         if(item.badge!=null)
         if (item.badge>1){
             holder.badge.text = "${item.badge}"

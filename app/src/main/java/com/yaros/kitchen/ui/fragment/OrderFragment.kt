@@ -1,6 +1,7 @@
 package com.yaros.kitchen.ui.fragment
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,24 +11,18 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
-import com.yaros.kitchen.adapter.CheckBoxAdapter
-import com.yaros.kitchen.adapter.ChipAdapter
-import com.yaros.kitchen.adapter.KitchenOrderAdapter
+import com.yaros.kitchen.adapter.*
 import com.yaros.kitchen.api.Api
-import com.yaros.kitchen.api.RxSingleSchedulers
+import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.CheckBoxModel
-import com.yaros.kitchen.models.KitchenOrderModel
-import com.yaros.kitchen.models.KitchenItemModel
 import com.yaros.kitchen.room.db.RoomDb
+import com.yaros.kitchen.room.entity.KitchenItemModel
+import com.yaros.kitchen.room.entity.KitchenOrderModel
 import com.yaros.kitchen.utils.DialogUtil
 import com.yaros.kitchen.viewModel.PaginationFactory
 import com.yaros.kitchen.viewModel.PaginationVM
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.List
-import kotlin.collections.arrayListOf
-import kotlin.collections.distinct
-import kotlin.collections.listOf
 
 class OrderFragment : BaseFragment(){
 
@@ -36,6 +31,8 @@ class OrderFragment : BaseFragment(){
     lateinit var chips : RecyclerView
     val checkBoxHash:HashMap<Int,CheckBoxModel> = HashMap()
     lateinit var paginationVM: PaginationVM
+    val countDownHash: HashMap<Int, CountDownTimer> = HashMap()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -49,15 +46,15 @@ class OrderFragment : BaseFragment(){
         chips  = view.findViewById(R.id.chips)
         kitchen  = view.findViewById(R.id.kitchen)
         empty = view.findViewById(R.id.empty)
-        val paginationFactory = PaginationFactory(RoomDb(context!!), RxSingleSchedulers.DEFAULT,
+        val paginationFactory = PaginationFactory(RoomDb(context!!), RxSchedulers.DEFAULT,
             Api("","",context!!).getApi()
         )
         paginationVM = ViewModelProviders.of(this,paginationFactory).get(PaginationVM::class.java)
 
+        paginationVM.fetchOrders()
+        paginationVM.fetchItems()
+
         paginationVM.loadOrders()
-        paginationVM.order.observe(this, androidx.lifecycle.Observer {
-            System.out.println("sdfsdf")
-        })
 
         setTypeOfKitchens()
         setChipAdapter(getListOfChips(listOf(checkBoxAdd())))
@@ -85,18 +82,30 @@ class OrderFragment : BaseFragment(){
     }
 
     private fun setChipAdapter(string : List<CheckBoxModel>) {
+
         val chipAdapter = object : ChipAdapter(string) {
             override fun clickListener(chip: String?, pos: Int) {
                 //show orders
                 if (pos==1){
-                    val orders = showKitchenItems()
-                    val kitchenOrderAdapter=KitchenOrderAdapter(orders,context!!)
-                    showEmpty(true,"")
-                    kitchen.adapter= kitchenOrderAdapter
+                     val orderAdapter =object :  OrderPageAdapter(){
+                        override fun setItemAdapter(recyclerView: RecyclerView, orderModel:KitchenOrderModel?) {
+                            itemAdapter(recyclerView,orderModel)
+                        }
+                     }
+
+                    paginationVM.order.observe(this@OrderFragment, androidx.lifecycle.Observer {
+                        if (it.size>0)
+                            showEmpty(true)
+                        else
+                            showEmpty(false,"Заказов нет")
+
+                        orderAdapter.submitList(it)
+                    })
+                    kitchen.adapter =orderAdapter
+
 
                 }else
                     showEmpty(false,"Заказов нет ")
-
             }
 
             override fun showDialog() {
@@ -110,45 +119,76 @@ class OrderFragment : BaseFragment(){
         chips.adapter = chipAdapter
     }
 
-    fun showKitchenItems(): ArrayList<KitchenOrderModel>{
-        val item1 = KitchenItemModel(
-            "1",
-            "Salat",
-            "ris",
-            "14:25",
-            "11:00",
-            1
-        )
-        val order1 = KitchenOrderModel(1,"Айжамал", arrayListOf(item1))
+    fun itemAdapter(recyclerView: RecyclerView, orderModel: KitchenOrderModel?){
+        val itemPageAdapter =  object  : ItemPageAdapter(context!!) {
+            override fun startReqCountDown(item: KitchenItemModel) {
+                if (!item.isCountStart) {
+                    object : CountDownTimer(item.reqTime.replace(":", "").toLong() * 5, 1000) { //TODO change this
+                        override fun onFinish() {
+                            paginationVM.updateElapsedTime("00:00  ", item.id)
+                     //       paginationVM.updateItemTime("", item.id)
+                            destroyCountDown(item.id)
+                        }
 
-        val item2 = KitchenItemModel(
-            "2",
-            "Salat2",
-            "",
-            "04:05",
-            "11:20",
-            1
-        )
-        val item3 = KitchenItemModel(
-            "3",
-            "Salat3",
-            "ris3", //
-            "21:25",
-            "11:18",
-            2
-        )
-        val item4 = KitchenItemModel(
-            "4",
-            "Salat4",
-            "ris3", //
-            "17:25",
-            "11:18",
-            5
-        )
+                        override fun onTick(millisUntilFinished: Long) {
+                            paginationVM.updateElapsedTime("${millisUntilFinished}", item.id)
+                        }
+                    }.start().let { countDownHash.put(item.id, it) }
+                    paginationVM.startCountDown(item.id)
+                }
+            }
 
-        val order2 = KitchenOrderModel(2,"Елена", arrayListOf(item2,item3,item4))
+            override fun showPopup(item: KitchenItemModel,orderId : Int) {
+                val dialog  = DialogUtil.bottomConstraint(R.layout.meal_ready_popup,context)
+                val title: TextView = dialog!!.findViewById(R.id.title)
+                val description: TextView = dialog.findViewById(R.id.description)
+                val badge: TextView = dialog.findViewById(R.id.badge)
+                val cancel: TextView = dialog.findViewById(R.id.cancel)
+                val ok: TextView = dialog.findViewById(R.id.ok)
+                title.text = item.title
+                dialog.show()  //duplicate
+                badge.text = "${item.badge}"
+                description.text = "№  ${item.orderId}    ${orderModel?.waiterName}     ${item.orderTime}    |   ${item.reqTime}"
 
-        return arrayListOf(order1,order2)
+                cancel.setOnClickListener {
+                    paginationVM.updateItemTime(context.resources.getString(R.string.cancel),item.id)
+                    dialog.dismiss()
+                    stopReqCountDown(item.id)
+                    destroyCountDown(item.id)
+                }
+
+                ok.setOnClickListener({
+                    paginationVM.updateItemTime(context.resources.getString(R.string.ready),item.id)
+                    dialog.dismiss()
+                    stopReqCountDown(item.id)
+                    destroyCountDown(item.id)
+                })
+            }
+        }
+        paginationVM.loadItemsByOrderId(orderModel?.id!!)
+        paginationVM.item.observe(this, androidx.lifecycle.Observer {
+            if (it.size==0) //If order has 0 item, then also order itself
+                paginationVM.deleteOrderById(orderModel.id)
+            itemPageAdapter.submitList(it)
+        })
+
+        recyclerView.adapter = itemPageAdapter
+    }
+
+    private fun stopReqCountDown(id : Int){
+        countDownHash.get(id)?.cancel()
+    }
+
+    private fun destroyCountDown(id : Int){
+            object : CountDownTimer(2000, 1000) {
+                override fun onFinish() {
+                    paginationVM.deleteItemById(id)
+                }
+
+                override fun onTick(millisUntilFinished: Long) {
+                    println("%$millisUntilFinished")
+                }
+            }.start()
     }
 
     private fun selectKitchens(){
@@ -193,7 +233,7 @@ class OrderFragment : BaseFragment(){
         return string
     }
 
-    private fun showEmpty(hasItem : Boolean, string: String){
+    private fun showEmpty(hasItem : Boolean, string: String=""){
         System.out.println("no item ${hasItem}")
         empty.text=string
 

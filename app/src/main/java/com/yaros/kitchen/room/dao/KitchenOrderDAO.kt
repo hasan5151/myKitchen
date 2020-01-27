@@ -6,18 +6,22 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.yaros.kitchen.room.entity.KitchenOrderModel
+import io.reactivex.Completable
 
 @Dao
 interface KitchenOrderDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(localAccount: KitchenOrderModel?)
+    fun insert(localAccount: KitchenOrderModel?) : Completable
 
     @Query("DELETE From  KitchenOrderModel WHERE id= :id")
-    fun deleteItem(id: Int)
+    fun deleteItem(id: Int) : Completable
 
     @Query("SELECT * FROM KitchenOrderModel ORDER BY id DESC")
     fun getAll(): DataSource.Factory<Int, KitchenOrderModel>
 
+    @Query("SELECT * FROM KitchenOrderModel WHERE id= :id ORDER BY id DESC")
+    fun getOrderById(id : Int): DataSource.Factory<Int, KitchenOrderModel>
+
     @Query("Delete from KitchenOrderModel")
-    fun deleteAll()
+    fun deleteAll() : Completable
 }

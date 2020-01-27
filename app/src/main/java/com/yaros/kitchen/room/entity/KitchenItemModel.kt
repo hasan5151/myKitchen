@@ -7,9 +7,11 @@ import androidx.room.PrimaryKey
 data class KitchenItemModel(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
+    var orderId : Int,
     var title: String,
     var subTitle: String?,
     var reqTime: String,
     var orderTime: String,
-    var badge: Int
+    var badge: Int,
+    var isCountStart : Boolean =false
 )
