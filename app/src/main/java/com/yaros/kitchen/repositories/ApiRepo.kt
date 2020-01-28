@@ -8,9 +8,9 @@ import com.yaros.kitchen.room.entity.KitchenOrderModel
 class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService) {
 
     fun fetchItems(){
-        KitchenItemModel(1,1,"Salat",null,"14:05","12:55",1).let { repos.getItemRepo().insert(it) }
-        KitchenItemModel(2,1,"Salat2","ris2","4:25","10:55",2).let {  repos.getItemRepo().insert(it)}
-        KitchenItemModel(3,2,"Salat3","ris2","10:25","11:00",6).let { repos.getItemRepo().insert(it) }
+        KitchenItemModel(1,"1","1","Salat",null,"54:05","12:55",1).let { repos.getItemRepo().insert(it) }
+        KitchenItemModel(2,"1","2","Salat2","ris2","24:25","10:55",2).let {  repos.getItemRepo().insert(it)}
+        KitchenItemModel(3,"2","3","Salat3","ris2","30:25","11:00",6).let { repos.getItemRepo().insert(it) }
     }
 
     fun fetchOrders(){
@@ -20,8 +20,8 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
     }
 
     fun showKitchenOrders(): List<KitchenOrderModel>{
-        val order1 = KitchenOrderModel(1,"Айжамал", listOf(1,2))
-        val order2 = KitchenOrderModel(2,"Елена", listOf(3))
+        val order1 = KitchenOrderModel("1","Айжамал")
+        val order2 = KitchenOrderModel("2","Елена")
         return listOf(order1,order2)
     }
 

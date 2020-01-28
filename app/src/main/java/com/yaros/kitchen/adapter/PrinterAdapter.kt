@@ -3,13 +3,12 @@ package com.yaros.kitchen.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
-import com.yaros.kitchen.models.CheckBoxModel
+import com.yaros.kitchen.models.PrintersModel
 import kotlinx.android.synthetic.main.chip_adapter.view.*
 
-abstract class ChipAdapter (val string : List<CheckBoxModel>) : RecyclerView.Adapter<ChipAdapter.MyChipAdapter>() {
+abstract class PrinterAdapter (val string : List<PrintersModel>) : RecyclerView.Adapter<PrinterAdapter.MyChipAdapter>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyChipAdapter {
         val view: View = LayoutInflater.from(parent.getContext())

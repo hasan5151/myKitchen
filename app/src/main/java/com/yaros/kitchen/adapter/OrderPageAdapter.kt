@@ -21,7 +21,7 @@ abstract class OrderPageAdapter() : PagedListAdapter<KitchenOrderModel, OrderPag
                     oldConcert: KitchenOrderModel,
                     newConcert: KitchenOrderModel
                 ): Boolean {
-                    return oldConcert.id === newConcert.id
+                    return oldConcert.order_item === newConcert.order_item
                 }
 
                 override fun areContentsTheSame(
@@ -47,7 +47,7 @@ abstract class OrderPageAdapter() : PagedListAdapter<KitchenOrderModel, OrderPag
 
     override fun onBindViewHolder(holder: OrderVH, position: Int) {
         val order = getItem(position)
-        holder.orderId.text ="№ ${order?.id}"
+        holder.orderId.text ="№ ${order?.number}"
         holder.waiterName.text = order?.waiterName
         setItemAdapter(holder.recyclerView,order)
     }

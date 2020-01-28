@@ -61,7 +61,7 @@ class Api(val user : String,val password : String,val context : Context) {
         label@ Authenticator { route: Route?, response: Response ->
             Log.w("response", "auth resp $response")
          //   if (response.code() == 401) {
-                val token  = getApi()?.getToken(user,password, Build.MODEL,
+                val token  = getApi()?.loginWaiter(user,password, Build.MODEL,
                         Settings.Secure.getString(context.contentResolver!!, Settings.Secure.ANDROID_ID), BuildConfig.VERSION_NAME)
                     token?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(
                         {run{

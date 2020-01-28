@@ -11,7 +11,7 @@ import java.util.ArrayList
 @TypeConverters(Converters::class)
 data class KitchenOrderModel (
     @PrimaryKey(autoGenerate = false)
-    val id: Int? = null,
-    val waiterName: String,
-    val itemId: List<Int>
+    val order_item: String,
+    val number: String,
+    val waiterName: String = ""
 )

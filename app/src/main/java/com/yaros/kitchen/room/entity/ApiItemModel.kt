@@ -4,15 +4,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity()
-data class KitchenItemModel(
+data class ApiItemModel(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
-    var number : String,
     var order_items : String,
-    var name: String,
-    var comment: String?,
-    var reqTime: Long,
-    var date: String,
+    var dish: String,
+    var number : String,
     var count: Int,
-    var isCountDownStarted : Boolean =false
+    var comment: String?,
+    var date: String
 )

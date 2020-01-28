@@ -102,24 +102,6 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
             holder.elapsedTime.setLayoutParams(paramsElapsedTime)
         }
 
-
-        //TODO use here countTimer
-  /*      if(!item.countDown) {
-            countDownMeal(
-                item,
-                item.reqTime.replace(":", "").toLong(),
-                holder,
-                object : CountDownFinish {
-                    override fun onFinish() {
-                        removeItem(holder.adapterPosition)
-                    }
-                })
-            item.countDown =true
-
-        } else{
-            holder.elapsedTime.text =item.reqTime
-        }*/
-
         holder.constraint.setOnClickListener {
             System.out.println("click me !!!!")
             val dialog  = DialogUtil.bottomConstraint(R.layout.meal_ready_popup,context)
@@ -166,21 +148,6 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
             notifyDataSetChanged()
             ItemSize(items!!.size)
         }
-    }/*
-
-    private fun removeItem(position: Int) {
-        items?.removeAt(position)
-        notifyDataSetChanged()
-        ItemSize(items!!.size)
-    }
-    */
-
-    open fun clear() {
-        val size: Int = items!!.size
-        if (size > 0) {
-            items.subList(0, size).clear()
-            notifyItemRangeRemoved(0, size)
-        }
     }
 
     fun isNullOrEmpty(str: CharSequence): Boolean {
@@ -199,24 +166,6 @@ abstract class KitchenItemAdapter (val items: ArrayList<KitchenItemModel>?, val 
                 println("%$millisUntilFinished")
             }
         }.start()
-
-
-    fun countDownMeal(kitchen: KitchenItemModel,time: Long,holder: KitchenItemVH,countDownFinish: CountDownFinish)  =
-        object : CountDownTimer(time*5, 1000) {
-            override fun onFinish() {
-                holder.orderTime.text= context.resources.getString(R.string.ready)
-                holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.green))
-                holder.elapsedTime.text=""
-                countDownFinish.onFinish()
-            }
-
-            override fun onTick(millisUntilFinished: Long) {
-                kitchen.reqTime=millisUntilFinished.toString()
-                holder.elapsedTime.text="${millisUntilFinished}"
-                println("$millisUntilFinished ${kitchen.title}")
-            }
-        }.start()
-
 
     abstract fun ItemSize(itemSize : Int)
 

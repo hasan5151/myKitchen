@@ -14,7 +14,7 @@ import com.yaros.kitchen.R
 import com.yaros.kitchen.adapter.*
 import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.RxSchedulers
-import com.yaros.kitchen.models.CheckBoxModel
+import com.yaros.kitchen.models.PrintersModel
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.room.entity.KitchenOrderModel
@@ -29,7 +29,7 @@ class OrderFragment : BaseFragment(){
     lateinit var kitchen : RecyclerView
     lateinit var empty : TextView
     lateinit var chips : RecyclerView
-    val checkBoxHash:HashMap<Int,CheckBoxModel> = HashMap()
+    val printersHash:HashMap<Int, PrintersModel> = HashMap()
     lateinit var paginationVM: PaginationVM
     val countDownHash: HashMap<Int, CountDownTimer> = HashMap()
 
@@ -57,33 +57,33 @@ class OrderFragment : BaseFragment(){
         paginationVM.loadOrders()
 
         setTypeOfKitchens()
-        setChipAdapter(getListOfChips(listOf(checkBoxAdd())))
+        setPrinterAdapter(getListOfChips(listOf(checkBoxAdd())))
     }
 
     private fun setTypeOfKitchens() {
-        val checkBoxModel = CheckBoxModel()
+        val checkBoxModel = PrintersModel()
         checkBoxModel.isChecked=false
         checkBoxModel.id= 0
         checkBoxModel.name = "Test"
 
-        val checkBoxModel2 = CheckBoxModel()
+        val checkBoxModel2 = PrintersModel()
         checkBoxModel2.isChecked=false
         checkBoxModel2.id= 1
         checkBoxModel2.name = "Test2"
 
-        val checkBoxModel3 = CheckBoxModel()
+        val checkBoxModel3 = PrintersModel()
         checkBoxModel3.isChecked=false
         checkBoxModel3.id= 2
         checkBoxModel3.name = "Test3"
 
-        checkBoxHash.put(0,checkBoxModel)
-        checkBoxHash.put(1,checkBoxModel2)
-        checkBoxHash.put(2,checkBoxModel3)
+        printersHash.put(0,checkBoxModel)
+        printersHash.put(1,checkBoxModel2)
+        printersHash.put(2,checkBoxModel3)
     }
 
-    private fun setChipAdapter(string : List<CheckBoxModel>) {
+    private fun setPrinterAdapter(string : List<PrintersModel>) {
 
-        val chipAdapter = object : ChipAdapter(string) {
+        val chipAdapter = object : PrinterAdapter(string) {
             override fun clickListener(chip: String?, pos: Int) {
                 //show orders
                 if (pos==1){
@@ -102,8 +102,6 @@ class OrderFragment : BaseFragment(){
                         orderAdapter.submitList(it)
                     })
                     kitchen.adapter =orderAdapter
-
-
                 }else
                     showEmpty(false,"Заказов нет ")
             }
@@ -121,22 +119,19 @@ class OrderFragment : BaseFragment(){
 
     fun itemAdapter(recyclerView: RecyclerView, orderModel: KitchenOrderModel?){
         val itemPageAdapter =  object  : ItemPageAdapter(context!!) {
-            override fun startReqCountDown(item: KitchenItemModel) {
-                if (!item.isCountStart) {
-                    object : CountDownTimer(item.reqTime.replace(":", "").toLong() * 5, 1000) { //TODO change this
-                        override fun onFinish() {
-                            paginationVM.updateElapsedTime("00:00  ", item.id)
-                     //       paginationVM.updateItemTime("", item.id)
-                            destroyCountDown(item.id)
-                        }
-
-                        override fun onTick(millisUntilFinished: Long) {
-                            paginationVM.updateElapsedTime("${millisUntilFinished}", item.id)
-                        }
-                    }.start().let { countDownHash.put(item.id, it) }
-                    paginationVM.startCountDown(item.id)
+            override fun updateRemainTime(item: KitchenItemModel, milisUntilFinish: Long) {
+                if (milisUntilFinish>0){
+                    paginationVM.updateElapsedTime("${milisUntilFinish}", item.id)
+                }else{
+                    destroyCountDown(item.id)
+                    countDownHash.remove(item.id)
                 }
             }
+
+            override fun startCountDown(item: KitchenItemModel, countDownTimer: CountDownTimer) {
+                paginationVM.startCountDown(item.id)
+                countDownHash.put(item.id, countDownTimer)
+             }
 
             override fun showPopup(item: KitchenItemModel,orderId : Int) {
                 val dialog  = DialogUtil.bottomConstraint(R.layout.meal_ready_popup,context)
@@ -145,10 +140,10 @@ class OrderFragment : BaseFragment(){
                 val badge: TextView = dialog.findViewById(R.id.badge)
                 val cancel: TextView = dialog.findViewById(R.id.cancel)
                 val ok: TextView = dialog.findViewById(R.id.ok)
-                title.text = item.title
+                title.text = item.name
                 dialog.show()  //duplicate
-                badge.text = "${item.badge}"
-                description.text = "№  ${item.orderId}    ${orderModel?.waiterName}     ${item.orderTime}    |   ${item.reqTime}"
+                badge.text = "${item.count}"
+                description.text = "№  ${item.number}    ${orderModel?.waiterName}     ${item.date}    |   ${item.reqTime}"
 
                 cancel.setOnClickListener {
                     paginationVM.updateItemTime(context.resources.getString(R.string.cancel),item.id)
@@ -165,10 +160,10 @@ class OrderFragment : BaseFragment(){
                 })
             }
         }
-        paginationVM.loadItemsByOrderId(orderModel?.id!!)
+        paginationVM.loadItemsByOrderId(orderModel?.order_item!!) //TODO needs to update with api
         paginationVM.item.observe(this, androidx.lifecycle.Observer {
             if (it.size==0) //If order has 0 item, then also order itself
-                paginationVM.deleteOrderById(orderModel.id)
+                paginationVM.deleteOrderById(orderModel.order_item)
             itemPageAdapter.submitList(it)
         })
 
@@ -176,7 +171,9 @@ class OrderFragment : BaseFragment(){
     }
 
     private fun stopReqCountDown(id : Int){
+        System.out.println("stopReqCountDown size of ${countDownHash.keys.size}")
         countDownHash.get(id)?.cancel()
+        countDownHash.remove(id)
     }
 
     private fun destroyCountDown(id : Int){
@@ -195,9 +192,9 @@ class OrderFragment : BaseFragment(){
         val dialog  = DialogUtil.bottom(R.layout.select_kitchen,context!!)
         val recyclerView:RecyclerView= dialog!!.findViewById(R.id.items)
         val button :Button= dialog.findViewById(R.id.button)
-        val valueList: List<CheckBoxModel> = ArrayList(checkBoxHash.values)
+        val valueList: List<PrintersModel> = ArrayList(printersHash.values)
 
-        ArrayList(checkBoxHash.values).filter { x->x.isChecked }.size.let {
+        ArrayList(printersHash.values).filter { x->x.isChecked }.size.let {
             if(it>0){
                 button.text = String.format("${context!!.resources.getString(R.string.selectKitchen)} (${it})")
             }else
@@ -205,9 +202,9 @@ class OrderFragment : BaseFragment(){
         }
 
         val check =  object: CheckBoxAdapter(valueList,context!!){
-            override fun getSelectItems(isChecked: Boolean, checkBoxModel: CheckBoxModel) {
-                checkBoxHash.put(checkBoxModel.id,checkBoxModel)
-                ArrayList(checkBoxHash.values).filter { x->x.isChecked }.size.let {
+            override fun getSelectItems(isChecked: Boolean, printersModel: PrintersModel) {
+                printersHash.put(printersModel.id,printersModel)
+                ArrayList(printersHash.values).filter { x->x.isChecked }.size.let {
                     if(it>0){
                         button.text = String.format("${context.resources.getString(R.string.selectKitchen)} (${it})")
                     }else
@@ -217,8 +214,8 @@ class OrderFragment : BaseFragment(){
         }
 
         button.setOnClickListener {
-            ArrayList(checkBoxHash.values).filter { x->x.isChecked }.plus(checkBoxAdd()).let {
-                setChipAdapter(it.distinct())
+            ArrayList(printersHash.values).filter { x->x.isChecked }.plus(checkBoxAdd()).let {
+                setPrinterAdapter(it.distinct())
                 showEmpty(it.size>1,resources.getString(R.string.selectKitchen))
             }
             dialog.dismiss()
@@ -227,7 +224,7 @@ class OrderFragment : BaseFragment(){
         dialog.show()
     }
 
-    private fun getListOfChips(string : List<CheckBoxModel>): List<CheckBoxModel> {
+    private fun getListOfChips(string : List<PrintersModel>): List<PrintersModel> {
         System.out.println("list Size ${string.size}")
         showEmpty(string.size>1,resources.getString(R.string.selectKitchen))
         return string
@@ -249,8 +246,8 @@ class OrderFragment : BaseFragment(){
     override fun getName(): String = "Заказы"
     override fun getDrawable(): Int = R.drawable.order
 
-    fun  checkBoxAdd() : CheckBoxModel{
-        val checkBoxModel = CheckBoxModel()
+    fun  checkBoxAdd() : PrintersModel {
+        val checkBoxModel = PrintersModel()
         checkBoxModel.isChecked = false
         checkBoxModel.id = -1
         checkBoxModel.name= "add"

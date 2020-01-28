@@ -1,6 +1,6 @@
 package com.yaros.kitchen.models;
 
-public class CheckBoxModel {
+public class PrintersModel {
     private int id;
     private String name;
     private boolean isChecked= false;

@@ -1,18 +1,16 @@
 package com.yaros.kitchen.adapter
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.widget.CompoundButtonCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
-import com.yaros.kitchen.models.CheckBoxModel
+import com.yaros.kitchen.models.PrintersModel
 import kotlinx.android.synthetic.main.checkbox_layout.view.*
 
-abstract class CheckBoxAdapter (val checkBoxModel:  List<CheckBoxModel>,val context : Context) : RecyclerView.Adapter<CheckBoxAdapter.CheckBoxVH>() {
+abstract class CheckBoxAdapter (val printersModel:  List<PrintersModel>, val context : Context) : RecyclerView.Adapter<CheckBoxAdapter.CheckBoxVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CheckBoxVH {
         val view: View = LayoutInflater.from(parent.getContext())
@@ -20,11 +18,11 @@ abstract class CheckBoxAdapter (val checkBoxModel:  List<CheckBoxModel>,val cont
         return CheckBoxVH(view)
     }
 
-    override fun getItemCount(): Int = checkBoxModel.size
+    override fun getItemCount(): Int = printersModel.size
 
 
     override fun onBindViewHolder(holder: CheckBoxVH, position: Int) {
-        holder.checkBox.isChecked = checkBoxModel.get(position).isChecked
+        holder.checkBox.isChecked = printersModel.get(position).isChecked
 
 /*        val states =
             arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf())
@@ -46,10 +44,10 @@ abstract class CheckBoxAdapter (val checkBoxModel:  List<CheckBoxModel>,val cont
             holder.checkBox.performClick()
         })
 
-        holder.name.text = checkBoxModel.get(position).name
+        holder.name.text = printersModel.get(position).name
         holder.checkBox.setOnCheckedChangeListener({ _compoundButton, b ->
-            checkBoxModel.get(position).isChecked = b
-            getSelectItems(b,checkBoxModel.get(position))
+            printersModel.get(position).isChecked = b
+            getSelectItems(b,printersModel.get(position))
             if (holder.checkBox.isChecked){
 
                 holder.name.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary))
@@ -68,7 +66,7 @@ abstract class CheckBoxAdapter (val checkBoxModel:  List<CheckBoxModel>,val cont
         val name = itemView.name
     }
 
-    abstract fun getSelectItems(isChecked : Boolean,checkBoxModel: CheckBoxModel)
+    abstract fun getSelectItems(isChecked : Boolean, printersModel: PrintersModel)
 
 
 }
