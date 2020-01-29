@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.yaros.kitchen.R
 import com.yaros.kitchen.adapter.*
 import com.yaros.kitchen.api.Api
@@ -18,6 +19,7 @@ import com.yaros.kitchen.models.PrintersModel
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.room.entity.KitchenOrderModel
+import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.utils.DialogUtil
 import com.yaros.kitchen.viewModel.PaginationFactory
 import com.yaros.kitchen.viewModel.PaginationVM
@@ -56,6 +58,15 @@ class OrderFragment : BaseFragment(){
 
         paginationVM.loadOrders()
 
+        paginationVM.getDishesById("1")
+        paginationVM.dishesInfo.observe(this, androidx.lifecycle.Observer {
+            System.out.println("ananin ami artik ya ${it}")
+        })
+
+        System.out.println("size of dishes23 ${paginationVM.getAllDishes()}")
+
+
+
         setTypeOfKitchens()
         setPrinterAdapter(getListOfChips(listOf(checkBoxAdd())))
     }
@@ -83,7 +94,7 @@ class OrderFragment : BaseFragment(){
 
     private fun setPrinterAdapter(string : List<PrintersModel>) {
 
-        val chipAdapter = object : PrinterAdapter(string) {
+         val chipAdapter = object : PrinterAdapter(string) {
             override fun clickListener(chip: String?, pos: Int) {
                 //show orders
                 if (pos==1){
@@ -93,6 +104,7 @@ class OrderFragment : BaseFragment(){
                         }
                      }
 
+                    paginationVM.getKitchenOrderModel("1")
                     paginationVM.order.observe(this@OrderFragment, androidx.lifecycle.Observer {
                         if (it.size>0)
                             showEmpty(true)
@@ -129,7 +141,7 @@ class OrderFragment : BaseFragment(){
             }
 
             override fun startCountDown(item: KitchenItemModel, countDownTimer: CountDownTimer) {
-                paginationVM.startCountDown(item.id)
+             //   paginationVM.startCountDown(item.id)
                 countDownHash.put(item.id, countDownTimer)
              }
 
@@ -143,35 +155,36 @@ class OrderFragment : BaseFragment(){
                 title.text = item.name
                 dialog.show()  //duplicate
                 badge.text = "${item.count}"
-                description.text = "№  ${item.number}    ${orderModel?.waiterName}     ${item.date}    |   ${item.reqTime}"
+                description.text = "№  ${item.number}    ${orderModel?.waiterName}     ${DateUtil.getHourandMinute(item.date.replace(" ","").toLong())}    |   ${DateUtil.cookTimeDate(item.reqTime)}"
 
                 cancel.setOnClickListener {
-                    paginationVM.updateItemTime(context.resources.getString(R.string.cancel),item.id)
                     dialog.dismiss()
                     stopReqCountDown(item.id)
                     destroyCountDown(item.id)
+                    paginationVM.updateItemTime(context.resources.getString(R.string.cancel),item.id)
                 }
 
                 ok.setOnClickListener({
-                    paginationVM.updateItemTime(context.resources.getString(R.string.ready),item.id)
                     dialog.dismiss()
                     stopReqCountDown(item.id)
                     destroyCountDown(item.id)
+                    paginationVM.updateItemTime(context.resources.getString(R.string.ready),item.id)
                 })
             }
         }
-        paginationVM.loadItemsByOrderId(orderModel?.order_item!!) //TODO needs to update with api
-        paginationVM.item.observe(this, androidx.lifecycle.Observer {
-            if (it.size==0) //If order has 0 item, then also order itself
-                paginationVM.deleteOrderById(orderModel.order_item)
-            itemPageAdapter.submitList(it)
-        })
+
+        paginationVM.getKitchenItemModel(orderModel!!.order_item)
+               paginationVM.item.observe(this, androidx.lifecycle.Observer {
+                   System.out.println("naber size ${it.size}")
+      /*             if (it.size==0) //If order has 0 item, then also order itself
+                       paginationVM.deleteItemByOrderId(orderModel.order_item)*/
+                   itemPageAdapter.submitList(it)
+               })
 
         recyclerView.adapter = itemPageAdapter
     }
 
     private fun stopReqCountDown(id : Int){
-        System.out.println("stopReqCountDown size of ${countDownHash.keys.size}")
         countDownHash.get(id)?.cancel()
         countDownHash.remove(id)
     }

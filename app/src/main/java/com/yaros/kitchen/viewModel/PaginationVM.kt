@@ -10,14 +10,13 @@ import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.repositories.ApiRepo
 import com.yaros.kitchen.repositories.Repos
 import com.yaros.kitchen.room.db.RoomDb
-import com.yaros.kitchen.room.entity.ItemInfoModel
-import com.yaros.kitchen.room.entity.KitchenItemModel
-import com.yaros.kitchen.room.entity.KitchenOrderModel
+import com.yaros.kitchen.room.entity.*
 
 class PaginationVM(db: RoomDb,rxSchedulers: RxSchedulers, apiService: ApiService) : ViewModel() {
     var item:  LiveData<PagedList<KitchenItemModel>> = MutableLiveData()
     var order: LiveData<PagedList<KitchenOrderModel>> = MutableLiveData()
     var itemInfo: LiveData<ItemInfoModel> = MutableLiveData()
+    var dishesInfo: LiveData<DishesModel> = MutableLiveData()
 
     val repos = Repos(db,rxSchedulers)
 
@@ -51,16 +50,17 @@ class PaginationVM(db: RoomDb,rxSchedulers: RxSchedulers, apiService: ApiService
         apiRepo.fetchItems()
     }
 
-    fun deleteItemById(itemId : Int){
+   /* fun deleteItemById(itemId : Int){
         repos.getItemRepo().delete(itemId)
-    }
+    }*/
 
     fun  deleteAllItems(){
         repos.getItemRepo().deleteAll()
     }
 
     fun  updateItemTime(string : String, itemId: Int){
-        repos.getItemRepo().updateItemTime(string,itemId)
+//        repos.getItemRepo().updateItemTime(string,itemId)
+        repos.getApiItemRepo().updateItemTime(string,itemId)
     }
 
     fun  startCountDown(itemId: Int){
@@ -75,4 +75,51 @@ class PaginationVM(db: RoomDb,rxSchedulers: RxSchedulers, apiService: ApiService
         itemInfo= LiveDataReactiveStreams.fromPublisher(repos.getItemRepo().getItemInfo(itemId))
     }
 
+    //------------------------------------------------------------------
+
+    fun insertNewItem(itemModel: ApiItemModel){
+        repos.getApiItemRepo().insert(itemModel)
+    }
+
+    fun updateItem(itemModel: ApiItemModel){
+        repos.getApiItemRepo().update(itemModel)
+    }
+
+    fun deleteItemById(id: Int){
+        repos.getApiItemRepo().deleteItem(id)
+    }
+
+    fun deleteItemByOrderId(id: String){
+        repos.getApiItemRepo().deleteItemByOrderId(id)
+    }
+
+    fun getKitchenItemModel(orderId: String){
+        item = repos.getApiItemRepo().getKitchenItemModel(orderId)
+    }
+
+    fun getKitchenOrderModel(printerId: String){
+        order= repos.getApiItemRepo().getOrdelModel(printerId)
+    }
+
+    //--------------------------------------------------------------------
+
+    fun insertNewDishes(dish: DishesModel){
+        repos.getDishesRepo().insert(dish)
+    }
+    fun updateDish(dish: DishesModel){
+        repos.getDishesRepo().update(dish)
+    }
+
+    fun deleteDishes(id: String){
+        repos.getDishesRepo().deleteItem(id)
+    }
+
+    fun  getDishesById(id: String){
+        dishesInfo = LiveDataReactiveStreams.fromPublisher(repos.getDishesRepo().getItemById(id))
+    }
+    fun  getAllDishes() =
+        repos.getDishesRepo().getAllList()
+
+
+    //----------------------------------------------------------------------
 }

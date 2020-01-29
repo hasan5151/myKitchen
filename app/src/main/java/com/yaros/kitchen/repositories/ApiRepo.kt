@@ -2,27 +2,51 @@ package com.yaros.kitchen.repositories
 
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
-import com.yaros.kitchen.room.entity.KitchenItemModel
-import com.yaros.kitchen.room.entity.KitchenOrderModel
+import com.yaros.kitchen.room.entity.*
 
 class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService) {
 
     fun fetchItems(){
-        KitchenItemModel(1,"1","1","Salat",null,"54:05","12:55",1).let { repos.getItemRepo().insert(it) }
-        KitchenItemModel(2,"1","2","Salat2","ris2","24:25","10:55",2).let {  repos.getItemRepo().insert(it)}
-        KitchenItemModel(3,"2","3","Salat3","ris2","30:25","11:00",6).let { repos.getItemRepo().insert(it) }
+        System.out.println("size of ananin ami")
+        DishesModel("1","Fish",12).let {
+            repos.getDishesRepo().insert(it)
+        }
+        DishesModel("2","Cola",10).let {
+            repos.getDishesRepo().insert(it)
+        }
+
+        ApiItemModel(1,"1","1","001",3,"test",System.currentTimeMillis().toString(),"1").let {
+            repos.getApiItemRepo().insert(it)
+        }
+        ApiItemModel(2,"1","2","001",2,"test",System.currentTimeMillis().toString(),"1").let {
+            repos.getApiItemRepo().insert(it)
+        }
+        ApiItemModel(3,"2","2","002",1,null,System.currentTimeMillis().toString(),"1").let {
+            repos.getApiItemRepo().insert(it)
+        }
+        ApiItemModel(4,"2","1","002",5,null,System.currentTimeMillis().toString(),"1").let {
+            repos.getApiItemRepo().insert(it)
+        }
+
+
     }
 
     fun fetchOrders(){
-        for (x in showKitchenOrders()){
+  /*      for (x in showKitchenOrders()){
             repos.getOrderRepo().insert(x)
-        }
+        }*/
     }
 
-    fun showKitchenOrders(): List<KitchenOrderModel>{
-        val order1 = KitchenOrderModel("1","Айжамал")
-        val order2 = KitchenOrderModel("2","Елена")
-        return listOf(order1,order2)
+    fun fetchDishes(){
+
+     }
+
+    fun fetchPrinters(){
+
+    }
+
+    fun fetchItemsWithTimeStamp(printerId: String, startDate: Long, endData: Long){
+
     }
 
 

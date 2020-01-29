@@ -3,7 +3,7 @@ package com.yaros.kitchen.utils
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.yaros.kitchen.models.Token
+import com.yaros.kitchen.models.AuthToken
 
 class Preferences {
 
@@ -12,10 +12,10 @@ class Preferences {
         val OAUTH = "auth"
 
         @Synchronized
-        fun saveOauth(context: Context?, oauth: Token?) {
+        fun saveOauth(context: Context?, oauth: AuthToken?) {
             val gson = Gson()
             val json = gson.toJson(oauth)
-            Preferences.savePref(
+            savePref(
                 OAUTH,
                 json,
                 context
@@ -23,7 +23,7 @@ class Preferences {
         }
 
         @Synchronized
-        fun getOauth(context: Context): Token? { //        SharedPreferences sharedPref = getPreferences(context);
+        fun getOauth(context: Context): AuthToken? { //        SharedPreferences sharedPref = getPreferences(context);
             val sharedPref = context.getSharedPreferences(
                 USER_PREFERENCES,
                 Context.MODE_PRIVATE
@@ -31,7 +31,7 @@ class Preferences {
             val gson = Gson()
             val json =
                 sharedPref.getString(OAUTH, null)
-            return gson.fromJson<Token>(json, Token::class.java)
+            return gson.fromJson<AuthToken>(json, AuthToken::class.java)
         }
 
 

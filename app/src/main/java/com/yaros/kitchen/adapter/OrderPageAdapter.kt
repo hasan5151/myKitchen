@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.yaros.kitchen.R
 import com.yaros.kitchen.models.OrderModel
 import com.yaros.kitchen.room.entity.KitchenItemModel
@@ -47,6 +48,7 @@ abstract class OrderPageAdapter() : PagedListAdapter<KitchenOrderModel, OrderPag
 
     override fun onBindViewHolder(holder: OrderVH, position: Int) {
         val order = getItem(position)
+          System.out.println(" naber ${order.toString()}")
         holder.orderId.text ="№ ${order?.number}"
         holder.waiterName.text = order?.waiterName
         setItemAdapter(holder.recyclerView,order)

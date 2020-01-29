@@ -12,5 +12,6 @@ data class ApiItemModel(
     var number : String,
     var count: Int,
     var comment: String?,
-    var date: String
+    var date: String,
+    var printerId : String
 )

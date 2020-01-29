@@ -12,10 +12,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
 import com.yaros.kitchen.room.entity.KitchenItemModel
+import com.yaros.kitchen.utils.DateUtil
 import kotlinx.android.synthetic.main.kitchen_item_adapter.view.*
+import java.lang.NumberFormatException
 
 abstract class ItemPageAdapter (val context : Context): PagedListAdapter<KitchenItemModel, ItemPageAdapter.ItemVH>(DIFF_CALLBACK) {
-
     companion object {
         protected val DIFF_CALLBACK: DiffUtil.ItemCallback<KitchenItemModel> =
             object : DiffUtil.ItemCallback<KitchenItemModel>() {
@@ -44,13 +45,16 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
     override fun onBindViewHolder(holder: ItemVH, position: Int) {
         val item = getItem(position)
         holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.timecolor))
-        holder.orderTime.text= "${item?.date}    |    "
-//        startReqCountDown(item!!,holder)
-        countDown(item!!,holder)
-        if (item?.date!!.contentEquals(context.resources.getString(R.string.cancel)))
+         countDown(item!!,holder)
+        if (item?.date!!.contentEquals(context.resources.getString(R.string.cancel))){
             holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.red))
-        else if (item.date.contentEquals(context.resources.getString(R.string.ready)))
-            holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.green))
+            holder.orderTime.text= "${item?.date}    |    "
+        }
+        else if (item.date.contentEquals(context.resources.getString(R.string.ready))) {
+            holder.orderTime.setTextColor(ContextCompat.getColor(context, R.color.green))
+            holder.orderTime.text = "${item?.date}    |    "
+        } else
+            holder.orderTime.text= "${DateUtil.getHourandMinute(item?.date?.replace(" ","")?.toLong())}    |    "
 
         holder.elapsedTime.text= "${item?.reqTime}"
         if(item?.count!=null)
@@ -115,10 +119,17 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
     }
 
     private fun countDown(item : KitchenItemModel, holder: ItemVH) {
-        if (!item.isCountDownStarted) {
-            object : CountDownTimer(item.reqTime, 1000) { //TODO change this
-                override fun onFinish() {
-               //     if (item.reqTime.replace(":", "").toLong() * 5<1000) {
+        if (item.isCountDownStarted!=1) {
+            try {
+                object : CountDownTimer(
+                    DateUtil.cookTime(
+                        item.date.replace(" ", "").toLong(),
+                        item.reqTime * item.count,
+                        0
+                    ), 1000
+                ) { //TODO change this
+                    override fun onFinish() {
+                        //     if (item.reqTime.replace(":", "").toLong() * 5<1000) {
                         holder.elapsedTime.text = "00:00  "
                         holder.elapsedTime.setTextColor(
                             ContextCompat.getColor(
@@ -133,16 +144,18 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
                             null
                         )
                         updateRemainTime(item, 0)
-                 //   }
-                }
+                        //   }
+                    }
 
-                override fun onTick(millisUntilFinished: Long) {
-                    holder.elapsedTime.text = "${millisUntilFinished}"
-                    updateRemainTime(item,millisUntilFinished)
-                }
-            }.start()
-                .let { startCountDown(item,it) }
+                    override fun onTick(millisUntilFinished: Long) {
+                        holder.elapsedTime.text = "${DateUtil.cookTimeDate(millisUntilFinished)}"
+                        updateRemainTime(item, millisUntilFinished)
+                    }
+                }.start()
+                    .let { startCountDown(item, it) }
+            }catch (e: NumberFormatException){
 
+            }
         }
     }
 

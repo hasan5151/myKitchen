@@ -1,8 +1,9 @@
 package com.yaros.kitchen.api
 
+import android.media.session.MediaSession
 import com.yaros.kitchen.BuildConfig.API_URL
 import com.yaros.kitchen.models.*
-import com.yaros.kitchen.room.entity.DishesModel
+ import com.yaros.kitchen.room.entity.DishesModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.http.Body
@@ -12,7 +13,6 @@ import retrofit2.http.Query
 
 
 interface ApiService {
-
 
     @GET(API_URL+ "/MobileKitchen?cmd=get_waiters")
     fun getWaiters(): Single<BaseList<WaitersModel>?>?
@@ -25,11 +25,11 @@ interface ApiService {
          @Query("device_name") deviceName: String?,
          @Query("imei") imei: String?,
          @Query("version") version: String?
-     ): Single<Base<Token>?>?
+     ): Single<Base<AuthToken>?>?
 
 
     @GET(API_URL+ "/MobileKitchen?cmd=logout_waiter")
-    fun logoutWaiter(@Query("waiter_token") waiterToken: String): Single<BaseList<Token>?>?
+    fun logoutWaiter(@Query("waiter_token") waiterToken: String): Single<BaseList<AuthToken>?>?
 
     @GET(API_URL+ "/MobileKitchen?cmd=get_printers")
     fun getPrinters(): Single<BaseList<PrintersModel>?>?

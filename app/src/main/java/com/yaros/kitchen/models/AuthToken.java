@@ -1,6 +1,6 @@
 package com.yaros.kitchen.models;
 
-public class Token {
+public class AuthToken {
     private String waiter_token;
     private String version_1c;
 

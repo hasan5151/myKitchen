@@ -6,7 +6,7 @@ package com.yaros.kitchen.api
  import android.util.Log
  import com.yaros.kitchen.BuildConfig
  import com.yaros.kitchen.BuildConfig.API_URL
- import com.yaros.kitchen.models.Token
+ import com.yaros.kitchen.models.AuthToken
  import com.yaros.kitchen.utils.Preferences
  import io.reactivex.android.schedulers.AndroidSchedulers
  import io.reactivex.schedulers.Schedulers
@@ -75,7 +75,7 @@ class Api(val user : String,val password : String,val context : Context) {
             null
         }
 
-    private fun saveToken(data: Token){
+    private fun saveToken(data: AuthToken){
         Preferences.saveOauth(context,data)
     }
 

@@ -2,7 +2,6 @@ package com.yaros.kitchen.ui.activity
 
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.provider.Settings.Secure
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat

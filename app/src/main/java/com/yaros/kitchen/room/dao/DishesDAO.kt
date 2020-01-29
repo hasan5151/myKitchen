@@ -6,8 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.yaros.kitchen.room.entity.DishesModel
-import com.yaros.kitchen.room.entity.KitchenItemModel
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
 
 @Dao
@@ -19,11 +19,14 @@ interface DishesDAO {
     fun update(itemModel: DishesModel?) : Completable
 
     @Query("DELETE FROM  DishesModel WHERE id= :id")
-    fun deleteItem(id: Int) : Completable
+    fun deleteItem(id: String) : Completable
 
-    @Query("SELECT * FROM DishesModel ORDER BY id DESC")
-    fun getAll(): DataSource.Factory<Int, DishesModel>
+    @Query("SELECT * FROM DishesModel")
+    fun getAll(): Flowable<DishesModel>
 
-    @Query("SELECT * FROM DishesModel ORDER BY id DESC")
-    fun getItemById(): Single<DishesModel>
+    @Query("SELECT * FROM DishesModel")
+    fun getAllList(): List<DishesModel>
+
+    @Query("SELECT * FROM DishesModel Where id=:id")
+    fun getItemById(id: String): Flowable<DishesModel>
 }

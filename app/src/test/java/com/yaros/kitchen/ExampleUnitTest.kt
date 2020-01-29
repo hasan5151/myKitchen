@@ -2,9 +2,12 @@ package com.yaros.kitchen
 
 import android.util.Base64
 import androidx.lifecycle.MutableLiveData
+import com.yaros.kitchen.utils.DateUtil
 import org.junit.Test
 
 import org.junit.Assert.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -55,5 +58,31 @@ class ExampleUnitTest {
         "Hello"
     }
 
+    @Test
+    fun dateTest(){
+        val pattern = "HH:mm"
+        val simpleDateFormat = SimpleDateFormat(pattern)
+        val date = simpleDateFormat.format(Date())
+        println(date)
+    }
+
+    @Test
+    fun testTimeStamp(){
+        print(System.currentTimeMillis())
+    }
+
+    @Test
+    fun testGetHour(){
+        print(DateUtil.getHourandMinute(20*60*1000000))
+    }
+
+    @Test
+    fun testCookTimeDate(){
+        print(DateUtil.cookTimeDate(20*60*1000))
+    }   @Test
+    fun testCookTime(){
+        print(DateUtil.cookTime(System.currentTimeMillis(),20,0))
+//        print(DateUtil.cookTime(1580292031307,20*60,0))
+    }
 
 }

@@ -13,13 +13,13 @@ interface KitchenOrderDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(localAccount: KitchenOrderModel?) : Completable
 
-    @Query("DELETE From  KitchenOrderModel WHERE id= :id")
+    @Query("DELETE From  KitchenOrderModel WHERE order_item= :id")
     fun deleteItem(id: Int) : Completable
 
-    @Query("SELECT * FROM KitchenOrderModel ORDER BY id DESC")
+    @Query("SELECT * FROM KitchenOrderModel ORDER BY order_item DESC")
     fun getAll(): DataSource.Factory<Int, KitchenOrderModel>
 
-    @Query("SELECT * FROM KitchenOrderModel WHERE id= :id ORDER BY id DESC")
+    @Query("SELECT * FROM KitchenOrderModel WHERE order_item= :id ORDER BY order_item DESC")
     fun getOrderById(id : Int): DataSource.Factory<Int, KitchenOrderModel>
 
     @Query("Delete from KitchenOrderModel")

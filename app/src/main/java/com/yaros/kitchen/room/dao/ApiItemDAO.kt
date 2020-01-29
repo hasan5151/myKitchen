@@ -6,12 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.yaros.kitchen.room.entity.ApiItemModel
-import com.yaros.kitchen.room.entity.DishesModel
-import com.yaros.kitchen.room.entity.ItemInfoModel
 import com.yaros.kitchen.room.entity.KitchenItemModel
+import com.yaros.kitchen.room.entity.KitchenOrderModel
 import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao
@@ -25,17 +22,26 @@ interface ApiItemDAO {
     @Query("DELETE FROM  ApiItemModel WHERE id= :id")
     fun deleteItem(id: Int) : Completable
 
-    @Query("SELECT * FROM ApiItemModel ORDER BY id DESC")
-    fun getAll(): DataSource.Factory<Int, ApiItemModel>
+    @Query("DELETE FROM  ApiItemModel WHERE order_items=:id")
+    fun deleteItemByOrderId(id: String) : Completable //delete Order
 
-    @Query("SELECT * FROM ApiItemModel ORDER BY id DESC")
-    fun getItemById(): Single<ApiItemModel>
+/*
+    @Query("SELECT ApiItemModel.id as id, ApiItemModel.number as number, ApiItemModel.order_items as order_items , 'test' as name, ApiItemModel.comment as comment , ApiItemModel.date as date ,ApiItemModel.count as count ,14353 as reqTime, 0 as isCountDownStarted  FROM ApiItemModel  INNER JOIN DishesModel ON  DishesModel.id= ApiItemModel.dish   ")
+    fun getKitchenItemModel() :  DataSource.Factory<Int, KitchenItemModel>
+*/
 
-    @Query("SELECT ApiItemModel.id as id, ApiItemModel.number as number, ApiItemModel.order_items as order_items , DishesModel.name as name, ApiItemModel.comment as comment , ApiItemModel.date as date ,ApiItemModel.count as count , ApiItemModel.date+DishesModel.cookingTime  as reqTime FROM ApiItemModel INNER JOIN DishesModel ON  DishesModel.id= ApiItemModel.dish")
-    fun getKitchenItemModel(itemID: Int) :  DataSource.Factory<Int, KitchenItemModel>
+    @Query("SELECT ApiItemModel.id as id, ApiItemModel.number as number, ApiItemModel.order_items as order_items , DishesModel.name as name, ApiItemModel.comment as comment , ApiItemModel.date as date ,ApiItemModel.count as count , DishesModel.cookingTime  as reqTime, 0 as isCountDownStarted  FROM ApiItemModel INNER JOIN DishesModel ON  DishesModel.id= ApiItemModel.dish Where ApiItemModel.order_items=:orderItems")
+    fun getKitchenItemModel(orderItems: String) :  DataSource.Factory<Int, KitchenItemModel>
 
-    @Query("SELECT ApiItemModel.number as number, ApiItemModel.order_items as order_items , DishesModel.name as name, ApiItemModel.comment as comment , ApiItemModel.date as date ,ApiItemModel.count as count , ApiItemModel.date+DishesModel.cookingTime  as reqTime FROM ApiItemModel INNER JOIN DishesModel ON  DishesModel.id= ApiItemModel.dish")
-    fun getOrdelModel(itemID: Int) : Flowable<KitchenItemModel>
+    @Query("SELECT ApiItemModel.number as number, ApiItemModel.order_items as order_item , ApiItemModel.number as waiterName FROM ApiItemModel Where printerId=:printerId Group By ApiItemModel.order_items")
+    fun getOrdelModel(printerId: String) :   DataSource.Factory<Int, KitchenOrderModel>
 
+    @Query("UPDATE ApiItemModel SET date=:date WHERE   ApiItemModel.id=:id")
+    fun updateItemTime(date: String,id : Int)
+
+
+    /*@Query("UPDATE KitchenItemModel SET reqTime=:reqTime WHERE id= :itemID")
+    fun updateElapsedTime(reqTime: String, itemID: Int) : Completable
+    */
 
 }

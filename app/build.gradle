@@ -18,7 +18,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
- 
+
 
     buildTypes {
         release {
@@ -39,6 +39,7 @@ dependencies {
     def paging_version = "2.1.1"
     def retrofit_version = "2.6.2"
     def lifecycle_version = "2.1.0"
+    def lifecycle_versionz = "2.1.0x"
 
     testImplementation 'org.mockito:mockito-core:2.25.0'
 

@@ -14,5 +14,5 @@ data class KitchenItemModel(
     var reqTime: Long,
     var date: String,
     var count: Int,
-    var isCountDownStarted : Boolean =false
+    var isCountDownStarted : Int =0
 )
