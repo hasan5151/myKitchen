@@ -16,10 +16,10 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET(API_URL+ "/MobileKitchen?cmd=get_waiters")
+    @GET("Services/hs/MobileKitchen?cmd=get_waiters")
     fun getWaiters(): Observable<BaseList<WaitersModel>?>?
 
-    @GET(API_URL+ "/MobileKitchen?cmd=login_waiter")
+    @GET("Services/hs//MobileKitchen?cmd=login_waiter")
     fun loginWaiter(
          @Query("waiter_id") waiterId: String,
          @Query("password") password: String,
@@ -28,24 +28,24 @@ interface ApiService {
          @Query("version") version: String?
      ): Single<Base<AuthToken>?>?
 
-    @GET(API_URL+ "/MobileKitchen?cmd=logout_waiter")
+    @GET( "/MobileKitchen?cmd=logout_waiter")
     fun logoutWaiter(@Query("waiter_token") waiterToken: String): Single<Base<AuthToken>?>?
 
-    @GET(API_URL+ "/MobileKitchen?cmd=get_printers")
+    @GET("/MobileKitchen?cmd=get_printers")
     fun getPrinters(): Observable<BaseList<PrintersModel>?>?
 
-    @GET(API_URL+ "/MobileKitchen?cmd=get_kitchen_data")
+    @GET("/MobileKitchen?cmd=get_kitchen_data")
     fun getKitchenData(): Observable<BaseList<DishesModel>?>?
 
-    @POST(API_URL+ "/MobileKitchen?cmd=get_order_items")
+    @POST("/MobileKitchen?cmd=get_order_items")
     fun getOrderItems(@Body printerList: List<String>, date_begin : Long?,data_end : Long? ): Observable<BaseList<ApiItemModel>?>?
 
-//    @GET(API_URL+ "/MobileKitchen?cmd=get_kitchen_hashes")
-    @GET(API_URL+ "/MobileKitchen?cmd=get_kitchen_hashes&waiter_token=d25b8e59-55d8-41ac-b658-e223a62f2991")
+    @GET(API_URL+ "/MobileKitchen?cmd=get_kitchen_hashes")
+//    @GET("/MobileKitchen?cmd=get_kitchen_hashes&waiter_token=d25b8e59-55d8-41ac-b658-e223a62f2991")
     fun getHashes(): Flowable<Base<HashModel>?>?
 
-//    @GET(API_URL+ "/MobileKitchen?cmd=get_kitchen_hashes")
-    @GET(API_URL+ "/MobileKitchen?cmd=get_kitchen_hashes&waiter_token=d25b8e59-55d8-41ac-b658-e223a62f2991")
+    @GET(API_URL+ "/MobileKitchen?cmd=get_kitchen_hashes")
+//    @GET( "/MobileKitchen?cmd=get_kitchen_hashes&waiter_token=d25b8e59-55d8-41ac-b658-e223a62f2991")
     fun getHashes2(): Observable<Base<HashModel>>
 
 

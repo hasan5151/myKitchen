@@ -26,7 +26,8 @@ class Api(val user : String,val password : String,val context : Context) {
     fun getApi(): ApiService {
         val client = OkHttpClient.Builder()
             .addInterceptor(OauthInterceptor(user,password))
-//            .addInterceptor(AuthInterceptor("d25b8e59-55d8-41ac-b658-e223a62f2991"))
+            .addInterceptor(AuthInterceptor("d25b8e59-55d8-41ac-b658-e223a62f2991"))
+            .authenticator(authenticator)
             .connectTimeout(100, TimeUnit.SECONDS)
             .readTimeout(
                 100,
@@ -47,6 +48,7 @@ class Api(val user : String,val password : String,val context : Context) {
         label@ Authenticator { route: Route?, response: Response ->
             System.out.println("selam sikeruu ha ${response.body()?.string()}")
         //    if (response.code() == 401) {
+
                 val token = getApi()?.loginWaiter(
                     user, password, Build.MODEL,
                     Settings.Secure.getString(
