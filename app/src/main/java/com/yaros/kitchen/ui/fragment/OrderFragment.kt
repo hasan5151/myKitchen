@@ -23,6 +23,8 @@ import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.utils.DialogUtil
 import com.yaros.kitchen.viewModel.PaginationFactory
 import com.yaros.kitchen.viewModel.PaginationVM
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -49,7 +51,7 @@ class OrderFragment : BaseFragment(){
         kitchen  = view.findViewById(R.id.kitchen)
         empty = view.findViewById(R.id.empty)
         val paginationFactory = PaginationFactory(RoomDb(context!!), RxSchedulers.DEFAULT,
-            Api("","",context!!).getApi()
+            Api("mobi","123",context!!).getApi()
         )
         paginationVM = ViewModelProviders.of(this,paginationFactory).get(PaginationVM::class.java)
 
@@ -58,13 +60,22 @@ class OrderFragment : BaseFragment(){
 
         paginationVM.loadOrders()
 
-        paginationVM.getDishesById("1")
-        paginationVM.dishesInfo.observe(this, androidx.lifecycle.Observer {
-            System.out.println("ananin ami artik ya ${it}")
+
+        Api("mobi","123",context!!).getApi().getHashes2().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+            System.out.println(" selam api4x ${it?.data?.order_hash}")
+
+        },{
+            it.printStackTrace()
+        })
+        paginationVM.getWaiters()
+        paginationVM.waitersList.observe(this, androidx.lifecycle.Observer {
+            System.out.println(" selam api ${it}")
         })
 
-        System.out.println("size of dishes23 ${paginationVM.getAllDishes()}")
-
+        paginationVM.getHashes()
+        paginationVM.orderHash.observe(this, androidx.lifecycle.Observer {
+            System.out.println(" selam api2 ${it}")
+        })
 
 
         setTypeOfKitchens()
@@ -104,7 +115,7 @@ class OrderFragment : BaseFragment(){
                         }
                      }
 
-                    paginationVM.getKitchenOrderModel("1")
+                    //paginationVM.getKitchenOrderModel("1")
                     paginationVM.order.observe(this@OrderFragment, androidx.lifecycle.Observer {
                         if (it.size>0)
                             showEmpty(true)
@@ -133,8 +144,9 @@ class OrderFragment : BaseFragment(){
         val itemPageAdapter =  object  : ItemPageAdapter(context!!) {
             override fun updateRemainTime(item: KitchenItemModel, milisUntilFinish: Long) {
                 if (milisUntilFinish>0){
-                    paginationVM.updateElapsedTime("${milisUntilFinish}", item.id)
+//                    paginationVM.updateElapsedTime("${milisUntilFinish}", item.id)
                 }else{
+//                    paginationVM.updateElapsedTime("${0}", item.id)
                     destroyCountDown(item.id)
                     countDownHash.remove(item.id)
                 }
@@ -173,11 +185,11 @@ class OrderFragment : BaseFragment(){
             }
         }
 
-        paginationVM.getKitchenItemModel(orderModel!!.order_item)
+               paginationVM.loadItemsByOrderId(orderModel!!.order_item)
                paginationVM.item.observe(this, androidx.lifecycle.Observer {
                    System.out.println("naber size ${it.size}")
-      /*             if (it.size==0) //If order has 0 item, then also order itself
-                       paginationVM.deleteItemByOrderId(orderModel.order_item)*/
+                   if (it.size==0) //If order has 0 item, then also order itself
+                       paginationVM.deleteOrderById(orderModel.order_item)
                    itemPageAdapter.submitList(it)
                })
 

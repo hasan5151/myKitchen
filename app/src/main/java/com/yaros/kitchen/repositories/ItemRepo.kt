@@ -44,7 +44,7 @@ class ItemRepo(val db: RoomDb, val rx : RxSchedulers) {
         return db.KitchenItemDAO().getItemInfo(itemId).compose(rx.applyFlowable())
     }
 
-    fun getItemByOrder(orderId : Int) : LiveData<PagedList<KitchenItemModel>> =
+    fun getItemByOrder(orderId : String) : LiveData<PagedList<KitchenItemModel>> =
         LivePagedListBuilder<Int, KitchenItemModel>(
             db.KitchenItemDAO().getItemByOrder(orderId), 10
         ).build()

@@ -14,6 +14,7 @@ package com.yaros.kitchen.api
  import retrofit2.Retrofit
  import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
  import retrofit2.converter.gson.GsonConverterFactory
+ import java.io.IOException
  import java.util.concurrent.TimeUnit
 
 
@@ -23,11 +24,9 @@ class Api(val user : String,val password : String,val context : Context) {
     val FAILED= "FAILED"
 
     fun getApi(): ApiService {
-        //   Credentials.basic("","")
-
         val client = OkHttpClient.Builder()
-            .addInterceptor(headerAuthInterceptor)
-            .authenticator(authenticator)
+            .addInterceptor(OauthInterceptor(user,password))
+//            .addInterceptor(AuthInterceptor("d25b8e59-55d8-41ac-b658-e223a62f2991"))
             .connectTimeout(100, TimeUnit.SECONDS)
             .readTimeout(
                 100,
@@ -43,34 +42,34 @@ class Api(val user : String,val password : String,val context : Context) {
         return retrofit.create<ApiService>(ApiService::class.java)
     }
 
-    private val headerAuthInterceptor =
-        Interceptor { chain: Interceptor.Chain ->
-            chain.call().cancel()
-            val original = chain.request()
-            chain.proceed(original).close()
-            chain.proceed(original)
-            val requestBuilder = original.newBuilder()
-                .header("Accept", "application/json;charset=UTF-8")
-                    .header("Authorization", "Bearer ${Preferences.getOauth(context)}")
-            val request = requestBuilder
-                .build()
-            chain.proceed(request)
-        }
 
     private val authenticator =
         label@ Authenticator { route: Route?, response: Response ->
-            Log.w("response", "auth resp $response")
-         //   if (response.code() == 401) {
-                val token  = getApi()?.loginWaiter(user,password, Build.MODEL,
-                        Settings.Secure.getString(context.contentResolver!!, Settings.Secure.ANDROID_ID), BuildConfig.VERSION_NAME)
-                    token?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(
-                        {run{
-                            when(it?.meta?.status){
-                                SUCCESS -> {saveToken(it.data)}
-                                FAILED -> {goToLoginPage()}
+            System.out.println("selam sikeruu ha ${response.body()?.string()}")
+        //    if (response.code() == 401) {
+                val token = getApi()?.loginWaiter(
+                    user, password, Build.MODEL,
+                    Settings.Secure.getString(
+                        context.contentResolver!!,
+                        Settings.Secure.ANDROID_ID
+                    ), BuildConfig.VERSION_NAME
+                )
+                token?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())
+                    ?.subscribe(
+                        {
+                            run {
+                                when (it?.meta?.status) {
+                                    SUCCESS -> {
+                                        saveToken(it.data)
+                                    }
+                                    FAILED -> {
+                                        goToLoginPage()
+                                    }
+                                }
                             }
-                        }},
-                        {t ->  t.printStackTrace()})
+                        },
+                        { t -> t.printStackTrace() })
+        //    }
        //     }
             null
         }

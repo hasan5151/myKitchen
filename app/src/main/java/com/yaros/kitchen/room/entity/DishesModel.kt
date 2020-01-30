@@ -9,5 +9,7 @@ data class DishesModel(
     @PrimaryKey(autoGenerate = false)
     var id: String,
     var name: String,
-    var cookingTime: Long
+    var cookingTime: Long,
+    var isChecked: Boolean = false
+
 )

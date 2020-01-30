@@ -1,53 +1,130 @@
 package com.yaros.kitchen.repositories
 
+import android.os.Build
+import android.provider.Settings
+import com.yaros.kitchen.BuildConfig
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
+import com.yaros.kitchen.models.*
 import com.yaros.kitchen.room.entity.*
+import com.yaros.kitchen.room.entity.KitchenItemModel
+import com.yaros.kitchen.room.entity.KitchenOrderModel
+import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
 
 class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService) {
-
+    val compositeDisposable = CompositeDisposable()
     fun fetchItems(){
-        System.out.println("size of ananin ami")
+         fetchDishes()
+
+        getTestItems().filter { it.count>-1 }.forEach {
+            val api = it
+            System.out.println("selam teset2 ${it.order_items}")
+            //insert order
+            KitchenOrderModel(it.order_items,it.number,"").let { repos.getOrderRepo().insert(it) }
+
+            val dishesModel = repos.getDishesRepo().getItem(it.dish)
+            KitchenItemModel(api.number,api.order_items,dishesModel.name,api.comment,dishesModel.cookingTime,api.date,api.count,0).let {
+                System.out.println("selam teset ${it.name}  ${api.order_items}")
+                repos.getItemRepo().insert(it)
+            }
+
+        }
+    }
+
+    fun getTestItems(): List<ApiItemModel>{
+        val api1 = ApiItemModel(1,"1","1","001",3,"test",System.currentTimeMillis().toString(),"1")
+        val api2 = ApiItemModel(2,"1","2","001",2,"test",System.currentTimeMillis().toString(),"1")
+        val api3 = ApiItemModel(3,"2","2","002",1,null,System.currentTimeMillis().toString(),"1")
+        val api4= ApiItemModel(4,"2","1","002",5,null,System.currentTimeMillis().toString(),"1")
+        return listOf(api1,api2,api3,api4)
+    }
+
+    fun fetchOrders(){ }
+
+    fun fetchDishes(){
         DishesModel("1","Fish",12).let {
             repos.getDishesRepo().insert(it)
         }
         DishesModel("2","Cola",10).let {
             repos.getDishesRepo().insert(it)
         }
-
-        ApiItemModel(1,"1","1","001",3,"test",System.currentTimeMillis().toString(),"1").let {
-            repos.getApiItemRepo().insert(it)
-        }
-        ApiItemModel(2,"1","2","001",2,"test",System.currentTimeMillis().toString(),"1").let {
-            repos.getApiItemRepo().insert(it)
-        }
-        ApiItemModel(3,"2","2","002",1,null,System.currentTimeMillis().toString(),"1").let {
-            repos.getApiItemRepo().insert(it)
-        }
-        ApiItemModel(4,"2","1","002",5,null,System.currentTimeMillis().toString(),"1").let {
-            repos.getApiItemRepo().insert(it)
-        }
-
-
-    }
-
-    fun fetchOrders(){
-  /*      for (x in showKitchenOrders()){
-            repos.getOrderRepo().insert(x)
-        }*/
-    }
-
-    fun fetchDishes(){
-
      }
 
-    fun fetchPrinters(){
+
+    //--------------------------------------------------------------------------------------------------------------
+    fun getWaiters() :Observable<List<WaitersModel>>? {
+        return apiService.getWaiters()?.compose(rxSchedulers.applyObservable())?.map { it.data }
+    }
+
+/*    fun loginWaiter(
+        waiterId: String,
+        password: String,
+        deviceName: String?,
+        imei: String?,
+        version: String?
+    ): Single<Base<AuthToken>?>? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }*/
+
+    fun logoutWaiter(waiterToken: String){
+        apiService.logoutWaiter(waiterToken)?.compose(rxSchedulers.applySingle())?.subscribe()
+    }
+
+    fun login(waiterId: String,pass: String,androidID :String)  : Single<AuthToken>?{
+        return apiService.loginWaiter(waiterId,pass, Build.MODEL,androidID,BuildConfig.VERSION_NAME)?.compose(rxSchedulers.applySingle())?.map { it.data }
+    }
+
+    fun getPrinters(): Observable<List<PrintersModel>>? = apiService.getPrinters()?.compose(rxSchedulers.applyObservable())?.map { it.data }
+
+    fun getKitchenData(){
+        compositeDisposable.add(apiService.getKitchenData()?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it->it }?.subscribe(
+            {
+                repos.getDishesRepo().insert(it)
+            }
+        )!!)
+    }
+
+    fun getOrderItems(
+        printerList: List<String>,
+        date_begin: Long?,
+        data_end: Long?
+    ){
+        compositeDisposable.add(apiService.getOrderItems(printerList,date_begin,data_end)?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it->it }?.subscribe(
+            {
+                val api = it
+                System.out.println("selam teset2 ${it.order_items}")
+                //insert order
+                KitchenOrderModel(it.order_items,it.number,"").let { repos.getOrderRepo().insert(it) }
+
+                val dishesModel = repos.getDishesRepo().getItem(it.dish)
+                KitchenItemModel(api.number,api.order_items,dishesModel.name,api.comment,dishesModel.cookingTime,api.date,api.count,0).let {
+                    System.out.println("selam teset ${it.name}  ${api.order_items}")
+                    repos.getItemRepo().insert(it)
+                }
+            }
+        )!!) //TODO filter if count -1
 
     }
 
-    fun fetchItemsWithTimeStamp(printerId: String, startDate: Long, endData: Long){
+//    fun getHashes():Flowable<Base<HashModel>?>? {
+    fun getHashes() {
+        apiService.getHashes()?.compose(rxSchedulers.applyFlowable())?.subscribe({
+            System.out.println("selam A ${it?.meta?.code}")
+            System.out.println("selam B ${it?.data?.time_server}")
+        },{
+            it.printStackTrace()
+            System.out.println("selam hata ${it}")
+        })
 
+      // return  apiService.getHashes()
     }
+
 
 
 }

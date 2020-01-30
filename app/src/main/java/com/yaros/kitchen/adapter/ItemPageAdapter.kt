@@ -33,6 +33,13 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
             }
     }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemVH {
+        val view: View = LayoutInflater.from(parent.getContext())
+            .inflate(R.layout.kitchen_item_adapter, parent, false)
+        return ItemVH(view)
+    }
+
+
     class ItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val badge = itemView.badge
         val title= itemView.title
@@ -45,18 +52,57 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
     override fun onBindViewHolder(holder: ItemVH, position: Int) {
         val item = getItem(position)
         holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.timecolor))
-         countDown(item!!,holder)
-        if (item?.date!!.contentEquals(context.resources.getString(R.string.cancel))){
+        countDown(item!!,holder)
+        if (item.date!!.contentEquals(context.resources.getString(R.string.cancel))){
             holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.red))
-            holder.orderTime.text= "${item?.date}    |    "
+            holder.orderTime.text= "${item?.date}       "
+            holder.elapsedTime.text = ""
         }
-        else if (item.date.contentEquals(context.resources.getString(R.string.ready))) {
+        else if (item.date!!.contentEquals(context.resources.getString(R.string.ready))) {
             holder.orderTime.setTextColor(ContextCompat.getColor(context, R.color.green))
-            holder.orderTime.text = "${item?.date}    |    "
-        } else
-            holder.orderTime.text= "${DateUtil.getHourandMinute(item?.date?.replace(" ","")?.toLong())}    |    "
+            holder.orderTime.text = "${item?.date}        "
+            holder.elapsedTime.text = ""
+        } else{
 
-        holder.elapsedTime.text= "${item?.reqTime}"
+
+            if (DateUtil.cookTime(
+                    item.date.replace(" ", "").toLong(),
+                    item.reqTime * item.count,
+                    0 //TODO set server diff
+                ) <1000) {
+                //   holder.elapsedTime.text = "00:00  "
+                holder.elapsedTime.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.red
+                    )
+                )
+                holder.elapsedTime.setCompoundDrawablesWithIntrinsicBounds(
+                    null,
+                    null,
+                    ContextCompat.getDrawable(context, R.drawable.warning),
+                    null
+                )
+                // updateRemainTime(item, 0)
+            }else{
+                holder.elapsedTime.setCompoundDrawablesWithIntrinsicBounds(
+                    null,
+                    null,
+                    null,
+                    null
+                )
+
+                holder.elapsedTime.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        android.R.color.black
+                    )
+                )
+            }
+
+            holder.orderTime.text= "${DateUtil.getHourandMinute(item?.date?.replace(" ","")?.toLong())}    |    "
+        }
+
         if(item?.count!=null)
             if (item.count>1){
                 holder.badge.text = "${item?.count}"
@@ -116,6 +162,11 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
         holder.constraint.setOnClickListener {
             showPopup(item,item.id)
         }
+
+
+
+
+
     }
 
     private fun countDown(item : KitchenItemModel, holder: ItemVH) {
@@ -125,26 +176,26 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
                     DateUtil.cookTime(
                         item.date.replace(" ", "").toLong(),
                         item.reqTime * item.count,
-                        0
+                        0 //TODO set server diff
                     ), 1000
                 ) { //TODO change this
                     override fun onFinish() {
-                        //     if (item.reqTime.replace(":", "").toLong() * 5<1000) {
-                        holder.elapsedTime.text = "00:00  "
-                        holder.elapsedTime.setTextColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.red
+                        if (item.reqTime <1000) {
+                            holder.elapsedTime.text = "00:00  "
+                            holder.elapsedTime.setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    R.color.red
+                                )
                             )
-                        )
-                        holder.elapsedTime.setCompoundDrawablesWithIntrinsicBounds(
-                            null,
-                            null,
-                            ContextCompat.getDrawable(context, R.drawable.warning),
-                            null
-                        )
-                        updateRemainTime(item, 0)
-                        //   }
+                            holder.elapsedTime.setCompoundDrawablesWithIntrinsicBounds(
+                                null,
+                                null,
+                                ContextCompat.getDrawable(context, R.drawable.warning),
+                                null
+                            )
+                            updateRemainTime(item, 0)
+                        }
                     }
 
                     override fun onTick(millisUntilFinished: Long) {
@@ -159,11 +210,7 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemVH {
-        val view: View = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.kitchen_item_adapter, parent, false)
-        return ItemVH(view)
-    }
+
 
     fun isNullOrEmpty(str: String?): Boolean {
         if (str != null && !str.isEmpty())

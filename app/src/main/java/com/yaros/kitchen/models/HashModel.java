@@ -5,7 +5,7 @@ public class HashModel {
     private String catalog_hash;
     private String order_hash;
     private String time_out;
-    private String time_server;
+    private Long time_server;
 
     public String getCatalog_hash() {
         return catalog_hash;
@@ -31,11 +31,11 @@ public class HashModel {
         this.time_out = time_out;
     }
 
-    public String getTime_server() {
+    public Long getTime_server() {
         return time_server;
     }
 
-    public void setTime_server(String time_server) {
+    public void setTime_server(Long time_server) {
         this.time_server = time_server;
     }
 }

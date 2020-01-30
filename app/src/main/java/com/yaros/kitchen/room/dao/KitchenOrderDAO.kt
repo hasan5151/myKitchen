@@ -14,7 +14,7 @@ interface KitchenOrderDAO {
     fun insert(localAccount: KitchenOrderModel?) : Completable
 
     @Query("DELETE From  KitchenOrderModel WHERE order_item= :id")
-    fun deleteItem(id: Int) : Completable
+    fun deleteItem(id: String) : Completable
 
     @Query("SELECT * FROM KitchenOrderModel ORDER BY order_item DESC")
     fun getAll(): DataSource.Factory<Int, KitchenOrderModel>

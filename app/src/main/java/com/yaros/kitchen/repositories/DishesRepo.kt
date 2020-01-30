@@ -4,6 +4,7 @@ import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.DishesModel
 import io.reactivex.Flowable
+import io.reactivex.Single
 
 class DishesRepo (val db: RoomDb, val rx: RxSchedulers) {
     fun insert(itemModel: DishesModel?) {
@@ -20,6 +21,10 @@ class DishesRepo (val db: RoomDb, val rx: RxSchedulers) {
 
     fun getItemById(id: String): Flowable<DishesModel> {
         return db.DishesDAO().getItemById(id).compose(rx.applyFlowable())
+    }
+
+    fun getItem(id: String): DishesModel {
+        return db.DishesDAO().getItem(id)
     }
     fun getAll(): Flowable<DishesModel> {
         return db.DishesDAO().getAll().compose(rx.applyFlowable())

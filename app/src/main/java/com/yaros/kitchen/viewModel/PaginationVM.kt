@@ -1,22 +1,30 @@
 package com.yaros.kitchen.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.LiveDataReactiveStreams
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import androidx.paging.PagedList
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
+import com.yaros.kitchen.models.PrintersModel
+import com.yaros.kitchen.models.WaitersModel
 import com.yaros.kitchen.repositories.ApiRepo
 import com.yaros.kitchen.repositories.Repos
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.*
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
-class PaginationVM(db: RoomDb,rxSchedulers: RxSchedulers, apiService: ApiService) : ViewModel() {
+class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,val apiService: ApiService) : ViewModel() {
+    var disposable = CompositeDisposable()
     var item:  LiveData<PagedList<KitchenItemModel>> = MutableLiveData()
     var order: LiveData<PagedList<KitchenOrderModel>> = MutableLiveData()
     var itemInfo: LiveData<ItemInfoModel> = MutableLiveData()
     var dishesInfo: LiveData<DishesModel> = MutableLiveData()
+    var waitersList: MutableLiveData<List<WaitersModel>> = MutableLiveData()
+    var printersList: MutableLiveData<List<PrintersModel>> = MutableLiveData()
+    var catalogHash: MutableLiveData<String> = MutableLiveData()
+    var orderHash: MutableLiveData<String> = MutableLiveData()
+    var timeStamp: MutableLiveData<Long> = MutableLiveData()
 
     val repos = Repos(db,rxSchedulers)
 
@@ -30,11 +38,11 @@ class PaginationVM(db: RoomDb,rxSchedulers: RxSchedulers, apiService: ApiService
         item= repos.getItemRepo().getAll()
     }
 
-    fun deleteOrderById(orderId : Int){
+    fun deleteOrderById(orderId : String){
         repos.getOrderRepo().deleteOrderById(orderId)
     }
 
-    fun loadItemsByOrderId(orderId : Int){
+    fun loadItemsByOrderId(orderId : String){
         item = repos.getItemRepo().getItemByOrder(orderId)
     }
 
@@ -59,8 +67,8 @@ class PaginationVM(db: RoomDb,rxSchedulers: RxSchedulers, apiService: ApiService
     }
 
     fun  updateItemTime(string : String, itemId: Int){
-//        repos.getItemRepo().updateItemTime(string,itemId)
-        repos.getApiItemRepo().updateItemTime(string,itemId)
+        repos.getItemRepo().updateItemTime(string,itemId)
+//        repos.getApiItemRepo().updateItemTime(string,itemId)
     }
 
     fun  startCountDown(itemId: Int){
@@ -72,7 +80,7 @@ class PaginationVM(db: RoomDb,rxSchedulers: RxSchedulers, apiService: ApiService
     }
 
     fun  getItemInfo(itemId: Int){
-        itemInfo= LiveDataReactiveStreams.fromPublisher(repos.getItemRepo().getItemInfo(itemId))
+          itemInfo= LiveDataReactiveStreams.fromPublisher(repos.getItemRepo().getItemInfo(itemId))
     }
 
     //------------------------------------------------------------------
@@ -86,7 +94,7 @@ class PaginationVM(db: RoomDb,rxSchedulers: RxSchedulers, apiService: ApiService
     }
 
     fun deleteItemById(id: Int){
-        repos.getApiItemRepo().deleteItem(id)
+        repos.getItemRepo().delete(id)
     }
 
     fun deleteItemByOrderId(id: String){
@@ -122,4 +130,38 @@ class PaginationVM(db: RoomDb,rxSchedulers: RxSchedulers, apiService: ApiService
 
 
     //----------------------------------------------------------------------
+
+    fun getWaiters(){//TODO filter with id
+        disposable.add(apiRepo.getWaiters()?.subscribe({
+            waitersList.value =it
+        })!!)
+    }
+
+    fun logoutWaiters(token : String){
+        apiRepo.logoutWaiter(token)
+    }
+
+    fun getPrinters(){
+        disposable.add(apiRepo.getPrinters()?.subscribe({
+            printersList.value = it
+        })!!)
+    }
+
+    fun getOrderItems(printerList: List<String>,date_begin: Long?,data_end: Long?){
+        apiRepo.getOrderItems(printerList,date_begin, data_end)
+    }
+
+    fun getHashes(){
+        apiRepo.getHashes()/*?.compose(rxSchedulers.applyFlowable())?.subscribe({
+            System.out.println(" selam api3 ${it?.data?.order_hash}")
+
+        },{
+            System.out.println(it.printStackTrace())
+        })*/
+    }
+
+    fun login(waiterId: String,pass: String,androidID :String){
+        apiRepo.login(waiterId,pass,androidID)
+    }
+
 }

@@ -29,4 +29,7 @@ interface DishesDAO {
 
     @Query("SELECT * FROM DishesModel Where id=:id")
     fun getItemById(id: String): Flowable<DishesModel>
+
+    @Query("SELECT * FROM DishesModel Where id=:id")
+    fun getItem(id: String): DishesModel
 }

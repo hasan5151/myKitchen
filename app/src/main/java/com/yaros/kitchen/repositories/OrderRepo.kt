@@ -18,7 +18,7 @@ class OrderRepo(val db: RoomDb,val rx: RxSchedulers) {
         db.KitchenOrderDAO().insert(item).compose(rx.applyCompletable()).subscribe()
     }
 
-    fun deleteOrderById(id: Int){
+    fun deleteOrderById(id: String){
         db.KitchenOrderDAO().deleteItem(id).compose(rx.applyCompletable()).subscribe()
     }
 

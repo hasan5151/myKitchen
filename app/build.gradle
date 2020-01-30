@@ -28,7 +28,7 @@ android {
             buildConfigField "String", "AUTH_PASS", '\" QWxhZGRpbjpPcGVuU2VzYW1l/\"'
         }
         debug {
-            buildConfigField "String", "API_URL", '\"http://localhost//Services/hs/\"'
+            buildConfigField "String", "API_URL", '\"http://yaros.pro:8580/Services/hs/\"'
             buildConfigField "String", "AUTH_PASS", '\" QWxhZGRpbjpPcGVuU2VzYW1l/\"'
         }
     }

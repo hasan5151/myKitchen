@@ -36,21 +36,11 @@ class MainActivity : AppCompatActivity() {
 
         val deviceId= Secure.getString(contentResolver!!, Secure.ANDROID_ID);
         System.out.println("${deviceId} huloooooooooog32")
-
-        //Test
-        /*Api.getApi()?.getToken(1,"1232",null,null,null,null)?.subscribe({
-
-        },{
-
-        })*/
-        /*.subscribe{result->
-            run{
-            result?.data?.waiter_token
-        }}*/
     }
 
     private fun init() {
         viewPager = findViewById(R.id.viewPager)
+        viewPager.offscreenPageLimit = 2
         tabLayout = findViewById(R.id.tabs)
     }
 
