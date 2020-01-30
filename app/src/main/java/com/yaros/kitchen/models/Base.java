@@ -1,7 +1,5 @@
 package com.yaros.kitchen.models;
 
-import java.util.List;
-
 public class Base<T> {
     private T data;
     private Meta meta;
@@ -12,5 +10,13 @@ public class Base<T> {
 
     public Meta getMeta() {
         return meta;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public void setMeta(Meta meta) {
+        this.meta = meta;
     }
 }

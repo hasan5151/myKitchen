@@ -15,6 +15,7 @@ import com.yaros.kitchen.R
 import com.yaros.kitchen.adapter.*
 import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.RxSchedulers
+import com.yaros.kitchen.models.Base
 import com.yaros.kitchen.models.PrintersModel
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenItemModel
@@ -57,26 +58,32 @@ class OrderFragment : BaseFragment(){
 
         paginationVM.fetchOrders()
         paginationVM.fetchItems()
-
         paginationVM.loadOrders()
 
 
-        Api("mobi","123",context!!).getApi().getHashes2().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-            System.out.println(" selam api4x ${it?.data?.order_hash}")
+        Api("mobi","123",context!!).getApi().getHashes3()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
 
-        },{
+            .subscribe({
+                if (it.meta.message.contentEquals("OK"))
+            System.out.println(" selam api4x ${it.data?.orders_hash}")
+            System.out.println(" selam api4x ${it.meta.message}")
+                val gson = Gson()
+         },{
             it.printStackTrace()
         })
-        paginationVM.getWaiters()
+
+    /*    paginationVM.getWaiters()
         paginationVM.waitersList.observe(this, androidx.lifecycle.Observer {
             System.out.println(" selam api ${it}")
-        })
+        })*/
 
-        paginationVM.getHashes()
+    /*    paginationVM.getHashes()
         paginationVM.orderHash.observe(this, androidx.lifecycle.Observer {
             System.out.println(" selam api2 ${it}")
         })
-
+*/
 
         setTypeOfKitchens()
         setPrinterAdapter(getListOfChips(listOf(checkBoxAdd())))

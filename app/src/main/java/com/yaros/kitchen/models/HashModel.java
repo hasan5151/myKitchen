@@ -3,7 +3,7 @@ package com.yaros.kitchen.models;
 public class HashModel {
 
     private String catalog_hash;
-    private String order_hash;
+    private String orders_hash;
     private String time_out;
     private Long time_server;
 
@@ -15,12 +15,12 @@ public class HashModel {
         this.catalog_hash = catalog_hash;
     }
 
-    public String getOrder_hash() {
-        return order_hash;
+    public String getOrders_hash() {
+        return orders_hash;
     }
 
-    public void setOrder_hash(String order_hash) {
-        this.order_hash = order_hash;
+    public void setOrders_hash(String orders_hash) {
+        this.orders_hash = orders_hash;
     }
 
     public String getTime_out() {
