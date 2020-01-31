@@ -6,26 +6,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.GridLayout
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.yaros.kitchen.R
-import com.yaros.kitchen.adapter.*
+import com.yaros.kitchen.adapter.CheckBoxAdapter
+import com.yaros.kitchen.adapter.ItemPageAdapter
+import com.yaros.kitchen.adapter.OrderPageAdapter
+import com.yaros.kitchen.adapter.PrinterAdapter
 import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.RxSchedulers
-import com.yaros.kitchen.models.Base
 import com.yaros.kitchen.models.PrintersModel
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.room.entity.KitchenOrderModel
 import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.utils.DialogUtil
+import com.yaros.kitchen.utils.Preferences
 import com.yaros.kitchen.viewModel.PaginationFactory
 import com.yaros.kitchen.viewModel.PaginationVM
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -34,7 +36,7 @@ class OrderFragment : BaseFragment(){
     lateinit var kitchen : RecyclerView
     lateinit var empty : TextView
     lateinit var chips : RecyclerView
-    val printersHash:HashMap<Int, PrintersModel> = HashMap()
+    val printersHash:HashMap<String, PrintersModel> = HashMap()
     lateinit var paginationVM: PaginationVM
     val countDownHash: HashMap<Int, CountDownTimer> = HashMap()
 
@@ -60,58 +62,45 @@ class OrderFragment : BaseFragment(){
         paginationVM.fetchItems()
         paginationVM.loadOrders()
 
-
-        Api("mobi","123",context!!).getApi().getHashes3()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-
-            .subscribe({
-                if (it.meta.message.contentEquals("OK"))
-            System.out.println(" selam api4x ${it.data?.orders_hash}")
-            System.out.println(" selam api4x ${it.meta.message}")
-                val gson = Gson()
-         },{
-            it.printStackTrace()
-        })
-
     /*    paginationVM.getWaiters()
         paginationVM.waitersList.observe(this, androidx.lifecycle.Observer {
             System.out.println(" selam api ${it}")
         })*/
 
-    /*    paginationVM.getHashes()
-        paginationVM.orderHash.observe(this, androidx.lifecycle.Observer {
-            System.out.println(" selam api2 ${it}")
-        })
-*/
-
+        setHash()
         setTypeOfKitchens()
         setPrinterAdapter(getListOfChips(listOf(checkBoxAdd())))
     }
 
+
     private fun setTypeOfKitchens() {
-        val checkBoxModel = PrintersModel()
+        paginationVM.getPrinters()
+        paginationVM.printersList.observe(this, androidx.lifecycle.Observer {
+             it.forEach {
+                 printersHash.put(it.id,it)
+             }
+        })
+        /*val checkBoxModel = PrintersModel()
         checkBoxModel.isChecked=false
-        checkBoxModel.id= 0
+        checkBoxModel.id= "0"
         checkBoxModel.name = "Test"
 
         val checkBoxModel2 = PrintersModel()
         checkBoxModel2.isChecked=false
-        checkBoxModel2.id= 1
+        checkBoxModel2.id= "1"
         checkBoxModel2.name = "Test2"
 
         val checkBoxModel3 = PrintersModel()
         checkBoxModel3.isChecked=false
-        checkBoxModel3.id= 2
+        checkBoxModel3.id= "2"
         checkBoxModel3.name = "Test3"
 
-        printersHash.put(0,checkBoxModel)
-        printersHash.put(1,checkBoxModel2)
-        printersHash.put(2,checkBoxModel3)
+        printersHash.put("0",checkBoxModel)
+        printersHash.put("1",checkBoxModel2)
+        printersHash.put("2",checkBoxModel3)*/
     }
 
     private fun setPrinterAdapter(string : List<PrintersModel>) {
-
          val chipAdapter = object : PrinterAdapter(string) {
             override fun clickListener(chip: String?, pos: Int) {
                 //show orders
@@ -122,8 +111,7 @@ class OrderFragment : BaseFragment(){
                         }
                      }
 
-                    //paginationVM.getKitchenOrderModel("1")
-                    paginationVM.order.observe(this@OrderFragment, androidx.lifecycle.Observer {
+                     paginationVM.order.observe(this@OrderFragment, androidx.lifecycle.Observer {
                         if (it.size>0)
                             showEmpty(true)
                         else
@@ -253,6 +241,7 @@ class OrderFragment : BaseFragment(){
             dialog.dismiss()
         }
         recyclerView.adapter = check
+        recyclerView.layoutManager = GridLayoutManager(context,1)
         dialog.show()
     }
 
@@ -281,8 +270,39 @@ class OrderFragment : BaseFragment(){
     fun  checkBoxAdd() : PrintersModel {
         val checkBoxModel = PrintersModel()
         checkBoxModel.isChecked = false
-        checkBoxModel.id = -1
+        checkBoxModel.id = "-1"
         checkBoxModel.name= "add"
         return  checkBoxModel
     }
+
+    private fun setHash() {
+        paginationVM.getHashes()
+        paginationVM.hash.observe(this, androidx.lifecycle.Observer {
+            System.out.println("slam ${it}")
+            val hashIt = it
+            val oldTimeStamp = Preferences.getPref("timeStamp","",context)
+            if(!oldTimeStamp!!.contentEquals(it.time_server.toString())){
+                Preferences.savePref("timeStamp","${it.time_server}",context)
+                System.out.println("selam server ${it.time_server}")
+            }
+
+            val oldCatalogHash= Preferences.getPref("catalogHash","",context)
+            if(!oldCatalogHash!!.contentEquals(it.catalog_hash.toString())){
+                Preferences.savePref("catalogHash",it.catalog_hash,context)
+                System.out.println("selam catalog ${it.catalog_hash}")
+                paginationVM.getDishes()
+                paginationVM.getPrinters()
+            }
+
+            val oldOrderHash = Preferences.getPref("orderHash","",context)
+            if(!oldOrderHash!!.contentEquals(it.orders_hash.toString())){
+                Preferences.savePref("orderHash",it.orders_hash,context)
+                System.out.println("selam orderHash ${it.orders_hash}")
+                //TODO update new orders
+                //TODO update orders
+            }
+        })
+    }
+
+
 }

@@ -1,7 +1,6 @@
 package com.yaros.kitchen.repositories
 
 import android.os.Build
-import android.provider.Settings
 import com.yaros.kitchen.BuildConfig
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
@@ -9,13 +8,11 @@ import com.yaros.kitchen.models.*
 import com.yaros.kitchen.room.entity.*
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.room.entity.KitchenOrderModel
-import io.reactivex.Flowable
+import com.yaros.kitchen.utils.Preferences
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
-import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService) {
     val compositeDisposable = CompositeDisposable()
@@ -56,21 +53,11 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
         }
      }
 
-
+    //--------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
     fun getWaiters() :Observable<List<WaitersModel>>? {
-        return apiService.getWaiters()?.compose(rxSchedulers.applyObservable())?.map { it.data }
+        return apiService.getWaiters()?.compose(rxSchedulers.applyObservable())?.map { it.data.waiters }
     }
-
-/*    fun loginWaiter(
-        waiterId: String,
-        password: String,
-        deviceName: String?,
-        imei: String?,
-        version: String?
-    ): Single<Base<AuthToken>?>? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }*/
 
     fun logoutWaiter(waiterToken: String){
         apiService.logoutWaiter(waiterToken)?.compose(rxSchedulers.applySingle())?.subscribe()
@@ -80,14 +67,15 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
         return apiService.loginWaiter(waiterId,pass, Build.MODEL,androidID,BuildConfig.VERSION_NAME)?.compose(rxSchedulers.applySingle())?.map { it.data }
     }
 
-    fun getPrinters(): Observable<List<PrintersModel>>? = apiService.getPrinters()?.compose(rxSchedulers.applyObservable())?.map { it.data }
+    fun getPrinters(): Observable<List<PrintersModel>>?
+            = apiService.getPrinters()?.compose(rxSchedulers.applyObservable())?.map { it.data.printers }
 
-    fun getKitchenData(){
-        compositeDisposable.add(apiService.getKitchenData()?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it->it }?.subscribe(
+    fun getDishes(){
+        compositeDisposable.add(apiService.getKitchenData()?.compose(rxSchedulers.applyObservable())?.map { it.data.dishes }?.flatMapIterable { it->it }?.subscribe(
             {
                 repos.getDishesRepo().insert(it)
             }
-        )!!)
+        ,{it.printStackTrace()})!!)
     }
 
     fun getOrderItems(
@@ -95,7 +83,7 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
         date_begin: Long?,
         data_end: Long?
     ){
-        compositeDisposable.add(apiService.getOrderItems(printerList,date_begin,data_end)?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it->it }?.subscribe(
+        compositeDisposable.add(apiService.getOrderItems(printerList,date_begin,data_end)?.compose(rxSchedulers.applyObservable())?.map { it.data.orders }?.flatMapIterable { it->it }?.subscribe(
             {
                 val api = it
                 System.out.println("selam teset2 ${it.order_items}")
@@ -108,23 +96,10 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
                     repos.getItemRepo().insert(it)
                 }
             }
-        )!!) //TODO filter if count -1
+        ,{it.printStackTrace()})!!) //TODO filter if count -1
 
     }
 
-//    fun getHashes():Flowable<Base<HashModel>?>? {
-    fun getHashes() {
-        apiService.getHashes()?.compose(rxSchedulers.applyFlowable())?.subscribe({
-            System.out.println("selam A ${it?.meta?.code}")
-            System.out.println("selam B ${it?.data?.time_server}")
-        },{
-            it.printStackTrace()
-            System.out.println("selam hata ${it}")
-        })
-
-      // return  apiService.getHashes()
-    }
-
-
+    fun getHashes() : Observable<HashModel>? = apiService.getHashes()?.compose(rxSchedulers.applyObservable())?.map { it.data }
 
 }

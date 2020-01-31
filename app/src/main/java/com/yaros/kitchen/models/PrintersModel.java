@@ -1,16 +1,15 @@
 package com.yaros.kitchen.models;
 
 public class PrintersModel {
-    private int id;
+    private String id;
     private String name;
     private boolean isChecked= false;
 
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

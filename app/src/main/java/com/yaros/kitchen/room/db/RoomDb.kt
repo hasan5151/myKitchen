@@ -5,15 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.yaros.kitchen.models.HashModel
 import com.yaros.kitchen.room.converters.Converters
-import com.yaros.kitchen.room.dao.ApiItemDAO
-import com.yaros.kitchen.room.dao.DishesDAO
-import com.yaros.kitchen.room.dao.KitchenItemDAO
-import com.yaros.kitchen.room.dao.KitchenOrderDAO
-import com.yaros.kitchen.room.entity.ApiItemModel
-import com.yaros.kitchen.room.entity.DishesModel
-import com.yaros.kitchen.room.entity.KitchenItemModel
-import com.yaros.kitchen.room.entity.KitchenOrderModel
+import com.yaros.kitchen.room.dao.*
+import com.yaros.kitchen.room.entity.*
 
 @Database(
     entities = [KitchenItemModel::class, KitchenOrderModel::class, DishesModel::class, ApiItemModel::class],

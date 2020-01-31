@@ -39,7 +39,6 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
         return ItemVH(view)
     }
 
-
     class ItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val badge = itemView.badge
         val title= itemView.title

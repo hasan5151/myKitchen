@@ -23,15 +23,14 @@ class Preferences {
         }
 
         @Synchronized
-        fun getOauth(context: Context): AuthToken? { //        SharedPreferences sharedPref = getPreferences(context);
-            val sharedPref = context.getSharedPreferences(
-                USER_PREFERENCES,
-                Context.MODE_PRIVATE
-            )
-            val gson = Gson()
-            val json =
-                sharedPref.getString(OAUTH, null)
-            return gson.fromJson<AuthToken>(json, AuthToken::class.java)
+        fun getPref(
+            key: String?,
+            initial: String?,
+            context: Context?
+        ): String? {
+            val sharedPref: SharedPreferences =
+               getPreferences(context)
+            return sharedPref.getString(key, initial)
         }
 
 

@@ -1,10 +1,6 @@
 package com.yaros.kitchen.api
 
-import com.google.gson.Gson
-import com.yaros.kitchen.models.Base
-import com.yaros.kitchen.models.HashModel
 import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 

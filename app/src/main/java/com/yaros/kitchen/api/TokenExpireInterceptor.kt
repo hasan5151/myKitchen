@@ -1,6 +1,7 @@
 package com.yaros.kitchen.api
 
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.yaros.kitchen.models.Base
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -18,13 +19,21 @@ class TokenExpireInterceptor () : Interceptor {
     private fun Interceptor.Chain.refreshToken(request: Request): Response {
         val response = proceed(request)
         val gson = Gson()
-        val base: Base<*> = gson.fromJson(response.body()?.string(), Base::class.java)
+        if (response.code()==406){
 
-        if (base.meta.code.contentEquals("10")){
-            //refresh token
+         //TODO session ended
+
+        }
+        else
+        try {
+            val base = gson.fromJson(response.body()?.string(), Base::class.java)
+            if (base.meta.code.contentEquals("10")) {
+                //refresh token
+            }
+        }catch(e: JsonSyntaxException) {
+            e.printStackTrace()
         }
 
-        System.out.println("bu guzel oldu ${base.meta.code}")
 
 /*
          if (response.code() == 401) {

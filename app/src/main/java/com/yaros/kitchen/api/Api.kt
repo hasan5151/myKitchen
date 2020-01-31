@@ -35,7 +35,7 @@ class Api(val user : String,val password : String,val context : Context) {
             .readTimeout(
                 100,
                 TimeUnit.SECONDS
-            ) //    .retryOnConnectionFailure(false)
+            )
             .build()
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(API_URL)
