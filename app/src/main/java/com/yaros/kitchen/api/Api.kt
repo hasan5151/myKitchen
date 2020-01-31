@@ -26,11 +26,9 @@ class Api(val user : String,val password : String,val context : Context) {
 
     fun getApi(): ApiService {
         val client = OkHttpClient.Builder()
-//            .authenticator(authenticator)
             .addInterceptor(AuthInterceptor("bdc6acda-1b15-4ba3-9b08-b1e2c5a9aa66"))
             .addInterceptor(OauthInterceptor(user,password))
             .addInterceptor(TokenExpireInterceptor())
-
             .connectTimeout(100, TimeUnit.SECONDS)
             .readTimeout(
                 100,
@@ -44,48 +42,6 @@ class Api(val user : String,val password : String,val context : Context) {
             .client(client)
             .build()
         return retrofit.create<ApiService>(ApiService::class.java)
-    }
-
-
-    private val authenticator =
-        label@ Authenticator { route: Route?, response: Response ->
-             System.out.println("bunlar hep ses")
-             System.out.println(route?.address().toString())
-                 System.out.println("selam sikeruu ha ${response.body()?.string()}")
-         //    if (response.code() == 401) {
-                val token = getApi().loginWaiter(
-                    user, password, Build.MODEL,
-                    Settings.Secure.getString(
-                        context.contentResolver!!,
-                        Settings.Secure.ANDROID_ID
-                    ), BuildConfig.VERSION_NAME
-                )
-                token?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())
-                    ?.subscribe(
-                        {
-                            run {
-                                when (it?.meta?.status) {
-                                    SUCCESS -> {
-                                        saveToken(it.data)
-                                    }
-                                    FAILED -> {
-                                        goToLoginPage()
-                                    }
-                                }
-                            }
-                        },
-                        { t -> t.printStackTrace() })
-        //    }
-       //     }
-            null
-        }
-
-    private fun Interceptor.Chain.proceedDeletingTokenOnError(request: Request): Response {
-        val response = proceed(request)
-        if (response.code() == 401) {
-           // repository.deleteToken()
-        }
-        return response
     }
 
     private fun saveToken(data: AuthToken){
