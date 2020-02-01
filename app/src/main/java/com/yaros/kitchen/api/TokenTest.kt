@@ -28,7 +28,7 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response? {
         val refreshResponse = chain.refreshToken(chain)
-        val request = chain.request()
+ //       val request = chain.request()
         return     chain.proceed(refreshResponse.request())
     }
 
@@ -37,7 +37,7 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
         System.out.println("anan2x ${string}")
 
 //        val response = proceed(chain.request())
-        val response = proceed(NewToken(chain,string!!).request())
+        val response = proceed(NewToken(chain,string!!).request()) // ilk request e query ekle
         val gson = Gson()
         if (response.code()==406){
             //TODO session ended
@@ -54,8 +54,13 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
                     val tokenRepo = TokenRepo(TokenService())
                      val string = tokenRepo.getToken(waiterId,password)
                     System.out.println("anan ${string}")
-                     Preferences.savePref("waiter_token","",context)
-                     return  NewToken(chain,string!!)
+                     Preferences.savePref("waiter_token",string,context)
+
+                    val string2 = Preferences.getPref("waiter_token","",context)
+                    System.out.println("anan2x ${string2}")
+
+
+                    return  NewToken(chain,string!!)
 
                     //refresh token
                 } else{

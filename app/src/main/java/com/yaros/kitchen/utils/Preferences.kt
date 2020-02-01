@@ -15,33 +15,19 @@ class Preferences {
         fun saveOauth(context: Context?, oauth: AuthToken?) {
             val gson = Gson()
             val json = gson.toJson(oauth)
-            savePref(
-                OAUTH,
-                json,
-                context
-            )
+            savePref(OAUTH, json, context)
         }
 
         @Synchronized
-        fun getPref(
-            key: String?,
-            initial: String?,
-            context: Context?
-        ): String? {
-            val sharedPref: SharedPreferences =
-               getPreferences(context)
+        fun getPref(key: String?, initial: String?, context: Context?): String? {
+            val sharedPref: SharedPreferences = getPreferences(context)
             return sharedPref.getString(key, initial)
         }
 
 
         @Synchronized
-        fun savePref(
-            key: String?,
-            value: String?,
-            context: Context?
-        ) {
-            val sharedPref: SharedPreferences =
-               getPreferences(context)
+        fun savePref(key: String?, value: String?, context: Context?) {
+            val sharedPref: SharedPreferences = getPreferences(context)
             val editor = sharedPref.edit()
             editor.putString(key, value)
             editor.apply()
