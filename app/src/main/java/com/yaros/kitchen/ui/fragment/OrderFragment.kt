@@ -54,7 +54,7 @@ class OrderFragment : BaseFragment(){
         kitchen  = view.findViewById(R.id.kitchen)
         empty = view.findViewById(R.id.empty)
         val paginationFactory = PaginationFactory(RoomDb(context!!), RxSchedulers.DEFAULT,
-            Api("mobi","123",context!!).getApi()
+            Api(context!!).getApi()
         )
         paginationVM = ViewModelProviders.of(this,paginationFactory).get(PaginationVM::class.java)
 

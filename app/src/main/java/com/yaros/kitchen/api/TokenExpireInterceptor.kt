@@ -3,9 +3,12 @@ package com.yaros.kitchen.api
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.yaros.kitchen.models.Base
+import com.yaros.kitchen.repositories.TokenRepo
+import com.yaros.kitchen.utils.Preferences
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import org.json.JSONObject
 import java.io.IOException
 
 class TokenExpireInterceptor () : Interceptor {
@@ -21,18 +24,31 @@ class TokenExpireInterceptor () : Interceptor {
         val gson = Gson()
         if (response.code()==406){
 
-         //TODO session ended
+            //TODO session ended
 
         }
         else
-        try {
-            val base = gson.fromJson(response.body()?.string(), Base::class.java)
-            if (base.meta.code.contentEquals("10")) {
-                //refresh token
+            try {
+                val responseBody= response.body()?.string()
+//                System.out.println(" senin anin ${responseBody}")
+//                System.out.println("salak aq ${responseBody}")
+                if(responseBody?.contentEquals("code")!!){
+                    System.out.println("anini siksinler")
+                }else
+                    System.out.println("babani siksinler")
+        /*        val jsonObject = JSONObject(responseBody)
+                val meta = jsonObject.getJSONObject("meta")
+                val code = meta.getString("code")*/
+                if (responseBody.contains("10")) {
+                    val tokenRepo = TokenRepo(TokenService())
+                    val string = tokenRepo.getToken("fa907412-a069-11e7-aa0e-002522ec5b96","123")
+                    System.out.println("orospu cocugu ${string}")
+                   // Preferences.savePref("waiter_token","",context)
+                    //return  NewToken(chain,string!!)
+                }
+            }catch(e: JsonSyntaxException) {
+                e.printStackTrace()
             }
-        }catch(e: JsonSyntaxException) {
-            e.printStackTrace()
-        }
 
 
 /*

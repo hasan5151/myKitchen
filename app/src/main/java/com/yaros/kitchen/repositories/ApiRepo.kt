@@ -68,7 +68,7 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
     }
 
     fun getPrinters(): Observable<List<PrintersModel>>?
-            = apiService.getPrinters()?.compose(rxSchedulers.applyObservable())?.map { it.data.printers }
+            = apiService.getPrinters()?.compose(rxSchedulers.applyObservable())?.map { it.data?.printers }
 
     fun getDishes(){
         compositeDisposable.add(apiService.getKitchenData()?.compose(rxSchedulers.applyObservable())?.map { it.data.dishes }?.flatMapIterable { it->it }?.subscribe(

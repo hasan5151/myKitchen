@@ -1,11 +1,10 @@
 package com.yaros.kitchen.api
 
 import com.yaros.kitchen.models.*
-import com.yaros.kitchen.room.entity.ApiItemModel
-import com.yaros.kitchen.room.entity.DishesModel
-import com.yaros.kitchen.models.HashModel
 import io.reactivex.Observable
 import io.reactivex.Single
+ import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -25,6 +24,25 @@ interface ApiService {
          @Query("imei") imei: String?,
          @Query("version") version: String?
      ): Single<Base<AuthToken>?>?
+
+    @GET("Services/hs/MobileKitchen?cmd=login_waiter")
+    fun login(
+         @Query("waiter_id") waiterId: String,
+         @Query("password") password: String,
+         @Query("app_id") appId: String?,
+         @Query("version") version: String?
+     ): Observable<Base<AuthToken>?>?
+//                        .url(API_URL+"hs/MobileKitchen?cmd=login_waiter&password=123&waiter_id=fa907412-a069-11e7-aa0e-002522ec5b96&app_id=mobile_kitchen&version=9")
+
+    @GET("Services/hs/MobileKitchen?cmd=login_waiter")
+    fun refreshToken(
+        @Query("waiter_id") waiterId: String,
+        @Query("password") password: String,
+        @Query("device_name") deviceName: String?,
+        @Query("imei") imei: String?,
+        @Query("version") version: String?
+    ): Call<Base<AuthToken>>
+
 
     @GET( "Services/hs/MobileKitchen?cmd=logout_waiter")
     fun logoutWaiter(@Query("waiter_token") waiterToken: String): Single<Base<AuthToken>?>?
