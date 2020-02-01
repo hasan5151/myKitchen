@@ -4,19 +4,20 @@ import android.content.Context
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import com.yaros.kitchen.BuildConfig
-import com.yaros.kitchen.models.Base
 import com.yaros.kitchen.repositories.TokenRepo
 import com.yaros.kitchen.utils.Preferences
-import okhttp3.*
-import org.json.JSONObject
+import okhttp3.Credentials
+import okhttp3.Interceptor
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 
 
 class TokenTest(val waiterId: String, val password : String, val context: Context) : Interceptor {
     fun NewToken(chain: Interceptor.Chain, @NonNull accessToken: String): Response {
         return run {
-            val url = chain.request().url()
+            val url = chain.request()
+                .url()
                 .newBuilder()
                 .addQueryParameter("waiter_token", accessToken)
                 .build()
@@ -37,7 +38,10 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
         System.out.println("anan2x ${string}")
 
 //        val response = proceed(chain.request())
-        val response = proceed(NewToken(chain,string!!).request()) // ilk request e query ekle
+        val request = NewToken(chain,string!!).request()
+        System.out.println("ananxxx ${request}")
+
+        val response = proceed(request) // ilk request e query ekle
         val gson = Gson()
         if (response.code()==406){
             //TODO session ended
