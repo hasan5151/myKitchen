@@ -6,9 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.GridLayout
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,10 +31,10 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class OrderFragment : BaseFragment(){
-
     lateinit var kitchen : RecyclerView
     lateinit var empty : TextView
     lateinit var chips : RecyclerView
+
     val printersHash:HashMap<String, PrintersModel> = HashMap()
     lateinit var paginationVM: PaginationVM
     val countDownHash: HashMap<Int, CountDownTimer> = HashMap()
@@ -53,65 +52,46 @@ class OrderFragment : BaseFragment(){
         chips  = view.findViewById(R.id.chips)
         kitchen  = view.findViewById(R.id.kitchen)
         empty = view.findViewById(R.id.empty)
+
         val paginationFactory = PaginationFactory(RoomDb(context!!), RxSchedulers.DEFAULT,
             Api(context!!).getApi()
         )
-        paginationVM = ViewModelProviders.of(this,paginationFactory).get(PaginationVM::class.java)
-
+        paginationVM = ViewModelProvider(this,paginationFactory).get(PaginationVM::class.java)
         paginationVM.fetchOrders()
         paginationVM.fetchItems()
         paginationVM.loadOrders()
 
-    /*    paginationVM.getWaiters()
-        paginationVM.waitersList.observe(this, androidx.lifecycle.Observer {
-            System.out.println(" selam api ${it}")
-        })*/
+        /*    paginationVM.getWaiters()
+            paginationVM.waitersList.observe(this, androidx.lifecycle.Observer {
+                System.out.println(" selam api ${it}")
+            })*/
 
         setHash()
         setTypeOfKitchens()
         setPrinterAdapter(getListOfChips(listOf(checkBoxAdd())))
     }
 
-
     private fun setTypeOfKitchens() {
         paginationVM.getPrinters()
-        paginationVM.printersList.observe(this, androidx.lifecycle.Observer {
-             it.forEach {
-                 printersHash.put(it.id,it)
-             }
+        paginationVM.printersList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            it.forEach {
+                printersHash.put(it.id,it)
+            }
         })
-        /*val checkBoxModel = PrintersModel()
-        checkBoxModel.isChecked=false
-        checkBoxModel.id= "0"
-        checkBoxModel.name = "Test"
-
-        val checkBoxModel2 = PrintersModel()
-        checkBoxModel2.isChecked=false
-        checkBoxModel2.id= "1"
-        checkBoxModel2.name = "Test2"
-
-        val checkBoxModel3 = PrintersModel()
-        checkBoxModel3.isChecked=false
-        checkBoxModel3.id= "2"
-        checkBoxModel3.name = "Test3"
-
-        printersHash.put("0",checkBoxModel)
-        printersHash.put("1",checkBoxModel2)
-        printersHash.put("2",checkBoxModel3)*/
     }
 
     private fun setPrinterAdapter(string : List<PrintersModel>) {
-         val chipAdapter = object : PrinterAdapter(string) {
+        val chipAdapter = object : PrinterAdapter(string) {
             override fun clickListener(chip: String?, pos: Int) {
                 //show orders
                 if (pos==1){
-                     val orderAdapter =object :  OrderPageAdapter(){
+                    val orderAdapter =object :  OrderPageAdapter(){
                         override fun setItemAdapter(recyclerView: RecyclerView, orderModel:KitchenOrderModel?) {
                             itemAdapter(recyclerView,orderModel)
                         }
-                     }
+                    }
 
-                     paginationVM.order.observe(this@OrderFragment, androidx.lifecycle.Observer {
+                    paginationVM.order.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
                         if (it.size>0)
                             showEmpty(true)
                         else
@@ -148,12 +128,12 @@ class OrderFragment : BaseFragment(){
             }
 
             override fun startCountDown(item: KitchenItemModel, countDownTimer: CountDownTimer) {
-             //   paginationVM.startCountDown(item.id)
+                //   paginationVM.startCountDown(item.id)
                 countDownHash.put(item.id, countDownTimer)
-             }
+            }
 
             override fun showPopup(item: KitchenItemModel,orderId : Int) {
-                val dialog  = DialogUtil.bottomConstraint(R.layout.meal_ready_popup,context)
+                val dialog  = DialogUtil.bottom(R.layout.meal_ready_popup,context)
                 val title: TextView = dialog!!.findViewById(R.id.title)
                 val description: TextView = dialog.findViewById(R.id.description)
                 val badge: TextView = dialog.findViewById(R.id.badge)
@@ -180,13 +160,13 @@ class OrderFragment : BaseFragment(){
             }
         }
 
-               paginationVM.loadItemsByOrderId(orderModel!!.order_item)
-               paginationVM.item.observe(this, androidx.lifecycle.Observer {
-                   System.out.println("naber size ${it.size}")
-                   if (it.size==0) //If order has 0 item, then also order itself
-                       paginationVM.deleteOrderById(orderModel.order_item)
-                   itemPageAdapter.submitList(it)
-               })
+        paginationVM.loadItemsByOrderId(orderModel!!.order_item)
+        paginationVM.item.observe(this, androidx.lifecycle.Observer {
+            System.out.println("naber size ${it.size}")
+            if (it.size==0) //If order has 0 item, then also order itself
+                paginationVM.deleteOrderById(orderModel.order_item)
+            itemPageAdapter.submitList(it)
+        })
 
         recyclerView.adapter = itemPageAdapter
     }
@@ -197,15 +177,15 @@ class OrderFragment : BaseFragment(){
     }
 
     private fun destroyCountDown(id : Int){
-            object : CountDownTimer(2000, 1000) {
-                override fun onFinish() {
-                    paginationVM.deleteItemById(id)
-                }
+        object : CountDownTimer(2000, 1000) {
+            override fun onFinish() {
+                paginationVM.deleteItemById(id)
+            }
 
-                override fun onTick(millisUntilFinished: Long) {
-                    println("%$millisUntilFinished")
-                }
-            }.start()
+            override fun onTick(millisUntilFinished: Long) {
+                println("%$millisUntilFinished")
+            }
+        }.start()
     }
 
     private fun selectKitchens(){
@@ -216,9 +196,9 @@ class OrderFragment : BaseFragment(){
 
         ArrayList(printersHash.values).filter { x->x.isChecked }.size.let {
             if(it>0){
-                button.text = String.format("${context!!.resources.getString(R.string.selectKitchen)} (${it})")
+                button.text = String.format("${context!!.resources.getString(R.string.select)} (${it})")
             }else
-                button.text = context!!.resources.getString(R.string.selectKitchen)
+                button.text = context!!.resources.getString(R.string.select)
         }
 
         val check =  object: CheckBoxAdapter(valueList,context!!){
@@ -226,9 +206,9 @@ class OrderFragment : BaseFragment(){
                 printersHash.put(printersModel.id,printersModel)
                 ArrayList(printersHash.values).filter { x->x.isChecked }.size.let {
                     if(it>0){
-                        button.text = String.format("${context.resources.getString(R.string.selectKitchen)} (${it})")
+                        button.text = String.format("${context.resources.getString(R.string.select)} (${it})")
                     }else
-                        button.text = context.resources.getString(R.string.selectKitchen)
+                        button.text = context.resources.getString(R.string.select)
                 }
             }
         }
@@ -254,7 +234,6 @@ class OrderFragment : BaseFragment(){
     private fun showEmpty(hasItem : Boolean, string: String=""){
         System.out.println("no item ${hasItem}")
         empty.text=string
-
         if (hasItem) {
             kitchen.visibility = View.VISIBLE
             empty.visibility = View.INVISIBLE
@@ -277,8 +256,7 @@ class OrderFragment : BaseFragment(){
 
     private fun setHash() {
         paginationVM.getHashes()
-        paginationVM.hash.observe(this, androidx.lifecycle.Observer {
-            System.out.println("slam ${it}")
+        paginationVM.hash.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             val hashIt = it
             val oldTimeStamp = Preferences.getPref("timeStamp","",context)
             if(!oldTimeStamp!!.contentEquals(it.time_server.toString())){
@@ -303,6 +281,4 @@ class OrderFragment : BaseFragment(){
             }
         })
     }
-
-
 }

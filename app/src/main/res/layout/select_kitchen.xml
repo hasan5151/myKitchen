@@ -1,43 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_height="400dp"
+<ScrollView android:layout_height="450dp"
     android:layout_width="match_parent"
     android:background="@drawable/dialog_gradient"
-    android:gravity="center"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:gravity="bottom"
+     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
             android:textSize="24sp"
-            android:layout_marginTop="20dp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:text="@string/selectKitchen"
             android:layout_width="match_parent"
             android:textColor="@color/popupcolor"
             android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:id="@+id/items"
             android:layout_gravity="start"
-            android:layout_marginLeft="42dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="330dp" />
 
         <Button
             android:gravity="center"
             android:text="@string/select"
             android:id="@+id/button"
             android:paddingLeft="20dp"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:layout_marginLeft="42dp"
             android:layout_marginRight="42dp"
             android:paddingRight="20dp"
             android:background="@color/colorPrimary"
-            android:layout_marginBottom="40dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:layout_width="match_parent"

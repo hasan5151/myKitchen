@@ -20,24 +20,15 @@ abstract class CheckBoxAdapter (val printersModel:  List<PrintersModel>, val con
 
     override fun getItemCount(): Int = printersModel.size
 
-
     override fun onBindViewHolder(holder: CheckBoxVH, position: Int) {
         holder.checkBox.isChecked = printersModel.get(position).isChecked
 
-/*        val states =
-            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf())
-        val colors = intArrayOf(R.color.popupcolor, R.color.colorPrimary)
-        CompoundButtonCompat.setButtonTintList(holder.checkBox, ColorStateList(states, colors))*/
-
         if (holder.checkBox.isChecked){
             holder.name.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary))
-    //        holder.checkBox.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary))
-        }
+         }
         else{
-
             holder.name.setTextColor(ContextCompat.getColor(context,R.color.popupcolor))
-      //      holder.checkBox.setTextColor(ContextCompat.getColor(context,R.color.popupcolor))
-        }
+         }
 
 
         holder.name.setOnClickListener({
@@ -51,12 +42,9 @@ abstract class CheckBoxAdapter (val printersModel:  List<PrintersModel>, val con
             if (holder.checkBox.isChecked){
 
                 holder.name.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary))
-        //        holder.checkBox.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary))
-            }
+             }
             else{
-
                 holder.name.setTextColor(ContextCompat.getColor(context,R.color.popupcolor))
-        //        holder.checkBox.setTextColor(ContextCompat.getColor(context,R.color.popupcolor))
             }
         })
     }

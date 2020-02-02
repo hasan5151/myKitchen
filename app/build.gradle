@@ -38,8 +38,7 @@ dependencies {
     def room_version = "2.2.3"
     def paging_version = "2.1.1"
     def retrofit_version = "2.6.2"
-    def lifecycle_version = "2.1.0"
-    def lifecycle_versionz = "2.1.0x"
+    def lifecycle_version = "2.2.0"
 
     testImplementation 'org.mockito:mockito-core:2.25.0'
 
@@ -62,7 +61,7 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
     implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version"
 
     implementation "androidx.paging:paging-runtime-ktx:$paging_version" // For Kotlin use paging-runtime-ktx
@@ -73,4 +72,8 @@ dependencies {
     kapt  "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
+
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
+
+
 }
