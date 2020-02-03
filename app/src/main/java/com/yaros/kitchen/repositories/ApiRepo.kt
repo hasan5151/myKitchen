@@ -5,44 +5,18 @@ import com.yaros.kitchen.BuildConfig
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.*
+import com.yaros.kitchen.models.apiModels.OrdersKitchenPostModel
+import com.yaros.kitchen.room.entity.WaitersModel
 import com.yaros.kitchen.room.entity.*
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.room.entity.KitchenOrderModel
-import com.yaros.kitchen.utils.Preferences
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import java.util.concurrent.TimeUnit
 
 class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService) {
     val compositeDisposable = CompositeDisposable()
-    fun fetchItems(){
-         fetchDishes()
 
-        getTestItems().filter { it.count>-1 }.forEach {
-            val api = it
-            System.out.println("selam teset2 ${it.order_items}")
-            //insert order
-            KitchenOrderModel(it.order_items,it.number,"").let { repos.getOrderRepo().insert(it) }
-
-            val dishesModel = repos.getDishesRepo().getItem(it.dish)
-            KitchenItemModel(api.number,api.order_items,dishesModel.name,api.comment,dishesModel.cookingTime,api.date,api.count,0).let {
-                System.out.println("selam teset ${it.name}  ${api.order_items}")
-                repos.getItemRepo().insert(it)
-            }
-
-        }
-    }
-
-    fun getTestItems(): List<ApiItemModel>{
-        val api1 = ApiItemModel(1,"1","1","001",3,"test",System.currentTimeMillis().toString(),"1")
-        val api2 = ApiItemModel(2,"1","2","001",2,"test",System.currentTimeMillis().toString(),"1")
-        val api3 = ApiItemModel(3,"2","2","002",1,null,System.currentTimeMillis().toString(),"1")
-        val api4= ApiItemModel(4,"2","1","002",5,null,System.currentTimeMillis().toString(),"1")
-        return listOf(api1,api2,api3,api4)
-    }
-
-    fun fetchOrders(){ }
 
     fun fetchDishes(){
         DishesModel("1","Fish",12).let {
@@ -55,8 +29,11 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
 
     //--------------------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------
-    fun getWaiters() :Observable<List<WaitersModel>>? {
-        return apiService.getWaiters()?.compose(rxSchedulers.applyObservable())?.map { it.data.waiters }
+    fun getWaiters() {
+/*        compositeDisposable.add(
+            apiService.getWaiters()?.compose(rxSchedulers.applyObservable())?.map { it.data.waiters }?.flatMapIterable { it }?.subscribe({
+            repos.getWaiterRepo().insert(it)
+        },{it.printStackTrace()})!!)*/
     }
 
     fun logoutWaiter(waiterToken: String){
@@ -83,23 +60,40 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
         date_begin: Long?,
         data_end: Long?
     ){
-        compositeDisposable.add(apiService.getOrderItems(printerList,date_begin,data_end)?.compose(rxSchedulers.applyObservable())?.map { it.data.orders }?.flatMapIterable { it->it }?.subscribe(
-            {
-                val api = it
-                System.out.println("selam teset2 ${it.order_items}")
-                //insert order
-                KitchenOrderModel(it.order_items,it.number,"").let { repos.getOrderRepo().insert(it) }
-
-                val dishesModel = repos.getDishesRepo().getItem(it.dish)
-                KitchenItemModel(api.number,api.order_items,dishesModel.name,api.comment,dishesModel.cookingTime,api.date,api.count,0).let {
-                    System.out.println("selam teset ${it.name}  ${api.order_items}")
-                    repos.getItemRepo().insert(it)
+        val ordersKitchenPostModel = OrdersKitchenPostModel(printerList,date_begin,data_end)
+        compositeDisposable.add(apiService.getOrderItems(ordersKitchenPostModel)?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it->it }?.subscribe(
+            { api ->
+                api.orders.forEach {order->
+//                  //  repos.getWaiterRepo().getWaiter(order.waiter)!!
+              //      if (repos.getOrderRepo().checkOrder(order.order)!!) {
+                        KitchenOrderModel(
+                            order.order,
+                            order.number,
+                            api.printer,
+                         ""
+                        ).let { repos.getOrderRepo().insert(it) }
+                        order.dishes.forEach { item ->
+                            val dishesModel = repos.getDishesRepo().getItem(item.dish)
+                            KitchenItemModel(
+                                order.number,
+                                order.order,
+                                dishesModel?.name,
+                                item.comment,
+                                dishesModel.cookingTime,
+                                item.item_date,
+                                item.count,
+                                item.dish,
+                                0
+                            )
+                                .let {
+                                    repos.getItemRepo().insert(it)
+                                }
+                        }
+                //    }
                 }
             }
         ,{it.printStackTrace()})!!) //TODO filter if count -1
-
     }
 
     fun getHashes() : Observable<HashModel>? = apiService.getHashes()?.compose(rxSchedulers.applyObservable())?.map { it.data }
-
 }

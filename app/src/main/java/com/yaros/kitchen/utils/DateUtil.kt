@@ -20,7 +20,7 @@ class DateUtil {
 
         fun syncTime(serverDiff : Long) = System.currentTimeMillis()+serverDiff
 
-        fun cookTime(orderTime: Long, cookTime: Long, serverDiff: Long) : Long{ //prevent negative countdown
+        fun remainCookTime(orderTime: Long, cookTime: Long, serverDiff: Long) : Long{ //prevent negative countdown
             if (orderTime+(cookTime*1000)- syncTime(serverDiff)>1001){
                 return orderTime+(cookTime*1000)- syncTime(serverDiff)
             }else return 1001
@@ -45,5 +45,9 @@ class DateUtil {
             return todaysCalendar
         }
 
+        fun calculateCookingTime(startedDate : String,serverTime : Long): Long{
+            val now = System.currentTimeMillis()
+            return  (now -startedDate.toLong())/1000%1000
+        }
     }
 }

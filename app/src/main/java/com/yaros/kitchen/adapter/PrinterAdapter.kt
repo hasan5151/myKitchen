@@ -25,7 +25,7 @@ abstract class PrinterAdapter (val string : List<PrintersModel>) : RecyclerView.
 
             holder.button.setOnClickListener({
                 if (!string.get(position).name!!.contentEquals("add"))
-                    clickListener(string.get(position).name,position)
+                    clickListener(string.get(position).name,string.get(position).id)
                 else
                     showDialog()
             })
@@ -43,7 +43,7 @@ abstract class PrinterAdapter (val string : List<PrintersModel>) : RecyclerView.
     class MyChipAdapter(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val button = itemView.button
     }
-    abstract fun clickListener(chip: String?,pos : Int)
+    abstract fun clickListener(chip: String?,pos : String)
     abstract fun showDialog()
 
 }

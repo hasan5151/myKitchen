@@ -82,7 +82,6 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:text="09:21"
             android:id="@+id/elapsedTime"
             android:duplicateParentState="true"
             android:clickable="false"

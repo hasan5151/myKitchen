@@ -7,11 +7,12 @@ import androidx.room.PrimaryKey
 data class ApiItemModel(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
-    var order_items : String,
+    var order : String,
     var dish: String,
     var number : String,
     var count: Int,
     var comment: String?,
     var date: String,
-    var printerId : String
+    var printerId : String,
+    var waiter : String
 )

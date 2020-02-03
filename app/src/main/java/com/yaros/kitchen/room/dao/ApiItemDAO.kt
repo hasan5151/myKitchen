@@ -22,7 +22,7 @@ interface ApiItemDAO {
     @Query("DELETE FROM  ApiItemModel WHERE id= :id")
     fun deleteItem(id: Int) : Completable
 
-    @Query("DELETE FROM  ApiItemModel WHERE order_items=:id")
+    @Query("DELETE FROM  ApiItemModel WHERE `order`=:id")
     fun deleteItemByOrderId(id: String) : Completable //delete Order
 
 /*
@@ -30,11 +30,13 @@ interface ApiItemDAO {
     fun getKitchenItemModel() :  DataSource.Factory<Int, KitchenItemModel>
 */
 
-    @Query("SELECT ApiItemModel.id as id, ApiItemModel.number as number, ApiItemModel.order_items as order_items , DishesModel.name as name, ApiItemModel.comment as comment , ApiItemModel.date as date ,ApiItemModel.count as count , DishesModel.cookingTime  as reqTime, 0 as isCountDownStarted  FROM ApiItemModel INNER JOIN DishesModel ON  DishesModel.id= ApiItemModel.dish Where ApiItemModel.order_items=:orderItems")
+/*
+    @Query("SELECT ApiItemModel.id as id, ApiItemModel.number as number, ApiItemModel.`order` as order_items , DishesModel.name as name, ApiItemModel.comment as comment , ApiItemModel.date as date ,ApiItemModel.count as count , DishesModel.cookingTime  as reqTime, 0 as isCountDownStarted  FROM ApiItemModel INNER JOIN DishesModel ON  DishesModel.id= ApiItemModel.dish Where ApiItemModel.`order`=:orderItems")
     fun getKitchenItemModel(orderItems: String) :  DataSource.Factory<Int, KitchenItemModel>
+*/
 
-    @Query("SELECT ApiItemModel.number as number, ApiItemModel.order_items as order_item , ApiItemModel.number as waiterName FROM ApiItemModel Where printerId=:printerId Group By ApiItemModel.order_items")
-    fun getOrdelModel(printerId: String) :   DataSource.Factory<Int, KitchenOrderModel>
+/*    @Query("SELECT ApiItemModel.number as number, ApiItemModel.`order` as order_item , ApiItemModel.number as waiterName FROM ApiItemModel Where printerId=:printerId Group By ApiItemModel.`order`")
+    fun getOrdelModel(printerId: String) :   DataSource.Factory<Int, KitchenOrderModel>*/
 
     @Query("UPDATE ApiItemModel SET date=:date WHERE   ApiItemModel.id=:id")
     fun updateItemTime(date: String,id : Int)

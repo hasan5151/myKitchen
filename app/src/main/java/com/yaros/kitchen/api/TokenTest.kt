@@ -35,12 +35,10 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
 
     private fun Interceptor.Chain.refreshToken(chain: Interceptor.Chain): Response {
         val string = Preferences.getPref("waiter_token","",context)
-        System.out.println("anan2x ${string}")
-
+        System.out.println("textxx ${string}")
 //        val response = proceed(chain.request())
         val request = NewToken(chain,string!!).request()
-        System.out.println("ananxxx ${request}")
-
+        System.out.println("testx ${request}")
         val response = proceed(request) // ilk request e query ekle
         val gson = Gson()
         if (response.code()==406){
@@ -49,11 +47,7 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
         else
             try {
                 val responseBody= response.body()?.string()
-                System.out.println("anan ${responseBody}")
-  /*              System.out.println("salak aq ${responseBody}")
-                val jsonObject = JSONObject(responseBody)
-                val meta = jsonObject.getJSONObject("meta")
-                val code = meta.getString("code")*/
+                System.out.println("test ${responseBody}")
                 if (responseBody!!.contains("Сессия не найдена")) {
                     val tokenRepo = TokenRepo(TokenService())
                      val string = tokenRepo.getToken(waiterId,password)
@@ -61,29 +55,27 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
                      Preferences.savePref("waiter_token",string,context)
 
                     val string2 = Preferences.getPref("waiter_token","",context)
-                    System.out.println("anan2x ${string2}")
-
-
                     return  NewToken(chain,string!!)
 
                     //refresh token
                 } else{
                     val string = Preferences.getPref("waiter_token","",context)
-                    System.out.println("anan2 ${string}")
+                    System.out.println("test2 ${string}")
                     return  NewToken(chain,string!!)
 
                 }
-            }catch(e: JsonSyntaxException) {
+            }catch(e: Throwable) {
                 e.printStackTrace()
             }
 
 
 /*
          if (response.code() == 401) {
-            System.out.println(" selam this is 401")
+           //
         }else
-            System.out.println(" selam this is else")*/
-        System.out.println("anan3 ")
+           //
+           */
+
         return response
     }
 }

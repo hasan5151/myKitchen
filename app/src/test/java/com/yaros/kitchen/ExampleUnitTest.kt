@@ -1,7 +1,6 @@
 package com.yaros.kitchen
 
 import android.util.Base64
-import androidx.lifecycle.MutableLiveData
 import com.yaros.kitchen.utils.DateUtil
 import org.junit.Test
 
@@ -79,9 +78,22 @@ class ExampleUnitTest {
     @Test
     fun testCookTimeDate(){
         print(DateUtil.cookTimeDate(20*60*1000))
-    }   @Test
+    }
+
+    @Test
+    fun calculateCookingTime(){
+        print(DateUtil.calculateCookingTime("1580710908000"))
+    }
+
+
+    @Test
     fun testCookTime(){
-        print(DateUtil.cookTime(System.currentTimeMillis(),20,0))
+        print(DateUtil.remainCookTime(System.currentTimeMillis(),20,0))
+//        print(DateUtil.cookTime(1580292031307,20*60,0))
+    }
+    @Test
+    fun testGuid(){
+        print(UUID.randomUUID().toString())
 //        print(DateUtil.cookTime(1580292031307,20*60,0))
     }
 

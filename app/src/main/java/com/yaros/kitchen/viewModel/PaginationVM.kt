@@ -6,16 +6,13 @@ import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.HashModel
 import com.yaros.kitchen.models.PrintersModel
-import com.yaros.kitchen.models.WaitersModel
+import com.yaros.kitchen.room.entity.WaitersModel
 import com.yaros.kitchen.repositories.ApiRepo
 import com.yaros.kitchen.repositories.Repos
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.*
-import com.yaros.kitchen.utils.Preferences
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiService) : ViewModel() {
@@ -25,10 +22,12 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
     var itemInfo: LiveData<ItemInfoModel> = MutableLiveData()
     var dishesInfo: LiveData<DishesModel> = MutableLiveData()
 
-    var waitersList: MutableLiveData<List<WaitersModel>> = MutableLiveData()
     var printersList: MutableLiveData<List<PrintersModel>> = MutableLiveData()
     var hash: MutableLiveData<HashModel> = MutableLiveData()
     var orderHash: MutableLiveData<String> = MutableLiveData()
+
+    lateinit var isWaitersCreated: LiveData<Boolean>
+    lateinit var isDishesCreated: LiveData<Boolean>
 
     val repos = Repos(db,rxSchedulers)
     val apiRepo = ApiRepo(repos,rxSchedulers,apiService)
@@ -37,8 +36,8 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
         order= repos.getOrderRepo().getAll()
     }
 
-    fun loadItems() {
-        item= repos.getItemRepo().getAll()
+    fun loadOrdersByPrinter(printerId: String) {
+        order= repos.getOrderRepo().getOrderByPrinterId(printerId)
     }
 
     fun deleteOrderById(orderId : String){
@@ -49,67 +48,14 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
         item = repos.getItemRepo().getItemByOrder(orderId)
     }
 
-    fun deleteAllOrders(){
-        repos.getOrderRepo().deleteAll()
-    }
-
-    fun fetchOrders(){ // from api
-        apiRepo.fetchOrders()
-    }
-
-    fun fetchItems() { // from api
-        apiRepo.fetchItems()
-    }
-
-   /* fun deleteItemById(itemId : Int){
-        repos.getItemRepo().delete(itemId)
-    }*/
-
-    fun  deleteAllItems(){
-        repos.getItemRepo().deleteAll()
-    }
-
     fun  updateItemTime(string : String, itemId: Int){
         repos.getItemRepo().updateItemTime(string,itemId)
 //        repos.getApiItemRepo().updateItemTime(string,itemId)
     }
-
-    fun  startCountDown(itemId: Int){
-        repos.getItemRepo().startCountDown(itemId)
-    }
-
-    fun  updateElapsedTime(string : String, itemId: Int){
-        repos.getItemRepo().updateElapsedTime(string,itemId)
-    }
-
-    fun  getItemInfo(itemId: Int){
-          itemInfo= LiveDataReactiveStreams.fromPublisher(repos.getItemRepo().getItemInfo(itemId))
-    }
-
     //------------------------------------------------------------------
-
-    fun insertNewItem(itemModel: ApiItemModel){
-        repos.getApiItemRepo().insert(itemModel)
-    }
-
-    fun updateItem(itemModel: ApiItemModel){
-        repos.getApiItemRepo().update(itemModel)
-    }
 
     fun deleteItemById(id: Int){
         repos.getItemRepo().delete(id)
-    }
-
-    fun deleteItemByOrderId(id: String){
-        repos.getApiItemRepo().deleteItemByOrderId(id)
-    }
-
-    fun getKitchenItemModel(orderId: String){
-        item = repos.getApiItemRepo().getKitchenItemModel(orderId)
-    }
-
-    fun getKitchenOrderModel(printerId: String){
-        order= repos.getApiItemRepo().getOrdelModel(printerId)
     }
 
     //--------------------------------------------------------------------
@@ -134,15 +80,23 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
 
     //----------------------------------------------------------------------
 
-    fun getWaiters(){//TODO filter with id
-        disposable.add(apiRepo.getWaiters()?.subscribe({
-            waitersList.value =it
-        },{it.printStackTrace()})!!)
+/*    fun checkWaiters() {
+        isWaitersCreated= repos.getWaiterRepo().isWaitersCreated()
+    }
+    fun checkDishes() {
+        isDishesCreated= repos.getDishesRepo().isDishesCreated()
+    }*/
+
+    fun fetchWaiters(){
+        apiRepo.getWaiters()
     }
 
     fun logoutWaiters(token : String){
         apiRepo.logoutWaiter(token)
     }
+
+
+
 
     fun getPrinters(){
         System.out.println("printer test0 ")
@@ -153,7 +107,7 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
             printersList.value = it
         },{it.printStackTrace()})
     }
-    fun getDishes(){
+    fun fetchDishes(){
         apiRepo.getDishes()
     }
 

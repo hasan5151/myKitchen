@@ -16,18 +16,11 @@ package com.yaros.kitchen.api
 
 
 class Api(val context : Context) {
-
-    val SUCCESS = "SUCCESS"
-    val FAILED= "FAILED"
-
     fun getApi(): ApiService {
         val client = OkHttpClient.Builder()
-//            .addInterceptor(AuthInterceptor("29d2e36a-cb7a-41e4-90e3-552d66a7bff4"))
-//            .addInterceptor(AuthInterceptor(Preferences.getPref("waiter_token","",context)))
             .addInterceptor(OauthInterceptor("mobi","123"))
             .addInterceptor(TokenTest("fa907412-a069-11e7-aa0e-002522ec5b96","123",context))
-//            .addInterceptor(TokenExpireInterceptor())
-            .connectTimeout(100, TimeUnit.SECONDS)
+             .connectTimeout(100, TimeUnit.SECONDS)
             .readTimeout(
                 100,
                 TimeUnit.SECONDS

@@ -13,5 +13,6 @@ data class KitchenOrderModel (
     @PrimaryKey(autoGenerate = false)
     val order_item: String,
     val number: String,
+    val printerId: String,
     val waiterName: String = ""
 )

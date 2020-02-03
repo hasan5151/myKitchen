@@ -1,5 +1,6 @@
 package com.yaros.kitchen.room.dao
 
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
@@ -8,6 +9,7 @@ import androidx.room.Query
 import com.yaros.kitchen.room.entity.DishesModel
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao
@@ -32,4 +34,7 @@ interface DishesDAO {
 
     @Query("SELECT * FROM DishesModel Where id=:id")
     fun getItem(id: String): DishesModel
+
+    @Query("Select COUNT(id) AS item FROM DishesModel")
+    fun isDishesCreated(): LiveData<Boolean>
 }

@@ -51,8 +51,13 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
     override fun onBindViewHolder(holder: ItemVH, position: Int) {
         val item = getItem(position)
         holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.timecolor))
-        countDown(item!!,holder)
-        if (item.date!!.contentEquals(context.resources.getString(R.string.cancel))){
+
+        System.out.println("selam item name ${item?.name} order ${item?.order_items}")
+        if (item!!.reqTime>0L) {
+            countDown(item, holder)
+            holder.elapsedTime.text=""
+        }
+        if (item?.date!!.contentEquals(context.resources.getString(R.string.cancel))){
             holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.red))
             holder.orderTime.text= "${item?.date}       "
             holder.elapsedTime.text = ""
@@ -64,7 +69,7 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
         } else{
 
 
-            if (DateUtil.cookTime(
+            if (DateUtil.remainCookTime(
                     item.date.replace(" ", "").toLong(),
                     item.reqTime * item.count,
                     0 //TODO set server diff
@@ -161,18 +166,13 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
         holder.constraint.setOnClickListener {
             showPopup(item,item.id)
         }
-
-
-
-
-
     }
 
     private fun countDown(item : KitchenItemModel, holder: ItemVH) {
         if (item.isCountDownStarted!=1) {
             try {
                 object : CountDownTimer(
-                    DateUtil.cookTime(
+                    DateUtil.remainCookTime(
                         item.date.replace(" ", "").toLong(),
                         item.reqTime * item.count,
                         0 //TODO set server diff

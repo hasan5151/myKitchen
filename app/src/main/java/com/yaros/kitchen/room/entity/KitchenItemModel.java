@@ -15,6 +15,7 @@ public class KitchenItemModel {
     private String order_items;
     private String name;
     private String comment;
+    private String dish;
     private Long reqTime;
     private String date;
     private Integer count;
@@ -92,10 +93,18 @@ public class KitchenItemModel {
         this.isCountDownStarted = isCountDownStarted;
     }
 
+    public String getDish() {
+        return dish;
+    }
 
-    public KitchenItemModel(String number, String order_items, String name, String comment, Long reqTime, String date, Integer count, Integer isCountDownStarted) {
+    public void setDish(String dish) {
+        this.dish = dish;
+    }
+
+    public KitchenItemModel(String number, String order_items, String name, String comment, Long reqTime, String date, Integer count,String dish, Integer isCountDownStarted) {
         this.number = number;
         this.order_items = order_items;
+        this.dish=dish;
         this.name = name;
         this.comment = comment;
         this.reqTime = reqTime;

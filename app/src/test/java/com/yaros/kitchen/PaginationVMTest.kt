@@ -40,7 +40,7 @@ class PaginationVMTest {
         MockitoAnnotations.initMocks(this)
         context= mock(Context::class.java)
         roomDb = RoomDb(context)
-        apiService = Api("","",context).getApi()
+        apiService = Api(context).getApi()
         paginationVM = PaginationVM(roomDb, RxSchedulers.TEST_SCHEDULER,apiService)
     }
 

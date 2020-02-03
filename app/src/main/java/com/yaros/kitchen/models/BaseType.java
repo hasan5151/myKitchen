@@ -1,5 +1,6 @@
 package com.yaros.kitchen.models;
 
+import com.yaros.kitchen.room.entity.WaitersModel;
 import com.yaros.kitchen.room.entity.ApiItemModel;
 import com.yaros.kitchen.room.entity.DishesModel;
 

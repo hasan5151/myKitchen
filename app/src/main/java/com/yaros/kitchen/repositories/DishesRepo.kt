@@ -1,5 +1,6 @@
 package com.yaros.kitchen.repositories
 
+import androidx.lifecycle.LiveData
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.DishesModel
@@ -16,7 +17,7 @@ class DishesRepo (val db: RoomDb, val rx: RxSchedulers) {
     }
 
     fun deleteItem(id: String) {
-        db.DishesDAO().deleteItem(id)
+        db.DishesDAO().deleteItem(id).compose(rx.applyCompletable()).subscribe()
     }
 
     fun getItemById(id: String): Flowable<DishesModel> {
@@ -31,5 +32,9 @@ class DishesRepo (val db: RoomDb, val rx: RxSchedulers) {
     }
     fun getAllList(): List<DishesModel> {
         return db.DishesDAO().getAllList()
+    }
+
+    fun isDishesCreated(): LiveData<Boolean> {
+        return db.DishesDAO().isDishesCreated()
     }
 }

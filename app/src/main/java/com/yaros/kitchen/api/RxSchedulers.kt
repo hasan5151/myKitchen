@@ -18,9 +18,6 @@ interface RxSchedulers {
                     single
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-
-
-
                 }
 
             override fun <T> applyObservable(): ObservableTransformer<T, T> =
@@ -53,7 +50,6 @@ interface RxSchedulers {
                     single
                         .subscribeOn(Schedulers.trampoline())
                         .observeOn(Schedulers.trampoline())
-
                 }
 
             override fun <T> applyObservable(): ObservableTransformer<T, T> =
@@ -76,8 +72,6 @@ interface RxSchedulers {
                         .subscribeOn(Schedulers.trampoline())
                         .observeOn(Schedulers.trampoline())
                 }
-
-
         }
     }
 }

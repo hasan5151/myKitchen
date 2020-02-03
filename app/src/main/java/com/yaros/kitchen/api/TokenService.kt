@@ -24,10 +24,6 @@ class TokenService {
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
-
-
         return retrofit.create<ApiService>(ApiService::class.java)
     }
-
-
 }
