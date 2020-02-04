@@ -46,8 +46,7 @@ class DateUtil {
         }
 
         fun calculateCookingTime(startedDate : String,serverTime : Long): Long{
-            val now = System.currentTimeMillis()
-            return  (now -startedDate.toLong())/1000%1000
+             return  (serverTime -startedDate.toLong())/1000
         }
     }
 }

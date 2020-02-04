@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
-import com.yaros.kitchen.models.KitchenOrderModel
+import com.yaros.kitchen.models.HistoryOrderModel
 import com.yaros.kitchen.models.OrderModel
 import kotlinx.android.synthetic.main.kitchen_order_adapter.view.*
 
 
-open class KitchenOrderAdapter(val orders: ArrayList<KitchenOrderModel>, val context: Context): RecyclerView.Adapter<KitchenOrderAdapter.KitchenVH>() {
+open class HistoryOrderAdapter(val orders: List<HistoryOrderModel>, val context: Context): RecyclerView.Adapter<HistoryOrderAdapter.KitchenVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KitchenVH {
         val view: View = LayoutInflater.from(parent.getContext())
@@ -22,7 +22,7 @@ open class KitchenOrderAdapter(val orders: ArrayList<KitchenOrderModel>, val con
     override fun getItemCount(): Int = orders.size
 
     override fun onBindViewHolder(holder: KitchenVH, position: Int) {
-        val order: KitchenOrderModel = orders.get(position)
+        val order: HistoryOrderModel = orders.get(position)
         holder.orderId.text ="№ ${order.id}"
         holder.waiterName.text = order.waiterName
 
@@ -31,25 +31,8 @@ open class KitchenOrderAdapter(val orders: ArrayList<KitchenOrderModel>, val con
         orderModel.workerName = order.waiterName
 
         if (order.orderItemsModelList!=null) {
-            val kitchenItemAdapter = object :
-                KitchenItemAdapter(order.orderItemsModelList, orderModel, context){
-                override fun ItemSize(itemSize: Int) {
-                    if (itemSize==0)
-                        removeItem(position)
-                }
-
-            }
+            val kitchenItemAdapter = HistoryItemAdapter(order.orderItemsModelList, orderModel, context)
             holder.recyclerView.adapter = kitchenItemAdapter
-        }
-    }
-
-    private fun removeItem(position: Int) {
-        if(orders.size==1){
-            orders.removeAt(orders.size-1)
-            notifyDataSetChanged()
-        }else {
-            orders.removeAt(position)
-            notifyDataSetChanged()
         }
     }
 

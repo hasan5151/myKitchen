@@ -36,11 +36,9 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
     private fun Interceptor.Chain.refreshToken(chain: Interceptor.Chain): Response {
         val string = Preferences.getPref("waiter_token","",context)
         System.out.println("textxx ${string}")
-//        val response = proceed(chain.request())
         val request = NewToken(chain,string!!).request()
         System.out.println("testx ${request}")
-        val response = proceed(request) // ilk request e query ekle
-        val gson = Gson()
+        val response = proceed(request)
         if (response.code()==406){
             //TODO session ended
         }
@@ -67,7 +65,6 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
             }catch(e: Throwable) {
                 e.printStackTrace()
             }
-
 
 /*
          if (response.code() == 401) {

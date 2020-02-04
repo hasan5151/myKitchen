@@ -1,13 +1,22 @@
 package com.yaros.kitchen.models.apiModels;
 
-public class DishCookedModel {
-    private String ticket;
+import com.yaros.kitchen.room.entity.KitchenItemModel;
+
+public class HistoryModel {
     private String order;
+    private String printer;
+    private String ticket;
     private String dish;
-  //  String comment;
     private Long cooking_date;
     private Long cooking_time;
-    private String printer;
+
+    public String getOrder() {
+        return order;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
+    }
 
     public String getPrinter() {
         return printer;
@@ -25,14 +34,6 @@ public class DishCookedModel {
         this.ticket = ticket;
     }
 
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
-    }
-
     public String getDish() {
         return dish;
     }
@@ -40,14 +41,6 @@ public class DishCookedModel {
     public void setDish(String dish) {
         this.dish = dish;
     }
-
-/*    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }*/
 
     public Long getCooking_date() {
         return cooking_date;
@@ -65,12 +58,14 @@ public class DishCookedModel {
         this.cooking_time = cooking_time;
     }
 
-    public DishCookedModel(String ticket, String order, String dish, Long cooking_date, Long cooking_time,String printer) {
-        this.ticket = ticket;
+    public HistoryModel(String order, String printer, String ticket, String dish, Long cooking_date, Long cooking_time) {
         this.order = order;
         this.printer = printer;
+        this.ticket = ticket;
         this.dish = dish;
         this.cooking_date = cooking_date;
         this.cooking_time = cooking_time;
     }
+
 }
+

@@ -4,7 +4,7 @@ import androidx.room.TypeConverter;
 
  import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.yaros.kitchen.models.KitchenItemModel;
+import com.yaros.kitchen.models.HistoryItemModel;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -24,13 +24,13 @@ public class Converters {
     }
 
     @TypeConverter
-    public static KitchenItemModel fromAccount(String value) {
-        Type listType = new TypeToken<KitchenItemModel>() {}.getType();
+    public static HistoryItemModel fromAccount(String value) {
+        Type listType = new TypeToken<HistoryItemModel>() {}.getType();
         return new Gson().fromJson(value, listType);
     }
 
     @TypeConverter
-    public static String fromArrayListDouble(KitchenItemModel list) {
+    public static String fromArrayListDouble(HistoryItemModel list) {
         Gson gson = new Gson();
         return gson.toJson(list);
     }

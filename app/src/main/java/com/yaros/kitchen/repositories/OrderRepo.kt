@@ -26,7 +26,8 @@ class OrderRepo(val db: RoomDb,val rx: RxSchedulers) {
         db.KitchenOrderDAO().deleteAll().compose(rx.applyCompletable()).subscribe()
     }
 
-    fun checkOrder(order : String) :Boolean? = db.KitchenOrderDAO().checkItem(order).compose(rx.applyObservable())?.blockingFirst()
+//    fun checkOrder(order : String) :Boolean? = db.KitchenOrderDAO().checkItem(order).compose(rx.applyObservable())?.blockingFirst()
+    fun checkOrder(order : String) :Boolean? = db.KitchenOrderDAO().checkItem(order)/*.compose(rx.applyObservable())?.blockingFirst()*/
 
 
     fun getOrderById(orderId : Int) : LiveData<PagedList<KitchenOrderModel>> =

@@ -28,9 +28,14 @@ interface KitchenOrderDAO {
 
     @Query("Delete from KitchenOrderModel")
     fun deleteAll() : Completable
+/*
 
     @Query("Select COUNT(order_item) AS item FROM KitchenOrderModel WHERE order_item= :orderItem")
     fun checkItem(orderItem: String): Observable<Boolean>
+*/
+
+    @Query("Select COUNT(order_item) AS item FROM KitchenOrderModel WHERE order_item= :orderItem")
+    fun checkItem(orderItem: String): Boolean
 
 
 }

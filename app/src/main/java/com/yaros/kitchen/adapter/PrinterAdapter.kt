@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
-import com.yaros.kitchen.models.PrintersModel
+import com.yaros.kitchen.room.entity.PrintersModel
 import kotlinx.android.synthetic.main.chip_adapter.view.*
 
 abstract class PrinterAdapter (val string : List<PrintersModel>) : RecyclerView.Adapter<PrinterAdapter.MyChipAdapter>() {

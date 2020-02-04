@@ -3,10 +3,14 @@ package com.yaros.kitchen.api
 import com.yaros.kitchen.models.*
 import com.yaros.kitchen.models.apiModels.DishCookedModel
 import com.yaros.kitchen.models.apiModels.GetOrderItems
+import com.yaros.kitchen.models.apiModels.HistoryModel
 import com.yaros.kitchen.models.apiModels.OrdersKitchenPostModel
+import com.yaros.kitchen.room.entity.WaitersModel
 import io.reactivex.Observable
 import io.reactivex.Single
+import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -16,7 +20,7 @@ import retrofit2.http.Query
 interface ApiService {
 
     @GET("Services/hs/MobileKitchen?cmd=get_waiters")
-    fun getWaiters(): Observable<Base<BaseType>?>?
+    fun getWaiters(): Observable<BaseList<WaitersModel>?>?
 
     @GET("Services/hs/MobileKitchen?cmd=login_waiter")
     fun loginWaiter(
@@ -62,6 +66,10 @@ interface ApiService {
 
     @JvmSuppressWildcards
     @POST( "Services/hs/MobileKitchen?cmd=dish_cooked")
-    fun sendDishCooked(@Body dishCookedModel : List<DishCookedModel>): Observable<Base<*>>
-//    fun sendDishCooked(@Body dishCookedModel : DishCookedModel): Observable<Base<OrderModel>>
+    fun sendDishCooked(@Body dishCookedModel : List<DishCookedModel>): Single<BaseList<Meta>>
+
+    @POST( "Services/hs/MobileKitchen?cmd=history_dish_cooked")
+    fun getHistory(@Body historyModel : OrdersKitchenPostModel): Observable<BaseList<HistoryModel>>
+
+
 }

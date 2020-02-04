@@ -24,9 +24,9 @@ interface WaiterDAO {
     fun getAll(): Observable<WaitersModel>
 
     @Query("SELECT * FROM WaitersModel Where id=:id")
-    fun getWaiter(id: String): Observable<WaitersModel>
+    fun getWaiter(id: String): WaitersModel
 
-    @Query("Select COUNT(id) AS item FROM waitersmodel")
+    @Query("Select COUNT(id) AS item FROM WaitersModel")
     fun isWaitersCreated(): LiveData<Boolean>
 
 }

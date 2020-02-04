@@ -9,4 +9,5 @@ class Repos (val db : RoomDb,val rxSchedulers: RxSchedulers){
     fun getApiItemRepo()= ApiItemRepo(db,rxSchedulers)
     fun getDishesRepo()= DishesRepo(db,rxSchedulers)
     fun getWaiterRepo()= WaiterRepo(db,rxSchedulers)
+    fun getPrintersRepo()= PrintersRepo(db,rxSchedulers)
 }

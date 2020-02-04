@@ -1,13 +1,14 @@
 package com.yaros.kitchen.models;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class KitchenOrderModel {
+public class HistoryOrderModel {
     private Integer id;
     private String waiterName;
-    private ArrayList<KitchenItemModel> orderItemsModelList;
+    private List<HistoryItemModel> orderItemsModelList;
 
-    public KitchenOrderModel(Integer id, String workerName, ArrayList<KitchenItemModel> orderItemsModelList) {
+    public HistoryOrderModel(Integer id, String workerName, List<HistoryItemModel> orderItemsModelList) {
         this.id = id;
         this.waiterName = workerName;
         this.orderItemsModelList = orderItemsModelList;
@@ -29,11 +30,11 @@ public class KitchenOrderModel {
         this.waiterName = waiterName;
     }
 
-     public ArrayList<KitchenItemModel> getOrderItemsModelList() {
+    public List<HistoryItemModel> getOrderItemsModelList() {
         return orderItemsModelList;
     }
 
-    public void setOrderItemsModelList(ArrayList<KitchenItemModel> orderItemsModelList) {
+    public void setOrderItemsModelList(ArrayList<HistoryItemModel> orderItemsModelList) {
         this.orderItemsModelList = orderItemsModelList;
     }
 }

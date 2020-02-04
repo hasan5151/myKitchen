@@ -27,7 +27,7 @@ class WaiterRepo (val db: RoomDb, val rx: RxSchedulers) {
     }
 
     fun getWaiter(id: String): String? {
-        return db.WaiterDAO().getWaiter(id).compose(rx.applyObservable()).map { it.name }.blockingFirst()
+        return db.WaiterDAO().getWaiter(id).name
     }
 
     fun isWaitersCreated(): LiveData<Boolean> {

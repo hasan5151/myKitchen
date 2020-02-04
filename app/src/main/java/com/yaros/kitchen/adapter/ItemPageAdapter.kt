@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.utils.DateUtil
+import com.yaros.kitchen.utils.Preferences
 import kotlinx.android.synthetic.main.kitchen_item_adapter.view.*
 import java.lang.NumberFormatException
 
@@ -67,8 +68,6 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
             holder.orderTime.text = "${item?.date}        "
             holder.elapsedTime.text = ""
         } else{
-
-
             if (DateUtil.remainCookTime(
                     item.date.replace(" ", "").toLong(),
                     item.reqTime * item.count,
@@ -175,7 +174,7 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
                     DateUtil.remainCookTime(
                         item.date.replace(" ", "").toLong(),
                         item.reqTime * item.count,
-                        0 //TODO set server diff
+                        Preferences.getPref("diff", "0", context)?.toLong()!!
                     ), 1000
                 ) { //TODO change this
                     override fun onFinish() {
@@ -193,7 +192,7 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
                                 ContextCompat.getDrawable(context, R.drawable.warning),
                                 null
                             )
-                            updateRemainTime(item, 0)
+                            updateRemainTime(item, 0)//TODO what will happen we time is exceed
                         }
                     }
 
@@ -208,8 +207,6 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
             }
         }
     }
-
-
 
     fun isNullOrEmpty(str: String?): Boolean {
         if (str != null && !str.isEmpty())

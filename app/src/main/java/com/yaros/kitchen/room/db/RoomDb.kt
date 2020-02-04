@@ -11,7 +11,7 @@ import com.yaros.kitchen.room.dao.*
 import com.yaros.kitchen.room.entity.*
 
 @Database(
-    entities = [KitchenItemModel::class, KitchenOrderModel::class, DishesModel::class, ApiItemModel::class, WaitersModel::class],
+    entities = [KitchenItemModel::class, KitchenOrderModel::class, DishesModel::class, ApiItemModel::class, WaitersModel::class, PrintersModel::class],
     exportSchema = false,
     version = 1
 )
@@ -22,6 +22,7 @@ abstract class RoomDb : RoomDatabase(){
     abstract fun DishesDAO(): DishesDAO
     abstract fun ApiItemDAO(): ApiItemDAO
     abstract fun WaiterDAO(): WaiterDAO
+    abstract fun PrintersDAO(): PrintersDAO
 
     companion object {
         @Volatile private var instance: RoomDb? = null

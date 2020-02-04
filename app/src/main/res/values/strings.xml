@@ -6,4 +6,8 @@
     <string name="cancel">Отмена</string>
     <string name="cancelled">Отменено</string>
     <string name="ready">Готово</string>
+    <string name="order">Заказы</string>
+    <string name="stoplist">Стоп-лист</string>
+    <string name="chat">Chat</string>
+    <string name="envanter">Инвентерь</string>
 </resources>

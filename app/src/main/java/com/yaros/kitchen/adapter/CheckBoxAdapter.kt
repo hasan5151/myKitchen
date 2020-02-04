@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
-import com.yaros.kitchen.models.PrintersModel
+import com.yaros.kitchen.room.entity.PrintersModel
 import kotlinx.android.synthetic.main.checkbox_layout.view.*
 
 abstract class CheckBoxAdapter (val printersModel:  List<PrintersModel>, val context : Context) : RecyclerView.Adapter<CheckBoxAdapter.CheckBoxVH>() {

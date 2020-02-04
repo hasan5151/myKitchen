@@ -5,8 +5,7 @@ import androidx.paging.PagedList
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.HashModel
-import com.yaros.kitchen.models.PrintersModel
-import com.yaros.kitchen.room.entity.WaitersModel
+import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.repositories.ApiRepo
 import com.yaros.kitchen.repositories.Repos
 import com.yaros.kitchen.room.db.RoomDb
@@ -22,12 +21,13 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
     var itemInfo: LiveData<ItemInfoModel> = MutableLiveData()
     var dishesInfo: LiveData<DishesModel> = MutableLiveData()
 
-    var printersList: MutableLiveData<List<PrintersModel>> = MutableLiveData()
+    var printersList: LiveData<List<PrintersModel>> = MutableLiveData()
     var hash: MutableLiveData<HashModel> = MutableLiveData()
     var orderHash: MutableLiveData<String> = MutableLiveData()
 
     lateinit var isWaitersCreated: LiveData<Boolean>
     lateinit var isDishesCreated: LiveData<Boolean>
+    lateinit var isPrintersCreated: LiveData<Boolean>
 
     val repos = Repos(db,rxSchedulers)
     val apiRepo = ApiRepo(repos,rxSchedulers,apiService)
@@ -80,12 +80,15 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
 
     //----------------------------------------------------------------------
 
-/*    fun checkWaiters() {
+    fun checkWaiters() {
         isWaitersCreated= repos.getWaiterRepo().isWaitersCreated()
     }
     fun checkDishes() {
         isDishesCreated= repos.getDishesRepo().isDishesCreated()
-    }*/
+    }
+    fun checkPrinters() {
+        isPrintersCreated= repos.getPrintersRepo().isPrintersCreated()
+    }
 
     fun fetchWaiters(){
         apiRepo.getWaiters()
@@ -95,23 +98,14 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
         apiRepo.logoutWaiter(token)
     }
 
-
-
-
-    fun getPrinters(){
-        System.out.println("printer test0 ")
-
-        apiRepo.getPrinters()?.subscribe({
-            System.out.println("printer test0.1 ${it}")
-
-            printersList.value = it
-        },{it.printStackTrace()})
+    fun fetchPrinters(){
+        apiRepo.getPrinters()
     }
     fun fetchDishes(){
         apiRepo.getDishes()
     }
 
-    fun getOrderItems(printerList: List<String>,date_begin: Long?,data_end: Long?){
+    fun getOrderItems(printerList: List<String>,date_begin: Long?=0,data_end: Long?=0){
         apiRepo.getOrderItems(printerList,date_begin, data_end)
     }
 
@@ -124,6 +118,10 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
                     orderHash.value= it.orders_hash
                 },{it.printStackTrace()})
             })
+    }
+
+    fun getPrinters(){
+        printersList = repos.getPrintersRepo().getAllWithLiveData()
     }
 
     fun login(waiterId: String,pass: String,androidID :String){

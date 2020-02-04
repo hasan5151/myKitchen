@@ -6,14 +6,11 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.yaros.kitchen.R
-import com.yaros.kitchen.models.OrderModel
-import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.room.entity.KitchenOrderModel
 import kotlinx.android.synthetic.main.kitchen_order_adapter.view.*
 
-abstract class OrderPageAdapter() : PagedListAdapter<KitchenOrderModel, OrderPageAdapter.OrderVH>(DIFF_CALLBACK) {
+abstract class OrderPageAdapter : PagedListAdapter<KitchenOrderModel, OrderPageAdapter.OrderVH>(DIFF_CALLBACK) {
 
     companion object {
         protected val DIFF_CALLBACK: DiffUtil.ItemCallback<KitchenOrderModel> =

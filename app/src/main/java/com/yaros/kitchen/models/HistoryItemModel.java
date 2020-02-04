@@ -1,30 +1,18 @@
 package com.yaros.kitchen.models;
 
-public class KitchenItemModel {
-    private String id;
+public class HistoryItemModel {
     private String title;
     private String subTitle;
     private String reqTime;
     private String orderTime;
-    private Integer badge;
-    private Boolean countDown=false;
+    private Boolean isCookedOnTime;
 
 
-    public KitchenItemModel(String id,String title, String subTitle, String reqTime, String orderTime, Integer badge) {
-        this.id=id;
+    public HistoryItemModel(String title, String reqTime, String orderTime, Boolean isCookedOnTime) {
         this.title = title;
-        this.subTitle = subTitle;
         this.reqTime = reqTime;
         this.orderTime = orderTime;
-        this.badge = badge;
-    }
-
-    public Integer getBadge() {
-        return badge;
-    }
-
-    public void setBadge(Integer badge) {
-        this.badge = badge;
+        this.isCookedOnTime = isCookedOnTime;
     }
 
     public String getTitle() {
@@ -59,19 +47,12 @@ public class KitchenItemModel {
         this.orderTime = orderTime;
     }
 
-    public Boolean getCountDown() {
-        return countDown;
+    public Boolean getCookedOnTime() {
+        return isCookedOnTime;
     }
 
-    public void setCountDown(Boolean countDown) {
-        this.countDown = countDown;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public void setCookedOnTime(Boolean cookedOnTime) {
+        isCookedOnTime = cookedOnTime;
     }
 }
+
