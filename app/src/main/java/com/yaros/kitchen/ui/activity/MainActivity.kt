@@ -8,9 +8,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import com.yaros.kitchen.R
+import com.yaros.kitchen.models.bottomModel.BottomInterface
 import com.yaros.kitchen.models.bottomModel.OrderBottom
+import com.yaros.kitchen.models.bottomModel.StopListBottom
 import com.yaros.kitchen.ui.fragment.BaseFragment
 
 
@@ -19,7 +22,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewPager: ViewPager
     lateinit var tabLayout: TabLayout
     lateinit var viewPagerAdapter: ViewPagerAdaper
-    lateinit var bottomInterface : OrderBottom
+    lateinit var bottomInterface : BottomInterface
+    lateinit var bottom_navigation : BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +31,23 @@ class MainActivity : AppCompatActivity() {
         init()
         setViewPagerAdapter()
         setTabLayout()
+        setBottomNavigationView()
+    }
 
+    private fun setBottomNavigationView() {
+        bottom_navigation.setOnNavigationItemSelectedListener {
+            when (it.itemId){
+                R.id.order -> bottomInterface = OrderBottom()
+                R.id.stoplist -> bottomInterface = StopListBottom()
+                R.id.chat->""
+                R.id.envanter->""
+            }
+
+            setViewPagerAdapter()
+            setTabLayout()
+
+            true
+        }
     }
 
     private fun init() {
@@ -35,13 +55,17 @@ class MainActivity : AppCompatActivity() {
         viewPager.offscreenPageLimit = 2
         tabLayout = findViewById(R.id.tabs)
         bottomInterface = OrderBottom()
+        bottom_navigation = findViewById(R.id.bottom_navigation)
     }
 
     private fun setTabLayout() {
         tabLayout.setupWithViewPager(viewPager)
         for (i in 0 until viewPagerAdapter.getCount()) { // show steps
-            tabLayout.getTabAt(i)!!.icon = ContextCompat.getDrawable(this, viewPagerAdapter.fragmentList.get(i).getDrawable())
+            if (viewPagerAdapter.fragmentList.get(i).getDrawable()!=0)
+           // if (viewPagerAdapter.fragmentList.get(i).getDrawable!=0)
+                tabLayout.getTabAt(i)!!.icon = ContextCompat.getDrawable(this, viewPagerAdapter.fragmentList.get(i).getDrawable())
             tabLayout.getTabAt(i)?.text= viewPagerAdapter.getPageTitle(i)
+           // tabLayout.getTabAt(i)?.showBadge().setNumber(1);
         }
     }
 

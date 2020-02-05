@@ -15,5 +15,4 @@ class OrderBottom : BottomInterface {
         OrderFragment(), HistoryDishCooked(),
         SentOrdersFragment()
     )
-
 }

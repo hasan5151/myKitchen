@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/dialog_gradient"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="250dp">
+    <TextView
+        android:layout_marginTop="20dp"
+        android:id="@+id/name"
+        android:textColor="@color/popupcolor"
+        android:textSize="24sp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_marginTop="40dp"
+        android:id="@+id/stopOrder"
+        android:padding="20dp"
+        app:cornerRadius="2dp"
+        android:textColor="@color/popupcolor"
+        android:textSize="16sp"
+        android:drawableRight="@drawable/keyboard_arrow_right"
+        android:text="@string/stopOrder"
+        android:layout_width="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/indicateBalance"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/popupcolor"
+        android:textSize="16sp"
+        app:cornerRadius="2dp"
+        android:text="@string/indicateBalance"
+        android:padding="20dp"
+        android:drawableRight="@drawable/keyboard_arrow_right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

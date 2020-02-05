@@ -10,5 +10,16 @@
     <color name="timecolor">#979CA2</color>
     <color name="text">#969BA1</color>
     <color name="red">#EB5757</color>
+    <color name="bottomColor">#8FA7BF</color>
     <color name="green">#0E9394</color>
- </resources>
+
+
+    <array name="buttoncolors">
+        <item name="White">#2285E5</item>
+        <item name="Ivory">#EB5757</item>
+        <item name="LightYellow">#A3C523</item>
+        <item name="Yellow">#673AB7</item>
+        <item name="Snow">#FF9800</item>
+    </array>
+
+  </resources>

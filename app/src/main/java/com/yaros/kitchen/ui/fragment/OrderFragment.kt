@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import com.google.gson.Gson
 import com.yaros.kitchen.R
 import com.yaros.kitchen.adapter.CheckBoxAdapter
 import com.yaros.kitchen.adapter.ItemPageAdapter
@@ -33,7 +32,6 @@ import com.yaros.kitchen.utils.MyWorkManager
 import com.yaros.kitchen.utils.Preferences
 import com.yaros.kitchen.viewModel.PaginationFactory
 import com.yaros.kitchen.viewModel.PaginationVM
-import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 import kotlin.collections.ArrayList
 

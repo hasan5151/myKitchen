@@ -11,19 +11,18 @@
     <item
         android:id="@+id/stoplist"
         android:orderInCategory="200"
-        android:icon="@drawable/order"
+        android:icon="@drawable/stoplist"
         android:title="@string/stoplist"
          />
     <item
         android:id="@+id/chat"
         android:orderInCategory="200"
-        android:icon="@drawable/order"
+        android:icon="@drawable/chat"
         android:title="@string/chat"
          />
     <item
         android:id="@+id/envanter"
         android:orderInCategory="200"
-        android:icon="@drawable/order"
         android:title="@string/envanter"
          />
 

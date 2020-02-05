@@ -24,7 +24,7 @@ interface DishesDAO {
     fun deleteItem(id: String) : Completable
 
     @Query("SELECT * FROM DishesModel")
-    fun getAll(): Flowable<DishesModel>
+    fun getAll(): LiveData<List<DishesModel>>
 
     @Query("SELECT * FROM DishesModel")
     fun getAllList(): List<DishesModel>

@@ -98,15 +98,7 @@ class ExampleUnitTest {
         print(UUID.randomUUID().toString())
 //        print(DateUtil.cookTime(1580292031307,20*60,0))
     }
-    @Test
-    fun testAddList(){
-        var historyItemModel : List<HistoryItemModel> = listOf()
-        val x = listOf(HistoryItemModel("1","1","2"))
-        historyItemModel = historyItemModel+x
 
-        System.out.println(historyItemModel.size)
-
-    }
     @Test
     fun testGroupBy(){
         val x= PrintersModel("1","sdf",false)
@@ -129,6 +121,14 @@ class ExampleUnitTest {
         })
 
 
+    }
+
+    @Test
+    fun testDrop(){
+        var  x = listOf(1,2,3,4,5,6,7)
+//        x=  x.dropLast(x.size-2)
+      x.dropLast(x.size-2)
+         System.out.println(x)
     }
 
 }

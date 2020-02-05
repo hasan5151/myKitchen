@@ -27,8 +27,8 @@ class DishesRepo (val db: RoomDb, val rx: RxSchedulers) {
     fun getItem(id: String): DishesModel {
         return db.DishesDAO().getItem(id)
     }
-    fun getAll(): Flowable<DishesModel> {
-        return db.DishesDAO().getAll().compose(rx.applyFlowable())
+    fun getAll(): LiveData<List<DishesModel>> {
+        return db.DishesDAO().getAll()
     }
     fun getAllList(): List<DishesModel> {
         return db.DishesDAO().getAllList()

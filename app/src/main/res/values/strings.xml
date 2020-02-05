@@ -10,4 +10,13 @@
     <string name="stoplist">Стоп-лист</string>
     <string name="chat">Chat</string>
     <string name="envanter">Инвентерь</string>
+    <string name="nodishes">Блюд нет</string>
+    <string name="add">+ Добавить</string>
+    <string name="stopOrder">Приостановить заказы</string>
+    <string name="indicateBalance">Указать количество / остаток</string>
+    <string name="fifteenmin">15 Мин</string>
+    <string name="thirtymin">30 Мин</string>
+    <string name="onehour">1 Час</string>
+    <string name="indicateTime">Указать точное время</string>
+    <string name="turnbackStopOrders">На Сколько приостановить заказы?</string>
 </resources>

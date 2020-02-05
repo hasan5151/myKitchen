@@ -19,7 +19,7 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
     var item:  LiveData<PagedList<KitchenItemModel>> = MutableLiveData()
     var order: LiveData<PagedList<KitchenOrderModel>> = MutableLiveData()
     var itemInfo: LiveData<ItemInfoModel> = MutableLiveData()
-    var dishesInfo: LiveData<DishesModel> = MutableLiveData()
+    lateinit var dishesInfo:  LiveData<List<DishesModel>>
 
     var printersList: LiveData<List<PrintersModel>> = MutableLiveData()
     var hash: MutableLiveData<HashModel> = MutableLiveData()
@@ -71,11 +71,14 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
         repos.getDishesRepo().deleteItem(id)
     }
 
-    fun  getDishesById(id: String){
+ /*   fun  getDishesById(id: String){
         dishesInfo = LiveDataReactiveStreams.fromPublisher(repos.getDishesRepo().getItemById(id))
+    }*/
+    fun  getAllDishes() {
+     dishesInfo = repos.getDishesRepo().getAll()
     }
-    fun  getAllDishes() =
-        repos.getDishesRepo().getAllList()
+
+
 
 
     //----------------------------------------------------------------------
