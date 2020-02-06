@@ -7,9 +7,7 @@ import com.yaros.kitchen.ui.fragment.OrderFragment
 import com.yaros.kitchen.ui.fragment.SentOrdersFragment
 
 class OrderBottom : BottomInterface {
-    override fun getName(): String = "заказы"
 
-    override fun getDrawable(): Int = R.drawable.order
 
     override fun getItems(): List<BaseFragment> = listOf(
         OrderFragment(), HistoryDishCooked(),

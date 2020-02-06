@@ -12,6 +12,7 @@
     <color name="red">#EB5757</color>
     <color name="bottomColor">#8FA7BF</color>
     <color name="green">#0E9394</color>
+    <color name="clearColor">#8FA7BF</color>
 
 
     <array name="buttoncolors">

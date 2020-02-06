@@ -31,4 +31,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <View
+        android:id="@+id/snackbarView"
+        android:layout_alignBottom="@id/menuRV"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp" />
+
 </RelativeLayout>

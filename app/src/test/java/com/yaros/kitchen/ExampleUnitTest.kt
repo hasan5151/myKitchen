@@ -2,6 +2,7 @@ package com.yaros.kitchen
 
 import android.util.Base64
 import com.yaros.kitchen.models.HistoryItemModel
+import com.yaros.kitchen.models.StopListModel
 import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.utils.DateUtil
 import org.junit.Test
@@ -131,4 +132,23 @@ class ExampleUnitTest {
          System.out.println(x)
     }
 
+
+    @Test
+    fun removeAt(){
+        val x : List<StopListModel> = listOf(
+            StopListModel("Стейк из семги с ризотто","x1",false),
+            StopListModel("Манты с мясом","x5",false),
+            StopListModel("жаренная чучвара","x2",false),
+            StopListModel("Стейк из семги с овощами","x4",false)
+        )
+
+
+
+
+
+        System.out.println( "${x.size}")
+
+
+
+    }
 }

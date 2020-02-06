@@ -1,18 +1,18 @@
 package com.yaros.kitchen.ui.fragment
 
-import android.app.Dialog
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.TimePicker
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.yaros.kitchen.R
 import com.yaros.kitchen.adapter.MenuAdapter
 import com.yaros.kitchen.adapter.MenuItemAdapter
@@ -23,10 +23,8 @@ import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.DishesModel
 import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.utils.DialogUtil
-import com.yaros.kitchen.viewModel.PaginationFactory
+import com.yaros.kitchen.viewModel.factory.PaginationFactory
 import com.yaros.kitchen.viewModel.PaginationVM
-import kotlinx.android.synthetic.main.kitchen_order_adapter.view.*
-import kotlinx.android.synthetic.main.search_adapter.view.*
 
 class MenuFragment : BaseFragment() {
     override fun getName(): String = "Меню"
@@ -35,6 +33,7 @@ class MenuFragment : BaseFragment() {
     lateinit var searchRV : RecyclerView
     lateinit var menuRV: RecyclerView
     lateinit var paginationVM: PaginationVM
+    lateinit var snackbarView : View
     var searchList = listOf(PrintersModel("-1","Все блюда",false))
 
 
@@ -52,11 +51,13 @@ class MenuFragment : BaseFragment() {
 
         searchRV = view.findViewById(R.id.searchRV)
         menuRV= view.findViewById(R.id.menuRV)
+        snackbarView= view.findViewById(R.id.snackbarView)
 
-        val paginationFactory = PaginationFactory(
-            RoomDb(context!!), RxSchedulers.DEFAULT,
-            Api(context!!).getApi()
-        )
+        val paginationFactory =
+            PaginationFactory(
+                RoomDb(context!!), RxSchedulers.DEFAULT,
+                Api(context!!).getApi()
+            )
         paginationVM = ViewModelProvider(this,paginationFactory).get(PaginationVM::class.java)
 
         setSearchRV()
@@ -113,24 +114,56 @@ class MenuFragment : BaseFragment() {
         val dialog  = DialogUtil.bottom(R.layout.menu_main_popup,context!!)
         val name: TextView = dialog!!.findViewById(R.id.name)
         val stopOrder: TextView = dialog!!.findViewById(R.id.stopOrder)
-        val indicateBalance: TextView = dialog!!.findViewById(R.id.indicateBalance)
+        val indicateCount: TextView = dialog!!.findViewById(R.id.indicateCount)
         name.text = dish.name
 
         stopOrder.setOnClickListener({
             stopOrderPopup(dish)
             dialog.dismiss()
         })
-        indicateBalance.setOnClickListener({
-            indicateBalancePopup(dish)
+        indicateCount.setOnClickListener({
+            indicateCount(dish)
             dialog.dismiss()
         })
 
         dialog?.show()
     }
 
-    private fun indicateBalancePopup(dish: DishesModel) {
+    private fun indicateCount(dish: DishesModel) {
         val dialog  = DialogUtil.bottom(R.layout.indicate_balance_popup,context!!)
         dialog?.show()
+        val name: TextView = dialog!!.findViewById(R.id.name)
+        name.text = dish.name
+        val cancel: TextView = dialog!!.findViewById(R.id.cancel)
+        val ok: TextView = dialog!!.findViewById(R.id.ok)
+        val increase: TextView = dialog!!.findViewById(R.id.increase)
+        val decrease: TextView = dialog!!.findViewById(R.id.decrease)
+        val count: TextView = dialog!!.findViewById(R.id.count)
+
+        increase.setOnClickListener({
+            var countInt = count.text.toString().toInt()
+            countInt = countInt +1
+            count.text = "${countInt}"
+        })
+
+        decrease.setOnClickListener({
+            var countInt = count.text.toString().toInt()
+            if (countInt!=0)
+                countInt = countInt - 1
+            count.text = "${countInt}"
+        })
+
+        cancel.setOnClickListener({
+            dialog.dismiss()
+        })
+
+        ok.setOnClickListener {
+            var countInt = count.text.toString().toInt()
+            dialog.dismiss()
+            val snackbar = Snackbar.make(snackbarView, "${dish.name} -  ${context!!.resources.getString(R.string.remain)} ${countInt}", Snackbar.LENGTH_LONG)
+            snackbar.anchorView = snackbarView
+            snackbar.show() //TODO send server indicate count
+        }
     }
 
     private fun stopOrderPopup(dish: DishesModel) {
@@ -146,11 +179,12 @@ class MenuFragment : BaseFragment() {
         val ok: TextView = dialog!!.findViewById(R.id.ok)
 
         name.text = dish.name
-
+        var time : String = "0"
         fifteenmin.setOnClickListener({
             fifteenmin.setTextColor(ContextCompat.getColor(context!!,R.color.colorPrimary))
             thirtymin.setTextColor(ContextCompat.getColor(context!!,R.color.popupcolor))
             onehour.setTextColor(ContextCompat.getColor(context!!,R.color.popupcolor))
+            time = context!!.resources.getString(R.string.fifteenmin)
             ok.visibility = View.VISIBLE
         })
 
@@ -158,15 +192,22 @@ class MenuFragment : BaseFragment() {
             thirtymin.setTextColor(ContextCompat.getColor(context!!,R.color.colorPrimary))
             fifteenmin.setTextColor(ContextCompat.getColor(context!!,R.color.popupcolor))
             onehour.setTextColor(ContextCompat.getColor(context!!,R.color.popupcolor))
+            time = context!!.resources.getString(R.string.thirtymin)
             ok.visibility = View.VISIBLE
         })
-
 
         onehour.setOnClickListener({
             onehour.setTextColor(ContextCompat.getColor(context!!,R.color.colorPrimary))
             fifteenmin.setTextColor(ContextCompat.getColor(context!!,R.color.popupcolor))
             thirtymin.setTextColor(ContextCompat.getColor(context!!,R.color.popupcolor))
+            time = context!!.resources.getString(R.string.onehour)
             ok.visibility = View.VISIBLE
+        })
+
+        indicateTime.setOnClickListener({
+            dialog.dismiss()
+            setStopInTime(dish)
+            //ok.visibility = View.VISIBLE
         })
 
         turnback.setOnClickListener({
@@ -178,14 +219,42 @@ class MenuFragment : BaseFragment() {
             dialog.dismiss()
         })
 
-        ok.setOnClickListener({
-            setStopOrder(dialog)
-        })
-
+        ok.setOnClickListener {
+            dialog.dismiss()
+             val snackbar = Snackbar.make(snackbarView, "${dish.name} -  ${context!!.resources.getString(R.string.stopText)} ${time}", Snackbar.LENGTH_LONG)
+            snackbar.anchorView = snackbarView
+            snackbar.show() //TODO send server 15min 30min or 1hour
+        }
     }
 
-    private fun setStopOrder(dialog: Dialog) {
-        //TODO send server info
-        //TODO update adapter
+    private fun setStopInTime(dish: DishesModel) {
+        val dialog  = DialogUtil.bottom(R.layout.stop_order_intime_popup,context!!)
+        dialog?.show()
+        val name: TextView = dialog!!.findViewById(R.id.name)
+        val cancel: TextView = dialog.findViewById(R.id.cancel)
+        val ok: TextView = dialog.findViewById(R.id.ok)
+        val timePicker: TimePicker = dialog.findViewById(R.id.timePicker)
+        name.text = dish.name
+
+        timePicker.setIs24HourView(true)
+        var hour =0
+        var min = 0
+        timePicker.setOnTimeChangedListener({picker, i, i2 ->
+            hour = i
+            min = i2
+
+            System.out.println("hour ${hour} min ${min}")
+        })
+
+        cancel.setOnClickListener({
+            dialog.dismiss()
+        })
+
+        ok.setOnClickListener {
+            dialog.dismiss()
+            val snackbar = Snackbar.make(snackbarView, "${dish.name} -  ${context!!.resources.getString(R.string.stopTimeText)} ${hour}:${min}", Snackbar.LENGTH_LONG)
+            snackbar.anchorView = snackbarView
+            snackbar.show() //TODO send server indicate time
+        }
     }
 }

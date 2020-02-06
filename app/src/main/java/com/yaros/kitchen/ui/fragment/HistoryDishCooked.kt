@@ -16,12 +16,9 @@ import com.yaros.kitchen.models.HistoryOrderModel
 import com.yaros.kitchen.models.apiModels.OrdersKitchenPostModel
 import com.yaros.kitchen.repositories.Repos
 import com.yaros.kitchen.room.db.RoomDb
-import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.utils.DateUtil
-import com.yaros.kitchen.viewModel.HistoryFactory
+import com.yaros.kitchen.viewModel.factory.HistoryFactory
 import com.yaros.kitchen.viewModel.HistoryVM
-import com.yaros.kitchen.viewModel.PaginationFactory
-import com.yaros.kitchen.viewModel.PaginationVM
 
 class HistoryDishCooked : BaseFragment() {
     lateinit var kitchenRecyclerView: RecyclerView

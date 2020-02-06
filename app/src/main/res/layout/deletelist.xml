@@ -4,10 +4,11 @@
     android:background="@drawable/dialog_gradient"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="350dp">
+    android:layout_height="230dp">
     <TextView
         android:layout_marginTop="20dp"
         android:id="@+id/name"
+        android:text="@string/clearStopList"
         android:textColor="@color/popupcolor"
         android:textSize="26sp"
         android:textStyle="bold"
@@ -16,71 +17,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TextView
+    <CheckBox
         android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:id="@+id/turnback"
+        android:id="@+id/check"
         android:padding="15dp"
-        android:textColor="@color/colorPrimary"
-        app:cornerRadius="2dp"
-        android:textStyle="bold"
-        android:drawableLeft="@drawable/arrow_back"
-        android:textSize="20sp"
-        android:text="@string/turnbackIndicateCount"
-        android:layout_width="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/arrow_back" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-    <TextView
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:id="@+id/increase"
-        android:padding="15dp"
-        android:textColor="@color/colorPrimary"
-        app:cornerRadius="2dp"
-        android:textStyle="bold"
-        android:textSize="60sp"
-        android:text="+"
-        android:layout_width="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:id="@+id/count"
-        android:padding="15dp"
+        android:layout_marginLeft="20dp"
         android:textColor="@color/popupcolor"
         app:cornerRadius="2dp"
         android:textStyle="bold"
-        android:textSize="60sp"
-        android:text="0"
+        app:buttonTint="@color/popupcolor"
+        android:textSize="15sp"
+        android:text="@string/clearCheckCount"
         android:layout_width="match_parent"
         android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:id="@+id/decrease"
-        android:padding="15dp"
-        android:textColor="@color/colorPrimary"
-        app:cornerRadius="2dp"
-        android:textStyle="bold"
-        android:textSize="60sp"
-        android:text="-"
-        android:layout_width="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content" />
-
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -104,17 +55,18 @@
             android:textSize="20sp" />
 
         <Button
-            android:background="@color/colorPrimary"
+            android:background="@color/red"
             android:textColor="@android:color/white"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
             android:textSize="20sp"
-            android:text="@string/save"
+            android:text="@string/clear"
             android:id="@+id/ok"
             android:layout_marginLeft="30dp"
             android:padding="10dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp" />
     </LinearLayout>
 
 

@@ -8,7 +8,7 @@
     <string name="ready">Готово</string>
     <string name="order">Заказы</string>
     <string name="stoplist">Стоп-лист</string>
-    <string name="chat">Chat</string>
+    <string name="chat">Чат</string>
     <string name="envanter">Инвентерь</string>
     <string name="nodishes">Блюд нет</string>
     <string name="add">+ Добавить</string>
@@ -19,4 +19,19 @@
     <string name="onehour">1 Час</string>
     <string name="indicateTime">Указать точное время</string>
     <string name="turnbackStopOrders">На Сколько приостановить заказы?</string>
+    <string name="stopText">приостановлено на</string>
+    <string name="stopTimeText">приостановлено до</string>
+    <string name="save">Сохранить</string>
+    <string name="turnbackStopOrdersInTime">До скольки приостановить заказы?</string>
+    <string name="turnbackIndicateCount">Какое количество осталось?</string>
+    <string name="remain">осталось</string>
+    <string name="clear">Очистить</string>
+    <string name="stop">Приостановлены</string>
+    <string name="countOrder">Заканчиваются</string>
+    <string name="renewOrder">Возобновить заказы?</string>
+    <string name="renew">Возобновить</string>
+    <string name="clearStopList">Очистить стоп-лист?</string>
+    <string name="clearCheckCount">Очистить заканчивающиеся блюда</string>
+    <string name="clearCountList">Очистить список</string>
+    <string name="clearStop">Очистить приостановленые блюда</string>
 </resources>

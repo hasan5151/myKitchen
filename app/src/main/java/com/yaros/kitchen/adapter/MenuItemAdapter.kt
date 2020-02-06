@@ -29,6 +29,7 @@ abstract class MenuItemAdapter(val items : List<DishesModel>)  : RecyclerView.Ad
     class MenuItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name = itemView.name
         val explanation = itemView.explanation
+        val layout = itemView.layout
     }
 
     abstract fun onClick (dish: DishesModel)

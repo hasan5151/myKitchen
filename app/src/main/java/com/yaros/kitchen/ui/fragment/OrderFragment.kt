@@ -30,7 +30,7 @@ import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.utils.DialogUtil
 import com.yaros.kitchen.utils.MyWorkManager
 import com.yaros.kitchen.utils.Preferences
-import com.yaros.kitchen.viewModel.PaginationFactory
+import com.yaros.kitchen.viewModel.factory.PaginationFactory
 import com.yaros.kitchen.viewModel.PaginationVM
 import java.util.*
 import kotlin.collections.ArrayList
@@ -60,9 +60,11 @@ class OrderFragment : BaseFragment(){
         kitchen  = view.findViewById(R.id.kitchen)
         empty = view.findViewById(R.id.empty)
 
-        val paginationFactory = PaginationFactory(RoomDb(context!!), RxSchedulers.DEFAULT,
-            Api(context!!).getApi()
-        )
+        val paginationFactory =
+            PaginationFactory(
+                RoomDb(context!!), RxSchedulers.DEFAULT,
+                Api(context!!).getApi()
+            )
         paginationVM = ViewModelProvider(this,paginationFactory).get(PaginationVM::class.java)
         paginationVM.loadOrders()
 
