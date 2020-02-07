@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.yaros.kitchen.R
 import com.yaros.kitchen.api.Api
@@ -20,9 +19,7 @@ import com.yaros.kitchen.models.bottomModel.*
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.ui.fragment.BaseFragment
 import com.yaros.kitchen.viewModel.MainActivityVM
-import com.yaros.kitchen.viewModel.PaginationVM
 import com.yaros.kitchen.viewModel.factory.MainActivityFactory
-import com.yaros.kitchen.viewModel.factory.PaginationFactory
 
 
 class MainActivity : AppCompatActivity() {
@@ -82,10 +79,9 @@ class MainActivity : AppCompatActivity() {
         tabLayout.setupWithViewPager(viewPager)
         for (i in 0 until viewPagerAdapter.getCount()) { // show steps
             if (viewPagerAdapter.fragmentList.get(i).getDrawable()!=0)
-           // if (viewPagerAdapter.fragmentList.get(i).getDrawable!=0)
                 tabLayout.getTabAt(i)!!.icon = ContextCompat.getDrawable(this, viewPagerAdapter.fragmentList.get(i).getDrawable())
             tabLayout.getTabAt(i)?.text= viewPagerAdapter.getPageTitle(i)
-           // tabLayout.getTabAt(i)?.showBadge().setNumber(1);
+//            tabLayout.getTabAt(i)?.badge = ;
         }
     }
 

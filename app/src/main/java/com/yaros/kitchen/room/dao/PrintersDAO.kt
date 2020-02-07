@@ -8,6 +8,7 @@ import androidx.room.Query
 import com.yaros.kitchen.room.entity.PrintersModel
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 @Dao
 interface PrintersDAO {
@@ -29,7 +30,13 @@ interface PrintersDAO {
     @Query("SELECT * FROM PrintersModel Where id=:id")
     fun getWaiter(id: String): Observable<PrintersModel>
 
-
     @Query("Select COUNT(id) AS item FROM PrintersModel")
     fun isWaitersCreated(): LiveData<Boolean>
+
+    @Query("UPDATE PrintersModel  SET isChecked=:isChecked  Where id=:id")
+    fun checkPrinter(isChecked: Boolean, id: String ): Completable
+
+    @Query("SELECT * FROM PRINTERSMODEL WHERE isChecked=:isChecked")
+    fun getCheckedPrinters(isChecked: Boolean=true) : LiveData<List<PrintersModel>>
+
 }

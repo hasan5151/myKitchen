@@ -1,7 +1,6 @@
 package com.yaros.kitchen.adapter
 
 import android.content.Context
-import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +11,6 @@ import com.yaros.kitchen.R
 import com.yaros.kitchen.models.HistoryItemModel
 import com.yaros.kitchen.models.OrderModel
 import kotlinx.android.synthetic.main.kitchen_item_adapter.view.*
-import java.util.*
-
 
 class HistoryItemAdapter (val items: List<HistoryItemModel>?, val order: OrderModel, val context: Context): RecyclerView.Adapter<HistoryItemAdapter.KitchenItemVH>() {
 
@@ -21,7 +18,6 @@ class HistoryItemAdapter (val items: List<HistoryItemModel>?, val order: OrderMo
         val view: View = LayoutInflater.from(parent.getContext())
             .inflate(R.layout.kitchen_item_adapter, parent, false)
         return KitchenItemVH(view)
-
     }
 
     override fun getItemCount(): Int = items!!.size
@@ -94,7 +90,6 @@ class HistoryItemAdapter (val items: List<HistoryItemModel>?, val order: OrderMo
             holder.elapsedTime.setLayoutParams(paramsElapsedTime)
       //  }
 
-
         if (!item.cookedOnTime){
             holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.red))
             holder.elapsedTime.setTextColor(ContextCompat.getColor(context,R.color.red))
@@ -104,7 +99,6 @@ class HistoryItemAdapter (val items: List<HistoryItemModel>?, val order: OrderMo
 
         }
     }
-
 
     fun isNullOrEmpty(str: CharSequence): Boolean {
         if (str != null && !str.isEmpty())

@@ -23,6 +23,7 @@ import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.DishesModel
 import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.utils.DialogUtil
+import com.yaros.kitchen.utils.TVDrawable
 import com.yaros.kitchen.viewModel.factory.PaginationFactory
 import com.yaros.kitchen.viewModel.PaginationVM
 
@@ -35,7 +36,7 @@ class MenuFragment : BaseFragment() {
     lateinit var paginationVM: PaginationVM
     lateinit var snackbarView : View
     var searchList = listOf(PrintersModel("-1","Все блюда",false))
-
+    lateinit var tvDrawable: TVDrawable
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,8 +48,7 @@ class MenuFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        tvDrawable = TVDrawable(context!!)
         searchRV = view.findViewById(R.id.searchRV)
         menuRV= view.findViewById(R.id.menuRV)
         snackbarView= view.findViewById(R.id.snackbarView)
@@ -71,7 +71,7 @@ class MenuFragment : BaseFragment() {
                 override fun onClick(printer: PrintersModel) {
                     searchList = searchList + listOf(printer)
                     setSearchRV()
-                    setMemnuItemRV()
+                    setMenuItemRV()
                 }
             }.let { menuRV.adapter = it }
 
@@ -87,7 +87,7 @@ class MenuFragment : BaseFragment() {
                     setMenuRV()
 
                 }else{
-                    setMemnuItemRV()
+                    setMenuItemRV()
                 }
                 searchList=  searchList.dropLast(searchList.size-position-1)
                 setSearchRV()
@@ -97,7 +97,7 @@ class MenuFragment : BaseFragment() {
         searchRV.layoutManager = LinearLayoutManager(context!!, LinearLayoutManager.HORIZONTAL, false)
     }
 
-    private fun setMemnuItemRV() {
+    private fun setMenuItemRV() {
         paginationVM.getAllDishes()
         paginationVM.dishesInfo.observe(viewLifecycleOwner, Observer {
             object : MenuItemAdapter(it){
@@ -113,9 +113,12 @@ class MenuFragment : BaseFragment() {
     private fun showPopup(dish: DishesModel) {
         val dialog  = DialogUtil.bottom(R.layout.menu_main_popup,context!!)
         val name: TextView = dialog!!.findViewById(R.id.name)
-        val stopOrder: TextView = dialog!!.findViewById(R.id.stopOrder)
-        val indicateCount: TextView = dialog!!.findViewById(R.id.indicateCount)
+        val stopOrder: TextView = dialog.findViewById(R.id.stopOrder)
+        val indicateCount: TextView = dialog.findViewById(R.id.indicateCount)
         name.text = dish.name
+
+        tvDrawable.drawSize(stopOrder,R.drawable.keyboard_arrow_rightt,0.35,false)
+        tvDrawable.drawSize(indicateCount,R.drawable.keyboard_arrow_rightt,0.35,false )
 
         stopOrder.setOnClickListener({
             stopOrderPopup(dish)
@@ -126,7 +129,7 @@ class MenuFragment : BaseFragment() {
             dialog.dismiss()
         })
 
-        dialog?.show()
+        dialog.show()
     }
 
     private fun indicateCount(dish: DishesModel) {
@@ -134,11 +137,19 @@ class MenuFragment : BaseFragment() {
         dialog?.show()
         val name: TextView = dialog!!.findViewById(R.id.name)
         name.text = dish.name
-        val cancel: TextView = dialog!!.findViewById(R.id.cancel)
-        val ok: TextView = dialog!!.findViewById(R.id.ok)
-        val increase: TextView = dialog!!.findViewById(R.id.increase)
-        val decrease: TextView = dialog!!.findViewById(R.id.decrease)
-        val count: TextView = dialog!!.findViewById(R.id.count)
+        val cancel: TextView = dialog.findViewById(R.id.cancel)
+        val ok: TextView = dialog.findViewById(R.id.ok)
+        val turnback: TextView = dialog.findViewById(R.id.turnback)
+        val increase: TextView = dialog.findViewById(R.id.increase)
+        val decrease: TextView = dialog.findViewById(R.id.decrease)
+        val count: TextView = dialog.findViewById(R.id.count)
+
+        tvDrawable.drawSize(turnback,R.drawable.arrow_backk,0.90)
+
+        turnback.setOnClickListener({
+            showPopup(dish)
+            dialog.dismiss()
+        })
 
         increase.setOnClickListener({
             var countInt = count.text.toString().toInt()
@@ -170,16 +181,19 @@ class MenuFragment : BaseFragment() {
         val dialog  = DialogUtil.bottom(R.layout.stop_order_popup,context!!)
         dialog?.show()
         val name: TextView = dialog!!.findViewById(R.id.name)
-        val fifteenmin: TextView = dialog!!.findViewById(R.id.fifteenmin)
-        val thirtymin: TextView = dialog!!.findViewById(R.id.thirtymin)
-        val onehour: TextView = dialog!!.findViewById(R.id.onehour)
-        val turnback: TextView = dialog!!.findViewById(R.id.turnback)
-        val indicateTime : TextView = dialog!!.findViewById(R.id.indicateTime)
-        val cancel: TextView = dialog!!.findViewById(R.id.cancel)
-        val ok: TextView = dialog!!.findViewById(R.id.ok)
+        val fifteenmin: TextView = dialog.findViewById(R.id.fifteenmin)
+        val thirtymin: TextView = dialog.findViewById(R.id.thirtymin)
+        val onehour: TextView = dialog.findViewById(R.id.onehour)
+        val turnback: TextView = dialog.findViewById(R.id.turnback)
+        val indicateTime : TextView = dialog.findViewById(R.id.indicateTime)
+        val cancel: TextView = dialog.findViewById(R.id.cancel)
+        val ok: TextView = dialog.findViewById(R.id.ok)
+
+        tvDrawable.drawSize(turnback,R.drawable.arrow_backk,0.90)
 
         name.text = dish.name
-        var time : String = "0"
+        var time = "0"
+
         fifteenmin.setOnClickListener({
             fifteenmin.setTextColor(ContextCompat.getColor(context!!,R.color.colorPrimary))
             thirtymin.setTextColor(ContextCompat.getColor(context!!,R.color.popupcolor))
@@ -207,7 +221,6 @@ class MenuFragment : BaseFragment() {
         indicateTime.setOnClickListener({
             dialog.dismiss()
             setStopInTime(dish)
-            //ok.visibility = View.VISIBLE
         })
 
         turnback.setOnClickListener({
@@ -232,9 +245,17 @@ class MenuFragment : BaseFragment() {
         dialog?.show()
         val name: TextView = dialog!!.findViewById(R.id.name)
         val cancel: TextView = dialog.findViewById(R.id.cancel)
+        val turnback: TextView = dialog.findViewById(R.id.turnback)
         val ok: TextView = dialog.findViewById(R.id.ok)
         val timePicker: TimePicker = dialog.findViewById(R.id.timePicker)
         name.text = dish.name
+
+        tvDrawable.drawSize(turnback,R.drawable.arrow_backk,0.90)
+
+        turnback.setOnClickListener({
+            showPopup(dish)
+            dialog.dismiss()
+        })
 
         timePicker.setIs24HourView(true)
         var hour =0

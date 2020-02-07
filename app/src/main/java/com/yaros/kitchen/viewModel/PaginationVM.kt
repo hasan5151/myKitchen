@@ -22,6 +22,7 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
     lateinit var dishesInfo:  LiveData<List<DishesModel>>
 
     var printersList: LiveData<List<PrintersModel>> = MutableLiveData()
+    var printerChipList: LiveData<List<PrintersModel>> = MutableLiveData()
     var hash: MutableLiveData<HashModel> = MutableLiveData()
     var orderHash: MutableLiveData<String> = MutableLiveData()
 
@@ -108,7 +109,7 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
         apiRepo.getDishes()
     }
 
-    fun getOrderItems(printerList: List<String>,date_begin: Long?=0,data_end: Long?=0){
+    fun getOrderItems(printerList: List<String>,date_begin: Long?=null,data_end: Long?=null){
         apiRepo.getOrderItems(printerList,date_begin, data_end)
     }
 
@@ -129,6 +130,14 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
 
     fun login(waiterId: String,pass: String,androidID :String){
         apiRepo.login(waiterId,pass,androidID)
+    }
+
+    fun checkPrinter(isChecked : Boolean, id : String){
+        repos.getPrintersRepo().checkPrinter(isChecked,id)
+    }
+
+    fun getCheckedPrinters(){
+        printerChipList = repos.getPrintersRepo().getCheckedPrinters()
     }
 
 

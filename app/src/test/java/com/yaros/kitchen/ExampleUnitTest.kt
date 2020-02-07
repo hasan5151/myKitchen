@@ -1,13 +1,14 @@
 package com.yaros.kitchen
 
 import android.util.Base64
-import com.yaros.kitchen.models.HistoryItemModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.yaros.kitchen.models.StopListModel
 import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.utils.DateUtil
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
+import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -141,14 +142,31 @@ class ExampleUnitTest {
             StopListModel("жаренная чучвара","x2",false),
             StopListModel("Стейк из семги с овощами","x4",false)
         )
-
-
-
-
-
         System.out.println( "${x.size}")
-
-
-
     }
+
+    @Test
+    fun testListtoJson(){
+        val x : List<StopListModel> = listOf(
+            StopListModel("Стейк из семги с ризотто","x1",false),
+            StopListModel("Манты с мясом","x5",false),
+            StopListModel("жаренная чучвара","x2",false),
+            StopListModel("Стейк из семги с овощами","x4",false)
+        )
+
+
+
+        Gson().toJson(x).let {
+            System.out.println(it)
+
+            val listType: Type = object : TypeToken<ArrayList<StopListModel?>?>() {}.getType()
+            val yourClassList: List<StopListModel> = Gson().fromJson(it, listType)
+
+            System.out.println(yourClassList.size)
+
+        }
+
+
+
+     }
 }

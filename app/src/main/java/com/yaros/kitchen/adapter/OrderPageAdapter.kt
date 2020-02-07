@@ -45,7 +45,6 @@ abstract class OrderPageAdapter : PagedListAdapter<KitchenOrderModel, OrderPageA
 
     override fun onBindViewHolder(holder: OrderVH, position: Int) {
         val order = getItem(position)
-          System.out.println(" naber ${order.toString()}")
         holder.orderId.text ="№ ${order?.number}"
         holder.waiterName.text = order?.waiterName
         setItemAdapter(holder.recyclerView,order)

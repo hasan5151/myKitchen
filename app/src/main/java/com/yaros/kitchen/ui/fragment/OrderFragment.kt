@@ -70,7 +70,6 @@ class OrderFragment : BaseFragment(){
 
         isDataInitialize()
         setHash() //dont change
-        setPrinterAdapter(getListOfChips(listOf(checkBoxAdd()))) //dont change
     }
 
     private fun isDataInitialize() { //if init then get orders
@@ -82,6 +81,7 @@ class OrderFragment : BaseFragment(){
                 paginationVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
                     if (dish&&waiters&&printers){
                         setPrinters()
+                        setPrinterChips()
                     }else{
                         //show loading bar
                     }
@@ -90,12 +90,19 @@ class OrderFragment : BaseFragment(){
         })
     }
 
+    private fun setPrinterChips() {
+        paginationVM.getCheckedPrinters()
+        paginationVM.printerChipList.observe(this, androidx.lifecycle.Observer {
+            setPrinterAdapter(getListOfChips(it+listOf(checkBoxAdd()))) //dont change
+        })
+    }
+
     private fun setPrinters() {
         paginationVM.getPrinters()
-         paginationVM.printersList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        paginationVM.printersList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             it.map { it.id }.let {
                 printerList = it
-                paginationVM.getOrderItems(it,1569867821000,1579867821000)//TODO change dates
+                paginationVM.getOrderItems(it,1569867821000,1579867821000)//TODO change dates, this just a example
             }
             it.forEach {
                 printersHash.put(it.id,it)
@@ -106,20 +113,20 @@ class OrderFragment : BaseFragment(){
     private fun setPrinterAdapter(string : List<PrintersModel>) {
         val chipAdapter = object : PrinterAdapter(string) {
             override fun clickListener(chip: String?, pos: String) {
-                    val orderAdapter =object :  OrderPageAdapter(){
-                        override fun setItemAdapter(recyclerView: RecyclerView, orderModel:KitchenOrderModel?) {
-                            itemAdapter(recyclerView,orderModel)
-                        }
+                val orderAdapter =object :  OrderPageAdapter(){
+                    override fun setItemAdapter(recyclerView: RecyclerView, orderModel:KitchenOrderModel?) {
+                        itemAdapter(recyclerView,orderModel)
                     }
-                 paginationVM.loadOrdersByPrinter(pos!!)
-                    paginationVM.order.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-                        if (it.size>0)
-                            showEmpty(true)
-                        else
-                            showEmpty(false,"Заказов нет")
-                        orderAdapter.submitList(it)
-                    })
-                    kitchen.adapter =orderAdapter
+                }
+                paginationVM.loadOrdersByPrinter(pos!!)
+                paginationVM.order.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                    if (it.size>0)
+                        showEmpty(true)
+                    else
+                        showEmpty(false,"Заказов нет")
+                    orderAdapter.submitList(it)
+                })
+                kitchen.adapter =orderAdapter
             }
 
             override fun showDialog() {
@@ -179,7 +186,7 @@ class OrderFragment : BaseFragment(){
                             "",
                             orderModel?.order_item,
                             item.dish,
-                            serverTime, //now //this is not now always
+                            serverTime,
                             DateUtil.calculateCookingTime(
                                 item.date,
                                 Preferences.getPref("timeStamp", "", context)?.toLong()!!
@@ -187,7 +194,7 @@ class OrderFragment : BaseFragment(){
                         )
                     sendDishToServer(dishCookedModel)
                     paginationVM.updateItemTime(context.resources.getString(R.string.ready),item.id)
-            })
+                })
             }
         }
 
@@ -201,7 +208,7 @@ class OrderFragment : BaseFragment(){
         recyclerView.adapter = itemPageAdapter
     }
 
-     private fun sendDishToServer(dishCookedModel: DishCookedModel){
+    private fun sendDishToServer(dishCookedModel: DishCookedModel){
         val data: Data = Data.Builder()
             .putString("orderId",dishCookedModel.order)
             .putString("dishId",dishCookedModel.dish)
@@ -212,7 +219,6 @@ class OrderFragment : BaseFragment(){
 
         val uploadPhotoRequest = OneTimeWorkRequest.Builder(MyWorkManager::class.java)
             .setInputData(data)
-         //   .addTag("cookedDish")
             .build()
         WorkManager.getInstance(context!!).enqueue(uploadPhotoRequest)
     }
@@ -249,6 +255,9 @@ class OrderFragment : BaseFragment(){
 
         val check =  object: CheckBoxAdapter(valueList,context!!){
             override fun getSelectItems(isChecked: Boolean, printersModel: PrintersModel) {
+
+                paginationVM.checkPrinter(isChecked,printersModel.id)
+
                 printersHash.put(printersModel.id,printersModel)
                 ArrayList(printersHash.values).filter { x->x.isChecked }.size.let {
                     if(it>0){
@@ -292,7 +301,6 @@ class OrderFragment : BaseFragment(){
     override fun getName(): String = "Заказы"
     override fun getDrawable(): Int = R.drawable.order
     fun  checkBoxAdd() : PrintersModel = PrintersModel("-1","add",false)
-
 
     private fun setHash() {
         paginationVM.getHashes()

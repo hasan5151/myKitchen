@@ -1,7 +1,5 @@
 package com.yaros.kitchen.models.apiModels;
 
-import com.yaros.kitchen.room.entity.ApiItemModel;
-
 import java.util.List;
 
 public class GetOrderItems {

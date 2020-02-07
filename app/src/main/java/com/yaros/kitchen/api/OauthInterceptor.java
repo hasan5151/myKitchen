@@ -20,7 +20,6 @@ public class OauthInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        Response response = chain.proceed(request);
         Request authenticatedRequest = request.newBuilder()
                 .header("Authorization", credentials).build();
         return chain.proceed(authenticatedRequest);

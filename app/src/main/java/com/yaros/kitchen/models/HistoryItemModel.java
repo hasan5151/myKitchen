@@ -7,7 +7,6 @@ public class HistoryItemModel {
     private String orderTime;
     private Boolean isCookedOnTime;
 
-
     public HistoryItemModel(String title, String reqTime, String orderTime, Boolean isCookedOnTime) {
         this.title = title;
         this.reqTime = reqTime;

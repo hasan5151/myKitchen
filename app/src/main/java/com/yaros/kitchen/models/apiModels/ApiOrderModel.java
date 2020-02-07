@@ -3,11 +3,11 @@ package com.yaros.kitchen.models.apiModels;
 import java.util.List;
 
 public class ApiOrderModel {
-    String order;
-    Long date;
-    String number;
-    String waiter;
-    List<ItemApiModel> dishes;
+    private String order;
+    private Long date;
+    private String number;
+    private String waiter;
+    private List<ItemApiModel> dishes;
 
     public String getOrder() {
         return order;

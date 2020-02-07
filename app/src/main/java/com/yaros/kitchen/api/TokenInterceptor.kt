@@ -13,7 +13,7 @@ import okhttp3.Response
 import java.io.IOException
 
 
-class TokenTest(val waiterId: String, val password : String, val context: Context) : Interceptor {
+class TokenInterceptor(val waiterId: String, val password : String, val context: Context) : Interceptor {
     fun NewToken(chain: Interceptor.Chain, @NonNull accessToken: String): Response {
         return run {
             val url = chain.request()
@@ -29,8 +29,7 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response? {
         val refreshResponse = chain.refreshToken(chain)
- //       val request = chain.request()
-        return     chain.proceed(refreshResponse.request())
+        return  chain.proceed(refreshResponse.request())
     }
 
     private fun Interceptor.Chain.refreshToken(chain: Interceptor.Chain): Response {
@@ -49,7 +48,7 @@ class TokenTest(val waiterId: String, val password : String, val context: Contex
                 if (responseBody!!.contains("Сессия не найдена")) {
                     val tokenRepo = TokenRepo(TokenService())
                      val string = tokenRepo.getToken(waiterId,password)
-                    System.out.println("anan ${string}")
+                    System.out.println("test2 ${string}")
                      Preferences.savePref("waiter_token",string,context)
 
                     val string2 = Preferences.getPref("waiter_token","",context)

@@ -20,6 +20,12 @@ class PrintersRepo (val db: RoomDb, val rx: RxSchedulers) {
         db.PrintersDAO().deleteItem(id)
     }
 
+    fun checkPrinter(isChecked : Boolean,id: String) {
+        db.PrintersDAO().checkPrinter(isChecked,id).compose(rx.applyCompletable()).subscribe()
+    }
+
+    fun getCheckedPrinters() : LiveData<List<PrintersModel>> = db.PrintersDAO().getCheckedPrinters()
+
     fun getAll(): Observable<PrintersModel> {
         return db.PrintersDAO().getAll().compose(rx.applyObservable())
     }

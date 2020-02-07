@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.yaros.kitchen.R
 import com.yaros.kitchen.adapter.HistoryOrderAdapter
 import com.yaros.kitchen.api.Api
@@ -19,6 +18,7 @@ import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.viewModel.factory.HistoryFactory
 import com.yaros.kitchen.viewModel.HistoryVM
+import io.reactivex.disposables.CompositeDisposable
 
 class HistoryDishCooked : BaseFragment() {
     lateinit var kitchenRecyclerView: RecyclerView
@@ -44,19 +44,16 @@ class HistoryDishCooked : BaseFragment() {
         )
         historyVM = ViewModelProvider(this,historyFactory).get(HistoryVM::class.java)
 
-        OrdersKitchenPostModel(listOf("00000000-0000-0000-0000-000000000000"),1577836800000,1579867821000).let { fetchHistory(it) }
+        OrdersKitchenPostModel(listOf("00000000-0000-0000-0000-000000000000"),1577836800000,1579867821000).let { fetchHistory(it) } //test
     }
 
     fun fetchHistory(post : OrdersKitchenPostModel){
-        val historyOrderAdapter : HistoryOrderAdapter
         val repos = Repos(RoomDb(context!!), RxSchedulers.DEFAULT)
-        historyVM.fetchHistory(post)?.subscribe({
-             val gson = Gson()
+        CompositeDisposable().add(historyVM.fetchHistory(post)?.subscribe({
             var historyOrderModel  : List<HistoryOrderModel>  = listOf()
             it?.groupBy { it?.order }?.forEach {order->
                  var historyItemModel : List<HistoryItemModel> = listOf()
                 order.value.forEach {item->
-                   //val printer = repos.getPrintersRepo().getPrinters(item!!.printer)
                     val dish = repos.getDishesRepo().getItem(item!!.dish)
                     val cookedTime = DateUtil.getHourandMinute(item?.cooking_date)
                     val startTime = DateUtil.getHourandMinute(item!!.cooking_date - (item!!.cooking_time*1000))
@@ -69,19 +66,14 @@ class HistoryDishCooked : BaseFragment() {
                 }
             }
 
-            val historyOrderAdapter = HistoryOrderAdapter(historyOrderModel,context!!)
-            kitchenRecyclerView.adapter=historyOrderAdapter
-
-
-        },{it.printStackTrace()})
+            kitchenRecyclerView.adapter=HistoryOrderAdapter(historyOrderModel,context!!)
+        },{it.printStackTrace()})!!)
     }
 
     fun checkCookingTime(dishCookTime : Long, itemCookTime : Long) : Boolean{
         if (dishCookTime>0){
             if (dishCookTime>=itemCookTime ){
                 return true
-
-
             } else return false
         }else
             return true

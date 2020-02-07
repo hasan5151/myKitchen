@@ -1,9 +1,5 @@
 package com.yaros.kitchen.models;
 
-import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
 public class HashModel {
     private String orders_hash;
     private String catalog_hash;

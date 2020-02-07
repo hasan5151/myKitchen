@@ -25,11 +25,10 @@ abstract class CheckBoxAdapter (val printersModel:  List<PrintersModel>, val con
 
         if (holder.checkBox.isChecked){
             holder.name.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary))
-         }
+        }
         else{
             holder.name.setTextColor(ContextCompat.getColor(context,R.color.popupcolor))
-         }
-
+        }
 
         holder.name.setOnClickListener({
             holder.checkBox.performClick()
@@ -40,9 +39,8 @@ abstract class CheckBoxAdapter (val printersModel:  List<PrintersModel>, val con
             printersModel.get(position).isChecked = b
             getSelectItems(b,printersModel.get(position))
             if (holder.checkBox.isChecked){
-
                 holder.name.setTextColor(ContextCompat.getColor(context,R.color.colorPrimary))
-             }
+            }
             else{
                 holder.name.setTextColor(ContextCompat.getColor(context,R.color.popupcolor))
             }

@@ -14,6 +14,7 @@ import com.yaros.kitchen.R
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.utils.Preferences
+import com.yaros.kitchen.utils.TVDrawable
 import kotlinx.android.synthetic.main.kitchen_item_adapter.view.*
 import java.lang.NumberFormatException
 
@@ -50,22 +51,24 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
     }
 
     override fun onBindViewHolder(holder: ItemVH, position: Int) {
+        val tvDrawable = TVDrawable(context)
+
         val item = getItem(position)
         holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.timecolor))
 
-        System.out.println("selam item name ${item?.name} order ${item?.order_items}")
-        if (item!!.reqTime>0L) {
+         if (item!!.reqTime>0L) {
             countDown(item, holder)
             holder.elapsedTime.text=""
         }
-        if (item?.date!!.contentEquals(context.resources.getString(R.string.cancel))){
+
+        if (item.date!!.contentEquals(context.resources.getString(R.string.cancel))){
             holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.red))
-            holder.orderTime.text= "${item?.date}       "
+            holder.orderTime.text= "${item.date}       "
             holder.elapsedTime.text = ""
         }
         else if (item.date!!.contentEquals(context.resources.getString(R.string.ready))) {
             holder.orderTime.setTextColor(ContextCompat.getColor(context, R.color.green))
-            holder.orderTime.text = "${item?.date}        "
+            holder.orderTime.text = "${item.date}        "
             holder.elapsedTime.text = ""
         } else{
             if (DateUtil.remainCookTime(
@@ -80,12 +83,8 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
                         R.color.red
                     )
                 )
-                holder.elapsedTime.setCompoundDrawablesWithIntrinsicBounds(
-                    null,
-                    null,
-                    ContextCompat.getDrawable(context, R.drawable.warning),
-                    null
-                )
+
+                tvDrawable.drawSize(holder.elapsedTime,R.drawable.error,0.9,false)
                 // updateRemainTime(item, 0)
             }else{
                 holder.elapsedTime.setCompoundDrawablesWithIntrinsicBounds(
@@ -102,8 +101,7 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
                     )
                 )
             }
-
-            holder.orderTime.text= "${DateUtil.getHourandMinute(item?.date?.replace(" ","")?.toLong())}    |    "
+            holder.orderTime.text= "${DateUtil.getHourandMinute(item.date?.replace(" ","")?.toLong())}    |    "
         }
 
         if(item?.count!=null)
@@ -125,9 +123,9 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
                 holder.title.layoutParams =params
             }
 
-        holder.title.text= item?.name!!
+        holder.title.text= item.name!!
 
-        if (!isNullOrEmpty(item?.comment)){
+        if (!isNullOrEmpty(item.comment)){
             holder.subTitle.text= "• ${item.comment}"
             holder.subTitle.visibility = View.VISIBLE
 
@@ -186,13 +184,8 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
                                     R.color.red
                                 )
                             )
-                            holder.elapsedTime.setCompoundDrawablesWithIntrinsicBounds(
-                                null,
-                                null,
-                                ContextCompat.getDrawable(context, R.drawable.warning),
-                                null
-                            )
-                            updateRemainTime(item, 0)//TODO what will happen we time is exceed
+                            TVDrawable(context).drawSize(holder.elapsedTime,R.drawable.error,0.9,false)
+                            updateRemainTime(item, 0)
                         }
                     }
 
@@ -203,7 +196,7 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
                 }.start()
                     .let { startCountDown(item, it) }
             }catch (e: NumberFormatException){
-
+                e.printStackTrace()
             }
         }
     }

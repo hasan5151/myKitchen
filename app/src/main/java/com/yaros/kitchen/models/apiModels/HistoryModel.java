@@ -1,7 +1,5 @@
 package com.yaros.kitchen.models.apiModels;
 
-import com.yaros.kitchen.room.entity.KitchenItemModel;
-
 public class HistoryModel {
     private String order;
     private String printer;

@@ -2,7 +2,7 @@
     <string name="app_name">Kitchen</string>
     <string name="selectKitchen">Выберите Кухню</string>
     <string name="select">Выбрать</string>
-    <string name="mealReady">Блюдо готово</string>
+    <string name="mealReady">Блюдо готово?</string>
     <string name="cancel">Отмена</string>
     <string name="cancelled">Отменено</string>
     <string name="ready">Готово</string>

@@ -1,6 +1,5 @@
 package com.yaros.kitchen.models.bottomModel
 
-import com.yaros.kitchen.R
 import com.yaros.kitchen.ui.fragment.BaseFragment
 import com.yaros.kitchen.ui.fragment.HistoryDishCooked
 import com.yaros.kitchen.ui.fragment.OrderFragment

@@ -1,7 +1,6 @@
 package com.yaros.kitchen.api
 
 import com.yaros.kitchen.BuildConfig
-import com.yaros.kitchen.utils.Preferences
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

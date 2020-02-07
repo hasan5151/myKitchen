@@ -28,7 +28,6 @@ abstract class SearchAdapter(val breadcrumbs : List<PrintersModel>) : RecyclerVi
         //
     }
 
-
     class SearchVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView = itemView.textView
     }
