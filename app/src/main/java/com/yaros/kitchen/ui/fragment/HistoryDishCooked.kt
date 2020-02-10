@@ -18,6 +18,8 @@ import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.viewModel.factory.HistoryFactory
 import com.yaros.kitchen.viewModel.HistoryVM
+import com.yaros.kitchen.viewModel.PaginationVM
+import com.yaros.kitchen.viewModel.factory.PaginationFactory
 import io.reactivex.disposables.CompositeDisposable
 
 class HistoryDishCooked : BaseFragment() {
@@ -25,6 +27,7 @@ class HistoryDishCooked : BaseFragment() {
     override fun getName(): String = "Готовые"
     override fun getDrawable(): Int = R.drawable.readyorder
     lateinit var historyVM: HistoryVM
+    lateinit var paginationVM: PaginationVM
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,12 +47,37 @@ class HistoryDishCooked : BaseFragment() {
         )
         historyVM = ViewModelProvider(this,historyFactory).get(HistoryVM::class.java)
 
-        OrdersKitchenPostModel(listOf("00000000-0000-0000-0000-000000000000"),1577836800000,1579867821000).let { fetchHistory(it) } //test
+        val paginationFactory =
+            PaginationFactory(
+                RoomDb(context!!), RxSchedulers.DEFAULT,
+                Api(context!!).getApi()
+            )
+        paginationVM = ViewModelProvider(this,paginationFactory).get(PaginationVM::class.java)
+        isDataInitialize()
+    }
+
+    private fun isDataInitialize() { //if init then get orders
+        paginationVM.checkDishes()
+        paginationVM.checkWaiters()
+        paginationVM.checkPrinters()
+        paginationVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
+            paginationVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
+                paginationVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
+                    if (dish&&waiters&&printers){
+                          OrdersKitchenPostModel(null,1177836800000,1579867821000).let { fetchHistory(it) } //test
+                    }else{
+                        //show loading bar
+                    }
+                })
+            })
+        })
     }
 
     fun fetchHistory(post : OrdersKitchenPostModel){
         val repos = Repos(RoomDb(context!!), RxSchedulers.DEFAULT)
         CompositeDisposable().add(historyVM.fetchHistory(post)?.subscribe({
+
+            System.out.println("init anan #${it?.size}")
             var historyOrderModel  : List<HistoryOrderModel>  = listOf()
             it?.groupBy { it?.order }?.forEach {order->
                  var historyItemModel : List<HistoryItemModel> = listOf()

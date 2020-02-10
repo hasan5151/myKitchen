@@ -8,34 +8,20 @@ import com.yaros.kitchen.api.TokenService
 import com.yaros.kitchen.models.*
 import com.yaros.kitchen.models.apiModels.HistoryModel
 import com.yaros.kitchen.models.apiModels.OrdersKitchenPostModel
-import com.yaros.kitchen.room.entity.*
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.room.entity.KitchenOrderModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observables.GroupedObservable
 
 class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService) {
     val compositeDisposable = CompositeDisposable()
 
-
-    fun fetchDishes(){
-        DishesModel("1","Fish",12).let {
-            repos.getDishesRepo().insert(it)
-        }
-        DishesModel("2","Cola",10).let {
-            repos.getDishesRepo().insert(it)
-        }
-     }
-
-    //--------------------------------------------------------------------------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------
     fun getWaiters() {
-         val tokenService = TokenService()
+        val tokenService = TokenService()
         compositeDisposable.add(
             tokenService.getApi().getWaiters()?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it }?.subscribe({
-             repos.getWaiterRepo().insert(it)
+                repos.getWaiterRepo().insert(it)
         },{it.printStackTrace()})!!)
     }
 
@@ -62,12 +48,12 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
     }
 
     fun getOrderItems(
-        printerList: List<String>,
+        printerList: List<String>?,
         date_begin: Long?,
         data_end: Long?
     ){
         val ordersKitchenPostModel = OrdersKitchenPostModel(printerList,date_begin,data_end)
-        compositeDisposable.add(apiService.getOrderItems(ordersKitchenPostModel)?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it->it }?.subscribe(
+        compositeDisposable.add(apiService.getOrderItems(ordersKitchenPostModel).compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it->it }?.subscribe(
             { api ->
                 api.orders.forEach {order->
                     if (!repos.getOrderRepo().checkOrder(order.order)!!) {
@@ -82,7 +68,7 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
                             KitchenItemModel(
                                 order.number,
                                 order.order,
-                                dishesModel?.name,
+                                dishesModel.name,
                                 item.comment,
                                 dishesModel.cookingTime,
                                 item.item_date,

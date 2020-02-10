@@ -109,7 +109,7 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
         apiRepo.getDishes()
     }
 
-    fun getOrderItems(printerList: List<String>,date_begin: Long?=null,data_end: Long?=null){
+    fun getOrderItems(printerList: List<String>?,date_begin: Long?=null,data_end: Long?=null){
         apiRepo.getOrderItems(printerList,date_begin, data_end)
     }
 

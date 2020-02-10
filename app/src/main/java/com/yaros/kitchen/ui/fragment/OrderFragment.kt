@@ -35,7 +35,6 @@ import com.yaros.kitchen.viewModel.PaginationVM
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 class OrderFragment : BaseFragment(){
     lateinit var kitchen : RecyclerView
     lateinit var empty : TextView
@@ -102,7 +101,8 @@ class OrderFragment : BaseFragment(){
         paginationVM.printersList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             it.map { it.id }.let {
                 printerList = it
-                paginationVM.getOrderItems(it,1569867821000,1579867821000)//TODO change dates, this just a example
+                paginationVM.getOrderItems(null,1569867821000,1579867821000)//TODO change dates, this just a example
+//                paginationVM.getOrderItems(it,1569867821000,1579867821000)//TODO change dates, this just a example
             }
             it.forEach {
                 printersHash.put(it.id,it)
@@ -327,8 +327,8 @@ class OrderFragment : BaseFragment(){
             if(!oldOrderHash!!.contentEquals(it.orders_hash.toString())){
                 Preferences.savePref("orderHash",it.orders_hash,context)
                 System.out.println("orderHash ${it.orders_hash}")
-                if (printerList.size>0)
-                    paginationVM.getOrderItems(printerList)
+                if (::printerList.isInitialized)
+                    paginationVM.getOrderItems(null)
             }
         })
     }

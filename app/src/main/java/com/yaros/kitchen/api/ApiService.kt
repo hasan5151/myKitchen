@@ -18,7 +18,6 @@ import retrofit2.http.Query
 
 @JvmSuppressWildcards
 interface ApiService {
-
     @GET("Services/hs/MobileKitchen?cmd=get_waiters")
     fun getWaiters(): Observable<BaseList<WaitersModel>?>?
 
@@ -70,6 +69,4 @@ interface ApiService {
 
     @POST( "Services/hs/MobileKitchen?cmd=history_dish_cooked")
     fun getHistory(@Body historyModel : OrdersKitchenPostModel): Observable<BaseList<HistoryModel>>
-
-
 }
