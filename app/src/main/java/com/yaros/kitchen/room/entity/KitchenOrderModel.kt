@@ -14,5 +14,5 @@ data class KitchenOrderModel (
     val order_item: String,
     val number: String,
     val printerId: String,
-    val waiterName: String = ""
+    val waiterName: String? = ""
 )

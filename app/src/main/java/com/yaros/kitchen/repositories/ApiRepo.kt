@@ -13,6 +13,7 @@ import com.yaros.kitchen.room.entity.KitchenOrderModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
+import java.lang.NullPointerException
 
 class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService) {
     val compositeDisposable = CompositeDisposable()
@@ -21,6 +22,7 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
         val tokenService = TokenService()
         compositeDisposable.add(
             tokenService.getApi().getWaiters()?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it }?.subscribe({
+                System.out.println("init it ${it}")
                 repos.getWaiterRepo().insert(it)
         },{it.printStackTrace()})!!)
     }
@@ -57,11 +59,18 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
             { api ->
                 api.orders.forEach {order->
                     if (!repos.getOrderRepo().checkOrder(order.order)!!) {
+
+                        var waiterName : String? =  ""
+                        try {
+                            waiterName=  repos.getWaiterRepo().getWaiter(order.waiter)
+                        }catch (e: NullPointerException){
+                            waiterName=""
+                        }
                         KitchenOrderModel(
                             order.order,
                             order.number,
                             api.printer,
-                            repos.getWaiterRepo().getWaiter(order.waiter)!!
+                            waiterName
                         ).let { repos.getOrderRepo().insert(it) }
                         order.dishes.forEach { item ->
                             val dishesModel = repos.getDishesRepo().getItem(item.dish)

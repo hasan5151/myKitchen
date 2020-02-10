@@ -78,6 +78,10 @@ class OrderFragment : BaseFragment(){
         paginationVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
             paginationVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
                 paginationVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
+
+                    System.out.println("init dish ${dish}")
+                    System.out.println("init waiters ${waiters}")
+                    System.out.println("init printers ${printers}")
                     if (dish&&waiters&&printers){
                         setPrinters()
                         setPrinterChips()
@@ -91,7 +95,7 @@ class OrderFragment : BaseFragment(){
 
     private fun setPrinterChips() {
         paginationVM.getCheckedPrinters()
-        paginationVM.printerChipList.observe(this, androidx.lifecycle.Observer {
+        paginationVM.printerChipList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             setPrinterAdapter(getListOfChips(it+listOf(checkBoxAdd()))) //dont change
         })
     }
@@ -101,7 +105,7 @@ class OrderFragment : BaseFragment(){
         paginationVM.printersList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             it.map { it.id }.let {
                 printerList = it
-                paginationVM.getOrderItems(null,1569867821000,1579867821000)//TODO change dates, this just a example
+                paginationVM.getOrderItems(null)//TODO change dates, this just a example
 //                paginationVM.getOrderItems(it,1569867821000,1579867821000)//TODO change dates, this just a example
             }
             it.forEach {
@@ -327,8 +331,16 @@ class OrderFragment : BaseFragment(){
             if(!oldOrderHash!!.contentEquals(it.orders_hash.toString())){
                 Preferences.savePref("orderHash",it.orders_hash,context)
                 System.out.println("orderHash ${it.orders_hash}")
-                if (::printerList.isInitialized)
-                    paginationVM.getOrderItems(null)
+               // if (::printerList.isInitialized)
+                paginationVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
+                    paginationVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
+                        paginationVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
+                            paginationVM.getOrderItems(null)
+                        })
+                    })
+                })
+
+
             }
         })
     }

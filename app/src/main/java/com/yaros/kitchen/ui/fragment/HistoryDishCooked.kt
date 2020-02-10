@@ -64,7 +64,7 @@ class HistoryDishCooked : BaseFragment() {
             paginationVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
                 paginationVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
                     if (dish&&waiters&&printers){
-                          OrdersKitchenPostModel(null,1177836800000,1579867821000).let { fetchHistory(it) } //test
+                          OrdersKitchenPostModel(null,null,null).let { fetchHistory(it) } //test
                     }else{
                         //show loading bar
                     }
@@ -76,8 +76,6 @@ class HistoryDishCooked : BaseFragment() {
     fun fetchHistory(post : OrdersKitchenPostModel){
         val repos = Repos(RoomDb(context!!), RxSchedulers.DEFAULT)
         CompositeDisposable().add(historyVM.fetchHistory(post)?.subscribe({
-
-            System.out.println("init anan #${it?.size}")
             var historyOrderModel  : List<HistoryOrderModel>  = listOf()
             it?.groupBy { it?.order }?.forEach {order->
                  var historyItemModel : List<HistoryItemModel> = listOf()
