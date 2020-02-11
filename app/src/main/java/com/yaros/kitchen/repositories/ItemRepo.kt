@@ -48,4 +48,12 @@ class ItemRepo(val db: RoomDb, val rx : RxSchedulers) {
         LivePagedListBuilder<Int, KitchenItemModel>(
             db.KitchenItemDAO().getItemByOrder(orderId), 10
         ).build()
+
+
+    fun getItemByOrderId(orderId : String) : List<KitchenItemModel>{
+        return db.KitchenItemDAO().getItemByOrderId(orderId)
+    }
+
+
+
 }

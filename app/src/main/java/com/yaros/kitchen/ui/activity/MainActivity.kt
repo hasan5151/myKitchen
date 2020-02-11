@@ -1,7 +1,9 @@
 package com.yaros.kitchen.ui.activity
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var bottomInterface : BottomInterface
     lateinit var bottom_navigation : BottomNavigationView
     lateinit var mainActivityVM: MainActivityVM
+    var isViewed: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +40,23 @@ class MainActivity : AppCompatActivity() {
         setViewPagerAdapter()
         setTabLayout()
         setBottomNavigationView()
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        toolbar.setOnClickListener({
+            isViewed= !isViewed
+            if (!isViewed){
+                mainActivityVM.setIsFullScreen(false)
+
+                bottom_navigation.setVisibility(View.VISIBLE)
+                tabLayout.setVisibility(View.VISIBLE)
+            }
+            else{
+                mainActivityVM.setIsFullScreen(true)
+                bottom_navigation.setVisibility(View.GONE)
+                tabLayout.setVisibility(View.GONE)
+            }
+        })
     }
 
     private fun setBottomNavigationView() {

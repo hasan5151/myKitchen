@@ -10,10 +10,15 @@ import com.yaros.kitchen.room.db.RoomDb
 class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: ApiService) : ViewModel() {
 
     var isClicked: MutableLiveData<Boolean> = MutableLiveData()
+    var isFullScreen: MutableLiveData<Boolean> = MutableLiveData()
 
     fun isStopListAddButtonClick(){
         isClicked.value =true
         isClicked.value=false
+    }
+
+    fun setIsFullScreen(isFull : Boolean){
+        isFullScreen.value = isFull
     }
 
 }

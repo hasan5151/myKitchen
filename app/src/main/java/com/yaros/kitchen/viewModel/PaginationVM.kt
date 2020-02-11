@@ -45,8 +45,16 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
         repos.getOrderRepo().deleteOrderById(orderId)
     }
 
+    fun deleteOrderById2(orderId : String){
+        repos.getOrderRepo().deleteOrderById2(orderId)
+    }
+
     fun loadItemsByOrderId(orderId : String){
         item = repos.getItemRepo().getItemByOrder(orderId)
+    }
+
+    fun loadItems(orderId : String) : List<KitchenItemModel>{
+        return repos.getItemRepo().getItemByOrderId(orderId)
     }
 
     fun  updateItemTime(string : String, itemId: Int){

@@ -3,6 +3,7 @@ package com.yaros.kitchen.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -18,14 +19,14 @@ abstract class OrderPageAdapter : PagedListAdapter<KitchenOrderModel, OrderPageA
                 override fun areItemsTheSame(
                     oldConcert: KitchenOrderModel,
                     newConcert: KitchenOrderModel
-                ): Boolean {
-                    return oldConcert.order_item === newConcert.order_item
-                }
+                ): Boolean = oldConcert.order_item === newConcert.order_item
+
 
                 override fun areContentsTheSame(
                     oldConcert: KitchenOrderModel,
                     newConcert: KitchenOrderModel
                 ): Boolean {
+//                    return false
                     return oldConcert.equals(newConcert)
                 }
             }
@@ -48,7 +49,16 @@ abstract class OrderPageAdapter : PagedListAdapter<KitchenOrderModel, OrderPageA
         holder.orderId.text ="№ ${order?.number}"
         holder.waiterName.text = order?.waiterName
         setItemAdapter(holder.recyclerView,order)
+        holder.itemView.setOnClickListener({
+            onClickListener(order)
+        })
     }
 
     abstract fun setItemAdapter(recyclerView: RecyclerView,orderModel : KitchenOrderModel?)
+    abstract fun onClickListener(orderModel : KitchenOrderModel?)
+
+/*    override fun onCurrentListChanged(previousList: PagedList<KitchenOrderModel>?, currentList: PagedList<KitchenOrderModel>?) {
+
+        super.onCurrentListChanged(previousList, currentList)
+    }*/
 }

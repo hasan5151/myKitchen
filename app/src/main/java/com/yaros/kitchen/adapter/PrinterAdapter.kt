@@ -46,6 +46,8 @@ abstract class PrinterAdapter (val string : List<PrintersModel>) : RecyclerView.
     abstract fun clickListener(chip: String?,pos : String)
     abstract fun showDialog()
 
+
+
 }
 
 

@@ -18,12 +18,13 @@ import java.lang.NullPointerException
 class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService) {
     val compositeDisposable = CompositeDisposable()
 
-    fun getWaiters() {
+    fun getWaiters(){
         val tokenService = TokenService()
         compositeDisposable.add(
             tokenService.getApi().getWaiters()?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it }?.subscribe({
                 System.out.println("init it ${it}")
                 repos.getWaiterRepo().insert(it)
+
         },{it.printStackTrace()})!!)
     }
 
@@ -91,7 +92,9 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
                     }
                 }
             }
-        ,{it.printStackTrace()})!!) //TODO filter if count -1
+        /*,{
+                System.out.println("ananin amina salata init")
+                it.printStackTrace()}*/)!!) //TODO filter if count -1
     }
 
     fun getHashes() : Observable<HashModel>? = apiService.getHashes()?.compose(rxSchedulers.applyObservable())?.map { it.data }

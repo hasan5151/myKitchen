@@ -17,6 +17,10 @@ interface KitchenOrderDAO {
     @Query("DELETE From  KitchenOrderModel WHERE order_item= :id")
     fun deleteItem(id: String) : Completable
 
+
+    @Query("DELETE From  KitchenOrderModel WHERE order_item= :id")
+    fun deleteItemById(id: String)
+
     @Query("SELECT * FROM KitchenOrderModel ORDER BY order_item DESC")
     fun getAll(): DataSource.Factory<Int, KitchenOrderModel>
 

@@ -3,13 +3,13 @@
     android:background="@color/colorPrimaryLight"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:animateLayoutChanges="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginLeft="10dp"
         android:id="@+id/chips"
-        android:layout_width="wrap_content"
+         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp" />
 
@@ -18,7 +18,6 @@
         android:layout_below="@+id/chips"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:id="@+id/kitchen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
