@@ -20,9 +20,9 @@ import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.bottomModel.*
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.ui.fragment.BaseFragment
+import com.yaros.kitchen.utils.Preferences
 import com.yaros.kitchen.viewModel.MainActivityVM
 import com.yaros.kitchen.viewModel.factory.MainActivityFactory
-
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewPager: ViewPager
@@ -55,6 +55,53 @@ class MainActivity : AppCompatActivity() {
                 mainActivityVM.setIsFullScreen(true)
                 bottom_navigation.setVisibility(View.GONE)
                 tabLayout.setVisibility(View.GONE)
+            }
+        })
+
+
+
+        mainActivityVM.checkDishes()
+        mainActivityVM.checkWaiters()
+        mainActivityVM.checkPrinters()
+        mainActivityVM.getHashes()
+        setHash()
+    }
+
+    private fun setHash() {
+        mainActivityVM.getHashes()
+        mainActivityVM.hash.observe(this, androidx.lifecycle.Observer {
+            val oldTimeStamp = Preferences.getPref("timeStamp","",this)
+            if(!oldTimeStamp!!.contentEquals(it.time_server.toString())){
+                Preferences.savePref("timeStamp","${it.time_server}",this)
+                val diff = System.currentTimeMillis()-it.time_server
+                Preferences.savePref("diff","${diff}",this)
+                System.out.println("timeHash ${it.time_server}")
+            }
+
+            val oldCatalogHash= Preferences.getPref("catalogHash","",this)
+            if(!oldCatalogHash!!.contentEquals(it.catalog_hash.toString())){
+                Preferences.savePref("catalogHash",it.catalog_hash,this)
+                System.out.println("catalogHash ${it.catalog_hash}")
+                mainActivityVM.fetchPrinters()
+                mainActivityVM.fetchDishes()
+                mainActivityVM.fetchWaiters()  //fetch datas with Work Manager
+            }
+
+            val oldOrderHash = Preferences.getPref("orderHash","",this)
+            if(!oldOrderHash!!.contentEquals(it.orders_hash.toString())){
+                Preferences.savePref("orderHash",it.orders_hash,this)
+                System.out.println("orderHash ${it.orders_hash}")
+                // if (::printerList.isInitialized)
+                mainActivityVM.isDishesCreated.observe(this, androidx.lifecycle.Observer {dish->
+                    mainActivityVM.isWaitersCreated.observe(this, androidx.lifecycle.Observer {waiters->
+                        mainActivityVM.isPrintersCreated.observe(this, androidx.lifecycle.Observer {printers->
+                            if (dish&&waiters&&printers) {
+                            //    mainActivityVM.setOrderUpdate()
+                                mainActivityVM.getOrderItems(null) //fetch datas with Work Manager
+                            }
+                        })
+                    })
+                })
             }
         })
     }

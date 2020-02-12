@@ -19,8 +19,10 @@ import com.yaros.kitchen.adapter.*
 import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.apiModels.DishCookedModel
+import com.yaros.kitchen.repositories.KitchenRepo
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenItemModel
+import com.yaros.kitchen.room.entity.KitchenModel
 import com.yaros.kitchen.room.entity.KitchenOrderModel
 import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.utils.DateUtil
@@ -34,7 +36,6 @@ import com.yaros.kitchen.viewModel.factory.PaginationFactory
 import jp.wasabeef.recyclerview.animators.SlideInRightAnimator
 import java.util.*
 import kotlin.collections.ArrayList
-
 
 class OrderFragment : BaseFragment(){
     lateinit var kitchen : RecyclerView
@@ -57,8 +58,8 @@ class OrderFragment : BaseFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        chips  = view.findViewById(R.id.chips)
-        kitchen  = view.findViewById(R.id.kitchen)
+        chips = view.findViewById(R.id.chips)
+        kitchen = view.findViewById(R.id.kitchen)
         empty = view.findViewById(R.id.empty)
 
         val paginationFactory =
@@ -66,19 +67,19 @@ class OrderFragment : BaseFragment(){
                 RoomDb(context!!), RxSchedulers.DEFAULT,
                 Api(context!!).getApi()
             )
-        paginationVM = ViewModelProvider(this,paginationFactory).get(PaginationVM::class.java)
+        paginationVM = ViewModelProvider(this, paginationFactory).get(PaginationVM::class.java)
 
         val mainActivityFactory =
             MainActivityFactory(
                 RoomDb(context!!), RxSchedulers.DEFAULT,
                 Api(context!!).getApi()
             )
-        mainActivityVM = ViewModelProvider(activity!!,mainActivityFactory ).get(MainActivityVM::class.java)
-
+        mainActivityVM =
+            ViewModelProvider(activity!!, mainActivityFactory).get(MainActivityVM::class.java)
 
         isDataInitialize()
-        setHash() //dont change
         observeIsFullScreen()
+
     }
 
     private fun observeIsFullScreen() {
@@ -92,17 +93,10 @@ class OrderFragment : BaseFragment(){
     }
 
     private fun isDataInitialize() { //if init then get orders
-        paginationVM.checkDishes()
-        paginationVM.checkWaiters()
-        paginationVM.checkPrinters()
-        paginationVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
-            paginationVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
-                paginationVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
-
-                    //.check(matches(isCompletelyDisplayed()));
-//        onView(withIndex(withId(R.id.cardView), 0)).perform(click());
-//  fragment.
-                    System.out.println("init dish ${dish}")
+        mainActivityVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
+            mainActivityVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
+                mainActivityVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
+                     System.out.println("init dish ${dish}")
                     System.out.println("init waiters ${waiters}")
                     System.out.println("init printers ${printers}")
                     if (dish&&waiters&&printers){
@@ -119,7 +113,7 @@ class OrderFragment : BaseFragment(){
     private fun setPrinterChips() {
         paginationVM.getCheckedPrinters()
         paginationVM.printerChipList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            setPrinterAdapter(getListOfChips(it+listOf(checkBoxAdd()))) //dont change
+            setPrinterAdapter(getListOfChips(it+listOf(checkBoxAll(),checkBoxAdd()))) //dont change
         })
     }
 
@@ -129,7 +123,6 @@ class OrderFragment : BaseFragment(){
             it.map { it.id }.let {
                 printerList = it
                 paginationVM.getOrderItems(null)//TODO change dates, this just a example
-//                paginationVM.getOrderItems(it,1569867821000,1579867821000)//TODO change dates, this just a example
             }
             it.forEach {
                 printersHash.put(it.id,it)
@@ -138,6 +131,110 @@ class OrderFragment : BaseFragment(){
     }
 
     private fun setPrinterAdapter(string : List<PrintersModel>) {
+        val chipAdapter = object : PrinterAdapter(string) {
+            override fun clickListener(chip: String?, pos: String) {
+
+                val kitchenAdapter = object : KitchenAdapter(context!!){
+                    override fun updateRemainTime(item: KitchenModel, milisUntilFinish: Long) {
+                        if (milisUntilFinish>0){
+//                    paginationVM.updateElapsedTime("${milisUntilFinish}", item.id)
+                        }else{
+//                    paginationVM.updateElapsedTime("${0}", item.id)
+                            destroyCountDown(item.id)
+                            countDownHash.remove(item.id)
+                        }
+                    }
+
+                    override fun startCountDown(
+                        item: KitchenModel,
+                        countDownTimer: CountDownTimer
+                    ) {
+                        countDownHash.put(item.id, countDownTimer)
+                    }
+
+                    override fun showPopup(item: KitchenModel, orderId: Int) {
+                        val dialog  = DialogUtil.bottom(R.layout.meal_ready_popup,context)
+                        val title: TextView = dialog!!.findViewById(R.id.title)
+                        val description: TextView = dialog.findViewById(R.id.description)
+                        val badge: TextView = dialog.findViewById(R.id.badge)
+                        val cancel: TextView = dialog.findViewById(R.id.cancel)
+                        val ok: TextView = dialog.findViewById(R.id.ok)
+                        title.text = item.name
+                        dialog.show()  //duplicate
+                        badge.text = "${item.count}"
+                        description.text = "№  ${item.number}    ${item?.waiterName}     ${DateUtil.getHourandMinute(item.date.replace(" ","").toLong())}    |   ${DateUtil.cookTimeDate(item.reqTime)}"
+
+                        cancel.setOnClickListener {
+                            dialog.dismiss()
+                            stopReqCountDown(item.id)
+                            destroyCountDown(item.id)
+                            paginationVM.updateItemTimeKitchen(context.resources.getString(R.string.cancel),item.id)
+                        }
+
+                        ok.setOnClickListener({
+                            dialog.dismiss()
+                            stopReqCountDown(item.id)
+                            destroyCountDown(item.id)
+                            val serverTime = System.currentTimeMillis() +Preferences.getPref("diff", "0", context)?.toLong()!!
+                            val dishCookedModel =
+                                DishCookedModel(
+                                    "",
+                                    item?.order_item,
+                                    item.dish,
+                                    serverTime,
+                                    DateUtil.calculateCookingTime(
+                                        item.date,
+                                        Preferences.getPref("timeStamp", "", context)?.toLong()!!
+                                    ),item?.printerId
+                                )
+                            sendDishToServer(dishCookedModel)
+                            paginationVM.updateItemTimeKitchen(context.resources.getString(R.string.ready),item.id)
+                        })
+
+                    }
+
+                }
+
+
+                if (!pos.contentEquals("-2")) {
+                    paginationVM.getAllByPrinterId(pos)
+
+                }else{
+                    paginationVM.getAll()
+                }
+
+                paginationVM.itemKitchen.observe(
+                    viewLifecycleOwner,
+                    androidx.lifecycle.Observer {
+                        if (it.size > 0)
+                            showEmpty(true)
+                        else
+                            showEmpty(false, "Заказов нет")
+
+                        kitchenAdapter.submitList(it)
+
+                    })
+
+                kitchen.adapter =kitchenAdapter
+                val linearLayoutManager = LinearLayoutManager(context!!)
+                kitchen.layoutManager= linearLayoutManager
+
+                kitchen.itemAnimator = SlideInRightAnimator()
+
+            }
+
+            override fun showDialog() {
+                selectKitchens()
+            }
+        }
+
+        val mLayoutManager =
+            LinearLayoutManager(context!!, LinearLayoutManager.HORIZONTAL, false)
+        chips.layoutManager = mLayoutManager
+        chips.adapter = chipAdapter
+    }
+
+    /*  private fun setPrinterAdapter(string : List<PrintersModel>) {
         val chipAdapter = object : PrinterAdapter(string) {
             override fun clickListener(chip: String?, pos: String) {
                 val orderAdapter =object :  OrderPageAdapter(){
@@ -192,81 +289,6 @@ class OrderFragment : BaseFragment(){
             LinearLayoutManager(context!!, LinearLayoutManager.HORIZONTAL, false)
         chips.layoutManager = mLayoutManager
         chips.adapter = chipAdapter
-    }
-
-    /*fun itemAdapter(recyclerView: RecyclerView, orderModel: KitchenOrderModel?){
-        paginationVM.loadItems(orderModel!!.order_item)
-        paginationVM.item.observe(this, androidx.lifecycle.Observer {
-            System.out.println("naber size ${it.size}")
-            if (it.size==0) //If order has 0 item, then also order itself
-                paginationVM.deleteOrderById(orderModel.order_item)
-
-            val itemPageAdapter =  object  : ItemAdapter(context!!,it) {
-                override fun updateRemainTime(item: KitchenItemModel, milisUntilFinish: Long) {
-                    if (milisUntilFinish>0){
-//                    paginationVM.updateElapsedTime("${milisUntilFinish}", item.id)
-                    }else{
-//                    paginationVM.updateElapsedTime("${0}", item.id)
-                        destroyCountDown(item.id)
-                        countDownHash.remove(item.id)
-                    }
-                }
-
-                override fun startCountDown(item: KitchenItemModel, countDownTimer: CountDownTimer) {
-                    //   paginationVM.startCountDown(item.id)
-                    countDownHash.put(item.id, countDownTimer)
-                }
-
-                override fun showPopup(item: KitchenItemModel,orderId : Int) {
-                    val dialog  = DialogUtil.bottom(R.layout.meal_ready_popup,context)
-                    val title: TextView = dialog!!.findViewById(R.id.title)
-                    val description: TextView = dialog.findViewById(R.id.description)
-                    val badge: TextView = dialog.findViewById(R.id.badge)
-                    val cancel: TextView = dialog.findViewById(R.id.cancel)
-                    val ok: TextView = dialog.findViewById(R.id.ok)
-                    title.text = item.name
-                    dialog.show()  //duplicate
-                    badge.text = "${item.count}"
-                    description.text = "№  ${item.number}    ${orderModel?.waiterName}     ${DateUtil.getHourandMinute(item.date.replace(" ","").toLong())}    |   ${DateUtil.cookTimeDate(item.reqTime)}"
-
-                    cancel.setOnClickListener {
-                        dialog.dismiss()
-                        stopReqCountDown(item.id)
-                        destroyCountDown(item.id)
-                        paginationVM.updateItemTime(context.resources.getString(R.string.cancel),item.id)
-                    }
-
-                    ok.setOnClickListener({
-                        dialog.dismiss()
-                        stopReqCountDown(item.id)
-                        destroyCountDown(item.id)
-                        val serverTime = System.currentTimeMillis() +Preferences.getPref("diff", "0", context)?.toLong()!!
-                        val dishCookedModel =
-                            DishCookedModel(
-                                "",
-                                orderModel?.order_item,
-                                item.dish,
-                                serverTime,
-                                DateUtil.calculateCookingTime(
-                                    item.date,
-                                    Preferences.getPref("timeStamp", "", context)?.toLong()!!
-                                ),orderModel?.printerId
-                            )
-                        sendDishToServer(dishCookedModel)
-                        paginationVM.updateItemTime(context.resources.getString(R.string.ready),item.id)
-                    })
-                }
-            }.let {
-                recyclerView.adapter = it
-
-            }
-
-            recyclerView.itemAnimator = SlideInRightAnimator()
-            recyclerView.itemAnimator?.apply {
-                removeDuration = 200
-            }
-
-        })
     }*/
 
     fun itemAdapter(recyclerView: RecyclerView, orderModel: KitchenOrderModel?){
@@ -337,7 +359,7 @@ class OrderFragment : BaseFragment(){
         })
         recyclerView.adapter = itemPageAdapter
         recyclerView.itemAnimator = SlideInRightAnimator()
-          recyclerView.itemAnimator?.apply {
+        recyclerView.itemAnimator?.apply {
                removeDuration = 120
          }
     }
@@ -350,7 +372,7 @@ class OrderFragment : BaseFragment(){
             .putLong("cooking_date",dishCookedModel.cooking_date)
             .putLong("cooking_time",dishCookedModel.cooking_time)
             .build()
-
+        mainActivityVM.setOrderUpdate()
         val uploadPhotoRequest = OneTimeWorkRequest.Builder(MyWorkManager::class.java)
             .setInputData(data)
             .build()
@@ -365,7 +387,7 @@ class OrderFragment : BaseFragment(){
     private fun destroyCountDown(id : Int){
         object : CountDownTimer(1000, 1000) {
             override fun onFinish() {
-                paginationVM.deleteItemById(id)
+                paginationVM.deleteItemKitchen(id)
             }
 
             override fun onTick(millisUntilFinished: Long) {
@@ -403,7 +425,7 @@ class OrderFragment : BaseFragment(){
         }
 
         button.setOnClickListener {
-            ArrayList(printersHash.values).filter { x->x.isChecked }.plus(checkBoxAdd()).let {
+            ArrayList(printersHash.values).filter { x->x.isChecked }.plus(checkBoxAll()).plus(checkBoxAdd()).let {
                 setPrinterAdapter(it.distinct())
                 showEmpty(it.size>1,resources.getString(R.string.selectKitchen))
             }
@@ -436,44 +458,7 @@ class OrderFragment : BaseFragment(){
 
     override fun getName(): String = "Заказы"
     override fun getDrawable(): Int = R.drawable.order
-    fun  checkBoxAdd() : PrintersModel = PrintersModel("-1","add",false)
+    private fun  checkBoxAdd() : PrintersModel = PrintersModel("-1","add",false)
+    private fun  checkBoxAll() : PrintersModel = PrintersModel("-2","Все",false)
 
-    private fun setHash() {
-        paginationVM.getHashes()
-        paginationVM.hash.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            val hashIt = it
-            val oldTimeStamp = Preferences.getPref("timeStamp","",context)
-            if(!oldTimeStamp!!.contentEquals(it.time_server.toString())){
-                Preferences.savePref("timeStamp","${it.time_server}",context)
-                val diff = System.currentTimeMillis()-it.time_server
-                Preferences.savePref("diff","${diff}",context)
-                System.out.println("timeHash ${it.time_server}")
-            }
-
-            val oldCatalogHash= Preferences.getPref("catalogHash","",context)
-            if(!oldCatalogHash!!.contentEquals(it.catalog_hash.toString())){
-                Preferences.savePref("catalogHash",it.catalog_hash,context)
-                System.out.println("catalogHash ${it.catalog_hash}")
-                paginationVM.fetchPrinters()
-                paginationVM.fetchDishes()
-                paginationVM.fetchWaiters()
-            }
-
-            val oldOrderHash = Preferences.getPref("orderHash","",context)
-            if(!oldOrderHash!!.contentEquals(it.orders_hash.toString())){
-                Preferences.savePref("orderHash",it.orders_hash,context)
-                System.out.println("orderHash ${it.orders_hash}")
-               // if (::printerList.isInitialized)
-                paginationVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
-                    paginationVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
-                        paginationVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
-                            if (dish&&waiters&&printers) {
-                                paginationVM.getOrderItems(null)
-                            }
-                        })
-                    })
-                })
-            }
-        })
-    }
 }

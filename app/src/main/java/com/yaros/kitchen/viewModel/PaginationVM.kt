@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit
 class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiService) : ViewModel() {
     var disposable = CompositeDisposable()
     var item:  LiveData<PagedList<KitchenItemModel>> = MutableLiveData()
+    var itemKitchen:  LiveData<PagedList<KitchenModel>> = MutableLiveData()
     var order: LiveData<PagedList<KitchenOrderModel>> = MutableLiveData()
     var itemInfo: LiveData<ItemInfoModel> = MutableLiveData()
     lateinit var dishesInfo:  LiveData<List<DishesModel>>
@@ -148,6 +149,29 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
         printerChipList = repos.getPrintersRepo().getCheckedPrinters()
     }
 
+    //-----------------------------------------------------
+
+    fun insertKitchen(itemModel: KitchenModel){
+        repos.getKitchenRepo().insert(itemModel)
+
+    }
+    fun deleteItemKitchen(id: Int){
+        repos.getKitchenRepo().delete(id)
+
+    }
+    fun getAllByPrinterId(printer : String){
+        itemKitchen = repos.getKitchenRepo().getAllByPrinter(printer)
+    }
+    fun getAll(){
+        itemKitchen = repos.getKitchenRepo().getAll()
+    }
 
 
+    fun updateItemTimeKitchen(orderTime: String, itemId : Int){
+          repos.getKitchenRepo().updateItemTime(orderTime,itemId)
+    }
+
+    fun changeAmount(orderItem: String, dish: String,  count : Int){
+          repos.getKitchenRepo().changeAmount(orderItem,dish,count)
+    }
 }

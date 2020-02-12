@@ -30,6 +30,9 @@ interface PrintersDAO {
     @Query("SELECT * FROM PrintersModel Where id=:id")
     fun getWaiter(id: String): Observable<PrintersModel>
 
+    @Query("SELECT * FROM PrintersModel Where id=:id")
+    fun getPrinerById(id: String): PrintersModel
+
     @Query("Select COUNT(id) AS item FROM PrintersModel")
     fun isWaitersCreated(): LiveData<Boolean>
 

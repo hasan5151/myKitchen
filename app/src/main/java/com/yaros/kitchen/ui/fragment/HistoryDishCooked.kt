@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
@@ -18,7 +19,9 @@ import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.viewModel.factory.HistoryFactory
 import com.yaros.kitchen.viewModel.HistoryVM
+import com.yaros.kitchen.viewModel.MainActivityVM
 import com.yaros.kitchen.viewModel.PaginationVM
+import com.yaros.kitchen.viewModel.factory.MainActivityFactory
 import com.yaros.kitchen.viewModel.factory.PaginationFactory
 import io.reactivex.disposables.CompositeDisposable
 
@@ -28,6 +31,7 @@ class HistoryDishCooked : BaseFragment() {
     override fun getDrawable(): Int = R.drawable.readyorder
     lateinit var historyVM: HistoryVM
     lateinit var paginationVM: PaginationVM
+    lateinit var mainActivityVM: MainActivityVM
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,16 +57,45 @@ class HistoryDishCooked : BaseFragment() {
                 Api(context!!).getApi()
             )
         paginationVM = ViewModelProvider(this,paginationFactory).get(PaginationVM::class.java)
+
+        val mainActivityFactory =
+            MainActivityFactory(
+                RoomDb(context!!), RxSchedulers.DEFAULT,
+                Api(context!!).getApi()
+            )
+        mainActivityVM =
+            ViewModelProvider(activity!!, mainActivityFactory).get(MainActivityVM::class.java)
+
         isDataInitialize()
     }
 
     private fun isDataInitialize() { //if init then get orders
-        paginationVM.checkDishes()
-        paginationVM.checkWaiters()
-        paginationVM.checkPrinters()
-        paginationVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
-            paginationVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
-                paginationVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
+        mainActivityVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
+            mainActivityVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
+                mainActivityVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
+                //    mainActivityVM.isOrderUpdated.observe(viewLifecycleOwner, Observer {
+                        if (dish&&waiters&&printers){
+                            OrdersKitchenPostModel(null,null,null).let { fetchHistory(it) } //test
+                        }else{
+                            //show loading bar
+                        }
+
+                  // })
+                })
+            })
+        })
+
+        mainActivityVM.isOrderUpdated.observe(viewLifecycleOwner, Observer {
+            if (it){
+                OrdersKitchenPostModel(null,null,null).let { fetchHistory(it) } //test
+            }else{
+                //show loading bar
+            }
+        })
+
+        /*      mainActivityVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
+            mainActivityVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
+                mainActivityVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
                     if (dish&&waiters&&printers){
                           OrdersKitchenPostModel(null,null,null).let { fetchHistory(it) } //test
                     }else{
@@ -70,7 +103,7 @@ class HistoryDishCooked : BaseFragment() {
                     }
                 })
             })
-        })
+        })*/
     }
 
     fun fetchHistory(post : OrdersKitchenPostModel){

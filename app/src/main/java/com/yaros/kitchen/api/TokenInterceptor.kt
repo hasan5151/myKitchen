@@ -2,16 +2,12 @@ package com.yaros.kitchen.api
 
 import android.content.Context
 import androidx.annotation.NonNull
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
 import com.yaros.kitchen.repositories.TokenRepo
 import com.yaros.kitchen.utils.Preferences
-import okhttp3.Credentials
 import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
-
+import java.net.UnknownHostException
 
 class TokenInterceptor(val waiterId: String, val password : String, val context: Context) : Interceptor {
     fun NewToken(chain: Interceptor.Chain, @NonNull accessToken: String): Response {
@@ -47,9 +43,9 @@ class TokenInterceptor(val waiterId: String, val password : String, val context:
                 System.out.println("test ${responseBody}")
                 if (responseBody!!.contains("Сессия не найдена")) {
                     val tokenRepo = TokenRepo(TokenService())
-                     val string = tokenRepo.getToken(waiterId,password)
+                    val string = tokenRepo.getToken(waiterId,password)
                     System.out.println("test2 ${string}")
-                     Preferences.savePref("waiter_token",string,context)
+                    Preferences.savePref("waiter_token",string,context)
 
                     val string2 = Preferences.getPref("waiter_token","",context)
                     return  NewToken(chain,string!!)
@@ -64,7 +60,6 @@ class TokenInterceptor(val waiterId: String, val password : String, val context:
             }catch(e: Throwable) {
                 e.printStackTrace()
             }
-
 /*
          if (response.code() == 401) {
            //

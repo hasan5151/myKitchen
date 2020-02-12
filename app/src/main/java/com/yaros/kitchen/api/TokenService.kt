@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit
 class TokenService {
     fun getApi(): ApiService {
         val client = OkHttpClient.Builder()
-             .addInterceptor(OauthInterceptor("mobi","123"))
-             .connectTimeout(100, TimeUnit.SECONDS)
+            .addInterceptor(OauthInterceptor("mobi","123"))
+            .connectTimeout(100, TimeUnit.SECONDS)
             .readTimeout(
                 100,
                 TimeUnit.SECONDS

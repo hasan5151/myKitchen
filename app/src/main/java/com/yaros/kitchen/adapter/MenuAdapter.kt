@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
 import com.yaros.kitchen.room.entity.PrintersModel
-import kotlinx.android.synthetic.main.chip_adapter.view.*
+import kotlinx.android.synthetic.main.menu_adapter.view.*
 
 
 abstract class MenuAdapter (val printers : List<PrintersModel>,val context : Context)  : RecyclerView.Adapter<MenuAdapter.MenuVH>() {

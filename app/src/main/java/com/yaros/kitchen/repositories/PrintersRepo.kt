@@ -38,6 +38,10 @@ class PrintersRepo (val db: RoomDb, val rx: RxSchedulers) {
         return db.PrintersDAO().getWaiter(id).compose(rx.applyObservable()).map { it.name }.blockingFirst()
     }
 
+    fun getPrintersById(id: String): PrintersModel{
+        return db.PrintersDAO().getPrinerById(id)
+    }
+
     fun isPrintersCreated(): LiveData<Boolean> {
         return db.PrintersDAO().isWaitersCreated()
     }

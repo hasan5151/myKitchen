@@ -8,8 +8,7 @@ import com.yaros.kitchen.api.TokenService
 import com.yaros.kitchen.models.*
 import com.yaros.kitchen.models.apiModels.HistoryModel
 import com.yaros.kitchen.models.apiModels.OrdersKitchenPostModel
-import com.yaros.kitchen.room.entity.KitchenItemModel
-import com.yaros.kitchen.room.entity.KitchenOrderModel
+import com.yaros.kitchen.room.entity.KitchenModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
@@ -59,6 +58,42 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
         compositeDisposable.add(apiService.getOrderItems(ordersKitchenPostModel).compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it->it }?.subscribe(
             { api ->
                 api.orders.forEach {order->
+                    order.dishes.forEach {item->
+
+                        if (!repos.getKitchenRepo().check(order.order,item.dish,item.item_date,item.count)){
+                            var waiterName : String? =  ""
+                            try {
+                                waiterName=  repos.getWaiterRepo().getWaiter(order.waiter)
+                            }catch (e: NullPointerException){
+                                waiterName=""
+                            }
+
+                            val dishesModel = repos.getDishesRepo().getItem(item.dish)
+                            val printerName= repos.getPrintersRepo().getPrintersById(api.printer)
+                            if (item.count>0){
+                                KitchenModel(order.number,api.printer,order.order,dishesModel.name,item.comment,item.dish,dishesModel.cookingTime,item.item_date,item.item_date,item.count,waiterName,0,printerName.name).let {
+                                    repos.getKitchenRepo().insert(it)
+                                }
+                            }/*else{ //TODO ask this part
+                                repos.getKitchenRepo().changeAmount(order.order,item.dish,item.count)
+                            }*/
+                        }
+                    }
+                }
+            }
+        ,{
+                 it.printStackTrace()})!!) //TODO filter if count -1
+    }
+
+    /*    fun getOrderItems(
+        printerList: List<String>?,
+        date_begin: Long?,
+        data_end: Long?
+    ){
+        val ordersKitchenPostModel = OrdersKitchenPostModel(printerList,date_begin,data_end)
+        compositeDisposable.add(apiService.getOrderItems(ordersKitchenPostModel).compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it->it }?.subscribe(
+            { api ->
+                api.orders.forEach {order->
                     if (!repos.getOrderRepo().checkOrder(order.order)!!) {
 
                         var waiterName : String? =  ""
@@ -92,10 +127,9 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
                     }
                 }
             }
-        /*,{
-                System.out.println("ananin amina salata init")
-                it.printStackTrace()}*/)!!) //TODO filter if count -1
-    }
+        ,{
+                 it.printStackTrace()})!!) //TODO filter if count -1
+    }*/
 
     fun getHashes() : Observable<HashModel>? = apiService.getHashes()?.compose(rxSchedulers.applyObservable())?.map { it.data }
 
