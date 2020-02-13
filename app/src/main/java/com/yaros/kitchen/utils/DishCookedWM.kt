@@ -18,7 +18,7 @@ import java.util.*
 
 
 @JvmSuppressWildcards
-class MyWorkManager(val appContext: Context, val workerParams: WorkerParameters) : ListenableWorker(appContext, workerParams) {
+class DishCookedWM(val appContext: Context, val workerParams: WorkerParameters) : ListenableWorker(appContext, workerParams) {
     @JvmSuppressWildcards
     override fun startWork(): ListenableFuture<Result> {
         val orderId = workerParams.inputData.getString("orderId")

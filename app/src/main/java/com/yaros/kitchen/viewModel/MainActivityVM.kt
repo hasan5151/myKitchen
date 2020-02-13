@@ -17,11 +17,15 @@ class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: Ap
 
     var isClicked: MutableLiveData<Boolean> = MutableLiveData()
     var isFullScreen: MutableLiveData<Boolean> = MutableLiveData()
+    var isOrderFetched: MutableLiveData<Boolean> = MutableLiveData()
 
     lateinit var isWaitersCreated: LiveData<Boolean>
     lateinit var isDishesCreated: LiveData<Boolean>
     lateinit var isPrintersCreated: LiveData<Boolean>
-     var isOrderUpdated: MutableLiveData<Boolean> = MutableLiveData()
+
+
+    var isHistoryUpdated: MutableLiveData<Boolean> = MutableLiveData()
+
 
     var hash: MutableLiveData<HashModel> = MutableLiveData()
 
@@ -35,6 +39,11 @@ class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: Ap
 
     fun setIsFullScreen(isFull : Boolean){
         isFullScreen.value = isFull
+    }
+
+    fun setIsOrderFetched(){
+        isOrderFetched.value = true
+        isOrderFetched.value = false
     }
 
     fun checkWaiters() {
@@ -70,13 +79,23 @@ class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: Ap
         apiRepo.getDishes()
     }
 
-    fun getOrderItems(printerList: List<String>?,date_begin: Long?=null,data_end: Long?=null){
+    fun getOrderItems(printerList: List<String>?=null,date_begin: Long?=null,data_end: Long?=null){
         apiRepo.getOrderItems(printerList,date_begin, data_end)
     }
 
-    fun setOrderUpdate(){
-        isOrderUpdated.value = true
-        isOrderUpdated.value= false
+    fun setHistoryUpdate(){
+        isHistoryUpdated.value = true
+        isHistoryUpdated.value= false
+    }
+
+
+
+    fun changeCountDownStatus(id: Int,status : String) {
+        repos.getKitchenRepo().changeCountDownStatus(id,status)
+    }
+
+    fun setCancelledOrders(id: Int,cancelledOrders : Int) {
+        repos.getKitchenRepo().setCancelledOrders(id,cancelledOrders)
     }
 
 

@@ -6,6 +6,11 @@ import androidx.room.PrimaryKey;
 @Entity
 public class KitchenModel {
 
+    public final Integer NOTSTARTED = 0;
+    public final Integer STARTED= 1;
+    public final Integer FINISHED = 2;
+    public final Integer NOREQTIME= 3;
+
     @PrimaryKey(autoGenerate = false)
     private Integer id;
     private String number;
@@ -20,7 +25,10 @@ public class KitchenModel {
     private String dateOriginal;
     private Integer count;
     private String waiterName;
-    private Integer isCountDownStarted;
+    private Integer countDownStatus;
+    private Integer isSent= 0;
+    private Integer cancelledOrders = 0;
+
 
     public Integer getId() {
         return id;
@@ -102,12 +110,12 @@ public class KitchenModel {
         this.count = count;
     }
 
-    public Integer getIsCountDownStarted() {
-        return isCountDownStarted;
+    public Integer getCountDownStatus() {
+        return countDownStatus;
     }
 
-    public void setIsCountDownStarted(Integer isCountDownStarted) {
-        this.isCountDownStarted = isCountDownStarted;
+    public void setCountDownStatus(Integer countDownStatus) {
+        this.countDownStatus = countDownStatus;
     }
 
     public String getDateOriginal() {
@@ -134,7 +142,9 @@ public class KitchenModel {
         this.printerName = printerName;
     }
 
-    public KitchenModel(String number, String printerId, String order_item, String name, String comment, String dish, Long reqTime, String date, String dateOriginal, Integer count, String waiterName, Integer isCountDownStarted,String printerName) {
+    public KitchenModel(String number, String printerId, String order_item, String name,
+                        String comment, String dish, Long reqTime, String date, String dateOriginal, Integer count, String waiterName, Integer countDownStatus, String printerName,
+                        Integer isSent,Integer cancelledOrders) {
         this.number = number;
         this.printerId = printerId;
         this.printerName = printerName;
@@ -147,6 +157,8 @@ public class KitchenModel {
         this.dateOriginal = dateOriginal;
         this.count = count;
         this.waiterName = waiterName;
-        this.isCountDownStarted = isCountDownStarted;
+        this.countDownStatus = countDownStatus;
+        this.isSent= isSent;
+        this.cancelledOrders= cancelledOrders;
     }
 }

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -17,7 +16,6 @@ import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.utils.Preferences
 import com.yaros.kitchen.utils.TVDrawable
 import kotlinx.android.synthetic.main.kitchen_adapter.view.*
-import kotlinx.android.synthetic.main.kitchen_item_adapter.view.*
 import kotlinx.android.synthetic.main.kitchen_item_adapter.view.badge
 import kotlinx.android.synthetic.main.kitchen_item_adapter.view.constraint
 import kotlinx.android.synthetic.main.kitchen_item_adapter.view.elapsedTime
@@ -36,7 +34,7 @@ abstract class KitchenAdapter (val context : Context): PagedListAdapter<KitchenM
                 override fun areContentsTheSame(oldItem: KitchenModel, newItem: KitchenModel) : Boolean {
                     if (!oldItem.reqTime.equals(newItem.reqTime))
                         return true
-                    else if (!oldItem.isCountDownStarted.equals(newItem.isCountDownStarted))
+                    else if (!oldItem.countDownStatus.equals(newItem.countDownStatus))
                         return true
                     return oldItem.equals(newItem)
                 }
@@ -88,7 +86,8 @@ abstract class KitchenAdapter (val context : Context): PagedListAdapter<KitchenM
         } else{
             if (DateUtil.remainCookTime(
                     item.date.replace(" ", "").toLong(),
-                    item.reqTime * item.count,
+                    item.reqTime,
+//                    item.reqTime * item.count,
                     0 //TODO set server diff
                 ) <1000) {
                 //   holder.elapsedTime.text = "00:00  "
@@ -185,7 +184,7 @@ abstract class KitchenAdapter (val context : Context): PagedListAdapter<KitchenM
     }
 
     private fun countDown(item : KitchenModel, holder: ItemVH) {
-        if (item.isCountDownStarted!=1) {
+        if (item.countDownStatus !=1) {
             try {
                 object : CountDownTimer(
                     DateUtil.remainCookTime(

@@ -169,4 +169,20 @@ class ExampleUnitTest {
 
 
      }
+
+    @Test
+    fun testForeach(){
+        val x = listOf(2,4,6,8,31)
+
+        x.forEachIndexed{index,unit->
+
+            if (x.size-1==index){
+                System.out.println("this is last item")
+            }
+
+            System.out.println(" text index  ${x.size} ${index} ${unit}")
+
+        }
+
+    }
 }

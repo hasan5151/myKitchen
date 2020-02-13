@@ -85,7 +85,7 @@ class HistoryDishCooked : BaseFragment() {
             })
         })
 
-        mainActivityVM.isOrderUpdated.observe(viewLifecycleOwner, Observer {
+        mainActivityVM.isHistoryUpdated.observe(viewLifecycleOwner, Observer {
             if (it){
                 OrdersKitchenPostModel(null,null,null).let { fetchHistory(it) } //test
             }else{

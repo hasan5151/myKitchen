@@ -3,9 +3,11 @@ package com.yaros.kitchen.repositories
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.room.Query
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenModel
+import io.reactivex.Completable
 
 class KitchenRepo (val db: RoomDb, val rx : RxSchedulers) {
     fun insert(itemModel: KitchenModel?) {
@@ -35,5 +37,15 @@ class KitchenRepo (val db: RoomDb, val rx : RxSchedulers) {
     }
 
     fun check(orderItem: String, dish: String,date : String, count: Int) : Boolean = db.KitchenDAO().check(orderItem,dish,date,count)
+
+
+    fun changeCountDownStatus(id: Int,status : String) {
+        db.KitchenDAO().changeCountDownStatus(id,status).compose(rx.applyCompletable()).subscribe()
+    }
+
+    fun setCancelledOrders(id: Int,cancelledOrders : Int) {
+        db.KitchenDAO().setCancelledOrders(id,cancelledOrders).compose(rx.applyCompletable()).subscribe()
+    }
+
 
 }

@@ -71,7 +71,7 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
                             val dishesModel = repos.getDishesRepo().getItem(item.dish)
                             val printerName= repos.getPrintersRepo().getPrintersById(api.printer)
                             if (item.count>0){
-                                KitchenModel(order.number,api.printer,order.order,dishesModel.name,item.comment,item.dish,dishesModel.cookingTime,item.item_date,item.item_date,item.count,waiterName,0,printerName.name).let {
+                                KitchenModel(order.number,api.printer,order.order,dishesModel.name,item.comment,item.dish,dishesModel.cookingTime,item.item_date,item.item_date,item.count,waiterName,0,printerName.name,0,0).let {
                                     repos.getKitchenRepo().insert(it)
                                 }
                             }/*else{ //TODO ask this part

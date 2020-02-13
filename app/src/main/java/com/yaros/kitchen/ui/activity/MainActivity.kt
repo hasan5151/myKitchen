@@ -12,6 +12,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import com.yaros.kitchen.R
@@ -20,9 +24,16 @@ import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.bottomModel.*
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.ui.fragment.BaseFragment
+import com.yaros.kitchen.utils.CatalogWM
+import com.yaros.kitchen.utils.CatalogWM.Companion.DISHES
+import com.yaros.kitchen.utils.CatalogWM.Companion.ORDERS
+import com.yaros.kitchen.utils.CatalogWM.Companion.PRINTERS
+import com.yaros.kitchen.utils.CatalogWM.Companion.WAITERS
 import com.yaros.kitchen.utils.Preferences
 import com.yaros.kitchen.viewModel.MainActivityVM
 import com.yaros.kitchen.viewModel.factory.MainActivityFactory
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewPager: ViewPager
@@ -82,22 +93,25 @@ class MainActivity : AppCompatActivity() {
             if(!oldCatalogHash!!.contentEquals(it.catalog_hash.toString())){
                 Preferences.savePref("catalogHash",it.catalog_hash,this)
                 System.out.println("catalogHash ${it.catalog_hash}")
-                mainActivityVM.fetchPrinters()
+                sendToServer(PRINTERS)
+                sendToServer(DISHES)
+                sendToServer(WAITERS)
+/*                mainActivityVM.fetchPrinters()
                 mainActivityVM.fetchDishes()
-                mainActivityVM.fetchWaiters()  //fetch datas with Work Manager
+                mainActivityVM.fetchWaiters()   */
             }
 
             val oldOrderHash = Preferences.getPref("orderHash","",this)
             if(!oldOrderHash!!.contentEquals(it.orders_hash.toString())){
                 Preferences.savePref("orderHash",it.orders_hash,this)
                 System.out.println("orderHash ${it.orders_hash}")
-                // if (::printerList.isInitialized)
                 mainActivityVM.isDishesCreated.observe(this, androidx.lifecycle.Observer {dish->
                     mainActivityVM.isWaitersCreated.observe(this, androidx.lifecycle.Observer {waiters->
                         mainActivityVM.isPrintersCreated.observe(this, androidx.lifecycle.Observer {printers->
                             if (dish&&waiters&&printers) {
-                            //    mainActivityVM.setOrderUpdate()
-                                mainActivityVM.getOrderItems(null) //fetch datas with Work Manager
+                                sendToServer(ORDERS)
+
+//                                mainActivityVM.getOrderItems() //fetch datas with Work Manager
                             }
                         })
                     })
@@ -167,4 +181,44 @@ class MainActivity : AppCompatActivity() {
         override fun getItemPosition(`object`: Any): Int = PagerAdapter.POSITION_NONE
         override fun getPageTitle(position: Int): CharSequence? = fragmentList.get(position).getName()
     }
+
+    private fun sendToServer(type: Int){
+        val data: Data = Data.Builder()
+            .putInt("type",type)
+            .build()
+        val catalogReq= OneTimeWorkRequest.Builder(CatalogWM::class.java)
+            .setInputData(data)
+            .build()
+        val operation = WorkManager.getInstance(this).enqueue(catalogReq)
+
+
+        if (type==ORDERS){
+            getStatusOfManager(catalogReq.id)
+            operation.state.observe(this, Observer {
+
+            })
+        }
+    }
+
+    private fun getStatusOfManager(id: UUID) {
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(id)
+            .observe(this, Observer { workInfo: WorkInfo ->
+                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    val data = workInfo.outputData
+                    val type= data.getInt("type",-1)
+                    if (type==ORDERS){
+                        mainActivityVM.setIsOrderFetched()
+
+                        startCountDown()
+                        //fetched finished succcessfully
+                    }
+                }
+            })
+    }
+
+    private fun startCountDown() {
+        mainActivityVM.
+    }
+
+
 }

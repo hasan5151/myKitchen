@@ -19,7 +19,6 @@ import com.yaros.kitchen.adapter.*
 import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.apiModels.DishCookedModel
-import com.yaros.kitchen.repositories.KitchenRepo
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.room.entity.KitchenModel
@@ -27,7 +26,7 @@ import com.yaros.kitchen.room.entity.KitchenOrderModel
 import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.utils.DialogUtil
-import com.yaros.kitchen.utils.MyWorkManager
+import com.yaros.kitchen.utils.DishCookedWM
 import com.yaros.kitchen.utils.Preferences
 import com.yaros.kitchen.viewModel.MainActivityVM
 import com.yaros.kitchen.viewModel.PaginationVM
@@ -45,7 +44,6 @@ class OrderFragment : BaseFragment(){
     val printersHash:HashMap<String, PrintersModel> = HashMap()
     lateinit var paginationVM: PaginationVM
     lateinit var mainActivityVM: MainActivityVM
-    lateinit var printerList: List<String>
     val countDownHash: HashMap<Int, CountDownTimer> = HashMap()
 
     override fun onCreateView(
@@ -79,7 +77,6 @@ class OrderFragment : BaseFragment(){
 
         isDataInitialize()
         observeIsFullScreen()
-
     }
 
     private fun observeIsFullScreen() {
@@ -120,10 +117,10 @@ class OrderFragment : BaseFragment(){
     private fun setPrinters() {
         paginationVM.getPrinters()
         paginationVM.printersList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            it.map { it.id }.let {
+       /*     it.map { it.id }.let {
                 printerList = it
                 paginationVM.getOrderItems(null)//TODO change dates, this just a example
-            }
+            }*/
             it.forEach {
                 printersHash.put(it.id,it)
             }
@@ -372,8 +369,8 @@ class OrderFragment : BaseFragment(){
             .putLong("cooking_date",dishCookedModel.cooking_date)
             .putLong("cooking_time",dishCookedModel.cooking_time)
             .build()
-        mainActivityVM.setOrderUpdate()
-        val uploadPhotoRequest = OneTimeWorkRequest.Builder(MyWorkManager::class.java)
+        mainActivityVM.setHistoryUpdate()
+        val uploadPhotoRequest = OneTimeWorkRequest.Builder(DishCookedWM::class.java)
             .setInputData(data)
             .build()
         WorkManager.getInstance(context!!).enqueue(uploadPhotoRequest)

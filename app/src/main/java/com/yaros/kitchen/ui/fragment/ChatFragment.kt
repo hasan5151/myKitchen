@@ -9,7 +9,9 @@ import com.yaros.kitchen.R
 class ChatFragment : BaseFragment() {
     override fun getName(): String = "Чат"
     override fun getDrawable(): Int =0
-
+    val ORDER = 0
+    val PRINTERS= 1
+    val REQUEST_TAKE_PHOTO = 1
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
