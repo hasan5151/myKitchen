@@ -23,6 +23,7 @@ class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: Ap
     lateinit var isWaitersCreated: LiveData<Boolean>
     lateinit var isDishesCreated: LiveData<Boolean>
     lateinit var isPrintersCreated: LiveData<Boolean>
+    var disposable = CompositeDisposable()
 
 
     var isHistoryUpdated: MutableLiveData<Boolean> = MutableLiveData()
@@ -31,7 +32,7 @@ class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: Ap
     var hash: MutableLiveData<HashModel> = MutableLiveData()
 
     val repos = Repos(db,rxSchedulers)
-    val apiRepo = ApiRepo(repos,rxSchedulers,apiService)
+    val apiRepo = ApiRepo(repos,rxSchedulers,apiService,disposable)
 
     fun isStopListAddButtonClick(){
         isClicked.value =true
@@ -58,7 +59,7 @@ class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: Ap
     }
 
     fun getHashes(){
-        CompositeDisposable().add(
+        disposable.add(
             Observable.interval(0, 5, TimeUnit.SECONDS)
                 .compose(rxSchedulers.applyObservable())
                 .subscribe {
@@ -100,6 +101,9 @@ class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: Ap
     fun getNewOrders() : List<KitchenModel> = repos.getKitchenRepo().getNewOrders()
 
 
-
+    override fun onCleared() {
+        disposable.clear()
+        super.onCleared()
+    }
 
 }

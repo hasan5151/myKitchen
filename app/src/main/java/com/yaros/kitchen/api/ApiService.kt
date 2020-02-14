@@ -1,10 +1,7 @@
 package com.yaros.kitchen.api
 
 import com.yaros.kitchen.models.*
-import com.yaros.kitchen.models.apiModels.DishCookedModel
-import com.yaros.kitchen.models.apiModels.GetOrderItems
-import com.yaros.kitchen.models.apiModels.HistoryModel
-import com.yaros.kitchen.models.apiModels.OrdersKitchenPostModel
+import com.yaros.kitchen.models.apiModels.*
 import com.yaros.kitchen.room.entity.WaitersModel
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -20,6 +17,9 @@ import retrofit2.http.Query
 interface ApiService {
     @GET("Services/hs/MobileKitchen?cmd=get_waiters")
     fun getWaiters(): Observable<BaseList<WaitersModel>?>?
+
+    @GET("Services/hs/MobileKitchen?cmd=get_waiters")
+    fun getWaiterss(): Observable<Response<BaseList<WaitersModel>?>?>?
 
     @GET("Services/hs/MobileKitchen?cmd=login_waiter")
     fun loginWaiter(
@@ -53,12 +53,20 @@ interface ApiService {
     @GET("Services/hs/MobileKitchen?cmd=get_printers")
     fun getPrinters(): Observable<Base<BaseType>?>?
 
+    @GET("Services/hs/MobileKitchen?cmd=get_printers")
+    fun getPrinterss(): Observable<Response<Base<BaseType>?>?>?
+
     @GET("Services/hs/MobileKitchen?cmd=get_kitchen_data")
     fun getKitchenData(): Observable<Base<BaseType>?>?
 
+    @GET("Services/hs/MobileKitchen?cmd=get_kitchen_data")
+    fun getKitchenDataa(): Observable<Response<Base<BaseType>?>?>?
+
     @POST("Services/hs/MobileKitchen?cmd=get_orders_kitchen")
     fun getOrderItems(@Body ordersKitchenPostModel: OrdersKitchenPostModel): Observable<BaseList<GetOrderItems>>
-//    fun getOrderItems(@Body printerList: List<String>, date_begin : Long?,data_end : Long? ): Observable<BaseList<BaseType>?>?
+
+    @POST("Services/hs/MobileKitchen?cmd=get_orders_kitchen")
+    fun getOrderItemsNew(@Body ordersKitchenPostModel: OrdersKitchenPostModel): Observable<Response<BaseList<OrdersKitchen>>>
 
     @GET( "Services/hs/MobileKitchen?cmd=get_kitchen_hashes")
     fun getHashes(): Observable<Base<HashModel>?>?

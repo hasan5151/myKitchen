@@ -15,8 +15,8 @@ import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import java.lang.NullPointerException
 
-class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService) {
-    val compositeDisposable = CompositeDisposable()
+class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService,val compositeDisposable: CompositeDisposable) {
+
 
     fun getWaiters(){
         val tokenService = TokenService()
@@ -150,10 +150,8 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
 
     fun getHistory(post : OrdersKitchenPostModel) : Observable<List<HistoryModel?>?>? =
         apiService.getHistory(post)?.compose(rxSchedulers.applyObservable())?.map { it.data }
-
 /*
     fun getHistory(post : OrdersKitchenPostModel) : Observable<GroupedObservable<String?,HistoryModel?>?>? =
         apiService.getHistory(post)?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it }?.groupBy { it.order }
 */
-
 }

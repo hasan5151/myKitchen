@@ -32,7 +32,7 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
     lateinit var isPrintersCreated: LiveData<Boolean>
 
     val repos = Repos(db,rxSchedulers)
-    val apiRepo = ApiRepo(repos,rxSchedulers,apiService)
+    val apiRepo = ApiRepo(repos,rxSchedulers,apiService,disposable)
 
     fun loadOrders() {
         order= repos.getOrderRepo().getAll()
@@ -173,5 +173,10 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
 
     fun changeAmount(orderItem: String, dish: String,  count : Int){
           repos.getKitchenRepo().changeAmount(orderItem,dish,count)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
     }
 }

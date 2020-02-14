@@ -19,6 +19,7 @@ import java.util.*
 
 @JvmSuppressWildcards
 class DishCookedWM(val appContext: Context, val workerParams: WorkerParameters) : ListenableWorker(appContext, workerParams) {
+    lateinit var compositeDisposable : CompositeDisposable
     @JvmSuppressWildcards
     override fun startWork(): ListenableFuture<Result> {
         val orderId = workerParams.inputData.getString("orderId")
@@ -27,7 +28,7 @@ class DishCookedWM(val appContext: Context, val workerParams: WorkerParameters) 
         val cooking_date = workerParams.inputData.getLong("cooking_date",-1)
         val cooking_time = workerParams.inputData.getLong("cooking_time",-1)
         val ticket: String = UUID.randomUUID().toString()
-
+        compositeDisposable = CompositeDisposable()
         val api = Api(appContext)
         val itemReadyModel = DishCookedModel(
             ticket,
@@ -43,12 +44,17 @@ class DishCookedWM(val appContext: Context, val workerParams: WorkerParameters) 
 
         val list = listOf(itemReadyModel)
         return CallbackToFutureAdapter.getFuture {callback ->
-            CompositeDisposable().add(api.getApi().sendDishCooked(list).compose(RxSchedulers.DEFAULT.applySingle()).map { it.meta }.subscribe ({meta->
-                if (meta.status.contentEquals("SUCCESS"))
+            compositeDisposable.add(api.getApi().sendDishCooked(list).compose(RxSchedulers.DEFAULT.applySingle()).map { it.meta }.subscribe ({meta->
+                if (meta.status!!.contentEquals("SUCCESS"))
                     callback.set(Result.success())
                 else
                     callback.set(Result.retry())
             },{it.printStackTrace()}))
         }
+    }
+
+    override fun onStopped() {
+        super.onStopped()
+        compositeDisposable.clear()
     }
 }

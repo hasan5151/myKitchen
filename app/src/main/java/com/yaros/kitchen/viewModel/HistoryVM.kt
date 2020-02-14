@@ -19,10 +19,12 @@ import com.yaros.kitchen.room.entity.KitchenOrderModel
 import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.utils.DateUtil
 import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
 
 class HistoryVM(db: RoomDb, val rxSchedulers: RxSchedulers, apiService: ApiService) : ViewModel() {
     val repos = Repos(db,rxSchedulers)
-    val apiRepo = ApiRepo(repos,rxSchedulers,apiService)
+    val compositeDisposable = CompositeDisposable()
+    val apiRepo = ApiRepo(repos,rxSchedulers,apiService,compositeDisposable)
 
     fun fetchHistory(post : OrdersKitchenPostModel) : Observable<List<HistoryModel?>?>? = apiRepo.getHistory(post)
 
@@ -53,4 +55,8 @@ class HistoryVM(db: RoomDb, val rxSchedulers: RxSchedulers, apiService: ApiServi
 */
 
 
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+    }
 }

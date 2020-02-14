@@ -187,15 +187,11 @@ class OrderFragment : BaseFragment(){
                             sendDishToServer(dishCookedModel)
                             paginationVM.updateItemTimeKitchen(context.resources.getString(R.string.ready),item.id)
                         })
-
                     }
-
                 }
-
 
                 if (!pos.contentEquals("-2")) {
                     paginationVM.getAllByPrinterId(pos)
-
                 }else{
                     paginationVM.getAll()
                 }
@@ -207,17 +203,12 @@ class OrderFragment : BaseFragment(){
                             showEmpty(true)
                         else
                             showEmpty(false, "Заказов нет")
-
                         kitchenAdapter.submitList(it)
-
                     })
-
                 kitchen.adapter =kitchenAdapter
                 val linearLayoutManager = LinearLayoutManager(context!!)
                 kitchen.layoutManager= linearLayoutManager
-
                 kitchen.itemAnimator = SlideInRightAnimator()
-
             }
 
             override fun showDialog() {
@@ -365,7 +356,7 @@ class OrderFragment : BaseFragment(){
         val data: Data = Data.Builder()
             .putString("orderId",dishCookedModel.order)
             .putString("dishId",dishCookedModel.dish)
-            .putString("printer",dishCookedModel.order)
+            .putString("printer",dishCookedModel.printer)
             .putLong("cooking_date",dishCookedModel.cooking_date)
             .putLong("cooking_time",dishCookedModel.cooking_time)
             .build()
@@ -457,5 +448,4 @@ class OrderFragment : BaseFragment(){
     override fun getDrawable(): Int = R.drawable.order
     private fun  checkBoxAdd() : PrintersModel = PrintersModel("-1","add",false)
     private fun  checkBoxAll() : PrintersModel = PrintersModel("-2","Все",false)
-
 }

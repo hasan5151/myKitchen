@@ -134,7 +134,6 @@ class MainActivity : AppCompatActivity() {
                         mainActivityVM.isPrintersCreated.observe(this, androidx.lifecycle.Observer {printers->
                             if (dish&&waiters&&printers) {
                                 sendToServer(ORDERS)
-
 //                                mainActivityVM.getOrderItems() //fetch datas with Work Manager
                             }
                         })

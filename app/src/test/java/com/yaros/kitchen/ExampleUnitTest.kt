@@ -4,6 +4,7 @@ import android.util.Base64
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.yaros.kitchen.models.StopListModel
+import com.yaros.kitchen.models.apiModels.OrdersKitchen
 import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.utils.DateUtil
 import org.junit.Assert.assertEquals
@@ -196,5 +197,23 @@ class ExampleUnitTest {
         cancelledOrders=cancelledOrders-count
 
         System.out.println("${cancelledOrders}")
+    }
+
+    @Test
+    fun kotlinSort(){
+        var x = listOf<OrdersKitchen>()
+        /*        val x = listOf(OrdersKitchen("1","2","3","4","5","5",1,"6","5","1","1"),
+        OrdersKitchen("1","2","3","4","5","5",1,"2","5","1","1"),
+        OrdersKitchen("1","2","3","4","5","5",1,"3","5","1","1"),
+        OrdersKitchen("1","2","3","4","5","5",1,"5","5","1","1"))*/
+
+        System.out.println(" x size ${x.size}")
+            x.sortedBy { it.item_date }?.forEachIndexed {index,it ->
+                if  (index==x.size-1)
+                    System.out.println("last item")
+                System.out.println(it.item_date)
+
+            }
+
     }
 }
