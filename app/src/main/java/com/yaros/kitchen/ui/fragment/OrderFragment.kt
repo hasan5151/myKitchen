@@ -135,7 +135,7 @@ class OrderFragment : BaseFragment(){
                     override fun updateRemainTime(item: KitchenModel, milisUntilFinish: Long) {
                         if (milisUntilFinish>0){
 //                    paginationVM.updateElapsedTime("${milisUntilFinish}", item.id)
-                        }else{
+                        }else{ // if it is 0 it means countDown is finished
 //                    paginationVM.updateElapsedTime("${0}", item.id)
                             destroyCountDown(item.id)
                             countDownHash.remove(item.id)

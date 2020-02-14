@@ -57,6 +57,7 @@ abstract class KitchenAdapter (val context : Context): PagedListAdapter<KitchenM
         val orderId=  itemView.orderId
         val waiterName=  itemView.waiterName
         val printerName=  itemView.printerName
+        val cancelledOrders=  itemView.cancelledOrders
     }
 
     override fun onBindViewHolder(holder: ItemVH, position: Int) {
@@ -68,6 +69,12 @@ abstract class KitchenAdapter (val context : Context): PagedListAdapter<KitchenM
         holder.orderId.text ="№ ${item?.number}"
         holder.waiterName.text = item?.waiterName
         holder.printerName.text = item?.printerName
+
+        if (item!!.cancelledOrders>0){
+            holder.cancelledOrders.visibility = View.VISIBLE
+            holder.cancelledOrders.text = "${item.cancelledOrders} заказы отменены"
+        }else
+            holder.cancelledOrders.visibility = View.GONE
 
         if (item!!.reqTime>0L) {
             countDown(item, holder)
@@ -88,9 +95,8 @@ abstract class KitchenAdapter (val context : Context): PagedListAdapter<KitchenM
                     item.date.replace(" ", "").toLong(),
                     item.reqTime,
 //                    item.reqTime * item.count,
-                    0 //TODO set server diff
+                    Preferences.getPref("diff", "0", context)?.toLong()!!
                 ) <1000) {
-                //   holder.elapsedTime.text = "00:00  "
                 holder.elapsedTime.setTextColor(
                     ContextCompat.getColor(
                         context,
@@ -184,7 +190,7 @@ abstract class KitchenAdapter (val context : Context): PagedListAdapter<KitchenM
     }
 
     private fun countDown(item : KitchenModel, holder: ItemVH) {
-        if (item.countDownStatus !=1) {
+        if (item.countDownStatus <2) {
             try {
                 object : CountDownTimer(
                     DateUtil.remainCookTime(

@@ -36,6 +36,8 @@ class TokenInterceptor(val waiterId: String, val password : String, val context:
         val response = proceed(request)
         if (response.code()==406){
             //TODO session ended
+        }else if (response.code() == 500){
+            return  NewToken(chain,string)
         }
         else
             try {

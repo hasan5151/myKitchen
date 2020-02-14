@@ -6,10 +6,7 @@ import androidx.room.PrimaryKey;
 @Entity
 public class KitchenModel {
 
-    public final Integer NOTSTARTED = 0;
-    public final Integer STARTED= 1;
-    public final Integer FINISHED = 2;
-    public final Integer NOREQTIME= 3;
+
 
     @PrimaryKey(autoGenerate = false)
     private Integer id;
@@ -136,6 +133,22 @@ public class KitchenModel {
 
     public String getPrinterName() {
         return printerName;
+    }
+
+    public Integer getIsSent() {
+        return isSent;
+    }
+
+    public void setIsSent(Integer isSent) {
+        this.isSent = isSent;
+    }
+
+    public Integer getCancelledOrders() {
+        return cancelledOrders;
+    }
+
+    public void setCancelledOrders(Integer cancelledOrders) {
+        this.cancelledOrders = cancelledOrders;
     }
 
     public void setPrinterName(String printerName) {

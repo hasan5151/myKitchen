@@ -123,6 +123,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <TextView
+            android:id="@+id/cancelledOrders"
+            android:visibility="gone"
+            android:text="2 заказы отменены"
+            android:duplicateParentState="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textColor="@color/red"
+            android:layout_marginTop="10dp"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orderTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

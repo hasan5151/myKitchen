@@ -9,6 +9,7 @@ import com.yaros.kitchen.models.HashModel
 import com.yaros.kitchen.repositories.ApiRepo
 import com.yaros.kitchen.repositories.Repos
 import com.yaros.kitchen.room.db.RoomDb
+import com.yaros.kitchen.room.entity.KitchenModel
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -88,15 +89,16 @@ class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: Ap
         isHistoryUpdated.value= false
     }
 
-
-
-    fun changeCountDownStatus(id: Int,status : String) {
+    fun changeCountDownStatus(id: Int,status : Int) {
         repos.getKitchenRepo().changeCountDownStatus(id,status)
     }
 
     fun setCancelledOrders(id: Int,cancelledOrders : Int) {
         repos.getKitchenRepo().setCancelledOrders(id,cancelledOrders)
     }
+
+    fun getNewOrders() : List<KitchenModel> = repos.getKitchenRepo().getNewOrders()
+
 
 
 

@@ -185,4 +185,16 @@ class ExampleUnitTest {
         }
 
     }
+
+    @Test
+    fun tesy(){
+        val count= -3
+        var cancelledOrders = 4
+        cancelledOrders=cancelledOrders-count
+
+        System.out.println("${cancelledOrders}")
+        cancelledOrders=cancelledOrders-count
+
+        System.out.println("${cancelledOrders}")
+    }
 }

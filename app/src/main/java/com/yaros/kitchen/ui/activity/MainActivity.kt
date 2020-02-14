@@ -18,11 +18,13 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
 import com.yaros.kitchen.R
 import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.bottomModel.*
 import com.yaros.kitchen.room.db.RoomDb
+import com.yaros.kitchen.room.entity.KitchenModel
 import com.yaros.kitchen.ui.fragment.BaseFragment
 import com.yaros.kitchen.utils.CatalogWM
 import com.yaros.kitchen.utils.CatalogWM.Companion.DISHES
@@ -43,6 +45,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var bottom_navigation : BottomNavigationView
     lateinit var mainActivityVM: MainActivityVM
     var isViewed: Boolean = false
+    val NOTSTARTED = 0
+    val STARTED = 1
+    val FINISHED = 2
+    val NOREQTIME = 3
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         setViewPagerAdapter()
         setTabLayout()
         setBottomNavigationView()
-
+        orderFetched()
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.setOnClickListener({
@@ -69,13 +75,31 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-
-
         mainActivityVM.checkDishes()
         mainActivityVM.checkWaiters()
         mainActivityVM.checkPrinters()
         mainActivityVM.getHashes()
         setHash()
+
+        RoomDb(this).KitchenDAO().getCancelledOrders().let {
+            System.out.println("it size1 ${it.size} ")
+        }
+        RoomDb(this).KitchenDAO().getCancelledOrders2().let {
+            System.out.println("it size2 ${it.size} ")
+        }
+
+        RoomDb(this).KitchenDAO().selectItemDecrease("9e96a039-4d50-11ea-a01c-0800271739ee","27eeb3bb-23d8-11e5-92a1-002522ec5b96",-1).let {
+            System.out.println("it size2 ${it?.date} ")
+        }
+
+        RoomDb(this).KitchenDAO().getAll2().forEach {
+            System.out.println("it size2x ${Gson().toJson(it,KitchenModel::class.java)} ")
+        }
+
+        RoomDb(this).KitchenDAO().check2("9e96a039-4d50-11ea-a01c-0800271739ee","27eeb3bb-23d8-11e5-92a1-002522ec5b96","1581661374000",-1).let {
+            System.out.println("it size22 ${it} ")
+        }
+//        RoomDb(this).KitchenDAO().changeAmountById(1,-3).compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe()
     }
 
     private fun setHash() {
@@ -194,9 +218,9 @@ class MainActivity : AppCompatActivity() {
 
         if (type==ORDERS){
             getStatusOfManager(catalogReq.id)
-            operation.state.observe(this, Observer {
+      /*      operation.state.observe(this, Observer {
 
-            })
+            })*/
         }
     }
 
@@ -209,15 +233,28 @@ class MainActivity : AppCompatActivity() {
                     if (type==ORDERS){
                         mainActivityVM.setIsOrderFetched()
 
-                        startCountDown()
+
                         //fetched finished succcessfully
                     }
                 }
             })
     }
 
-    private fun startCountDown() {
-        mainActivityVM.
+    private fun orderFetched() {
+        mainActivityVM.isOrderFetched.observe(this, Observer {
+            mainActivityVM.getNewOrders().forEach {
+                if(it.reqTime>0){
+                    startCountDown(it)
+                    mainActivityVM.changeCountDownStatus(it.id,STARTED)
+                }else{
+                    mainActivityVM.changeCountDownStatus(it.id,NOREQTIME)
+                }
+            }
+        })
+    }
+
+    private fun startCountDown(kitchenModel: KitchenModel) {
+
     }
 
 

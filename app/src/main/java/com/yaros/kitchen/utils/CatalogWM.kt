@@ -131,7 +131,7 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
                                         val dishesModel = repos.getDishesRepo().getItem(item.dish)
                                         val printerName =
                                             repos.getPrintersRepo().getPrintersById(api.printer)
-                                        if (item.count > 0) {
+                                     //   if (item.count > 0) {
                                             KitchenModel(
                                                 order.number,
                                                 api.printer,
@@ -151,9 +151,11 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
                                             ).let {
                                                 repos.getKitchenRepo().insert(it)
                                             }
-                                        }/*else{ //TODO ask this part
+                                      //  }else{ //TODO ask this part
+                                        if (item.count < 0){
+                                            System.out.println("only one time baby")
                                              repos.getKitchenRepo().changeAmount(order.order,item.dish,item.count)
-                                        }*/
+                                        }
                                     }
                                     val data: Data = Data.Builder()
                                         .putInt("type",ORDERS)

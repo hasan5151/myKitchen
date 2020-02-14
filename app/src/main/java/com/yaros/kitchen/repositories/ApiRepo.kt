@@ -1,6 +1,7 @@
 package com.yaros.kitchen.repositories
 
 import android.os.Build
+import android.widget.Toast
 import com.yaros.kitchen.BuildConfig
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
@@ -24,7 +25,7 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
                 System.out.println("init it ${it}")
                 repos.getWaiterRepo().insert(it)
 
-        },{it.printStackTrace()})!!)
+            },{it.printStackTrace()})!!)
     }
 
     fun logoutWaiter(waiterToken: String){
@@ -37,8 +38,8 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
 
     fun getPrinters(){
         compositeDisposable.add(apiService.getPrinters()?.compose(rxSchedulers.applyObservable())?.map { it.data?.printers }?.flatMapIterable { it }?.subscribe({
-               repos.getPrintersRepo().insert(it)
-            },{it.printStackTrace()})!!)
+            repos.getPrintersRepo().insert(it)
+        },{it.printStackTrace()})!!)
     }
 
     fun getDishes(){
@@ -46,7 +47,7 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
             {
                 repos.getDishesRepo().insert(it)
             }
-        ,{it.printStackTrace()})!!)
+            ,{it.printStackTrace()})!!)
     }
 
     fun getOrderItems(
@@ -54,6 +55,7 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
         date_begin: Long?,
         data_end: Long?
     ){
+        System.out.println("it sizeXY asdasdansdm,ansd")
         val ordersKitchenPostModel = OrdersKitchenPostModel(printerList,date_begin,data_end)
         compositeDisposable.add(apiService.getOrderItems(ordersKitchenPostModel).compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it->it }?.subscribe(
             { api ->
@@ -61,6 +63,10 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
                     order.dishes.forEach {item->
 
                         if (!repos.getKitchenRepo().check(order.order,item.dish,item.item_date,item.count)){
+                            System.out.println("it sizeXY ${item.item_date}")
+                            System.out.println("it sizeXY asdasdansdm,ansd")
+
+
                             var waiterName : String? =  ""
                             try {
                                 waiterName=  repos.getWaiterRepo().getWaiter(order.waiter)
@@ -74,15 +80,24 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
                                 KitchenModel(order.number,api.printer,order.order,dishesModel.name,item.comment,item.dish,dishesModel.cookingTime,item.item_date,item.item_date,item.count,waiterName,0,printerName.name,0,0).let {
                                     repos.getKitchenRepo().insert(it)
                                 }
-                            }/*else{ //TODO ask this part
-                                repos.getKitchenRepo().changeAmount(order.order,item.dish,item.count)
-                            }*/
+                            }else{ //TODO ask this part
+                                System.out.println("it sizeXX")
+
+
+                   /*             repos.getKitchenRepo().selectItemDecrease(order.order,item.dish,item.count)?.let {
+                                    System.out.println("it sizeX ${it.id}")
+                                    System.out.println("it sizeX1 ${item.count}")
+                                    repos.getKitchenRepo().changeAmountById(it?.id,item.count)
+                                }*/
+
+//                                repos.getKitchenRepo().changeAmount(order.order,item.dish,item.count)
+                            }
                         }
                     }
                 }
             }
-        ,{
-                 it.printStackTrace()})!!) //TODO filter if count -1
+            ,{
+                it.printStackTrace()})!!) //TODO filter if count -1
     }
 
     /*    fun getOrderItems(
