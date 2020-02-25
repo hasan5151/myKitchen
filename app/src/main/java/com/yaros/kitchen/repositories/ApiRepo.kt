@@ -8,6 +8,7 @@ import com.yaros.kitchen.api.TokenService
 import com.yaros.kitchen.models.*
 import com.yaros.kitchen.models.apiModels.HistoryModel
 import com.yaros.kitchen.models.apiModels.OrdersKitchenPostModel
+import com.yaros.kitchen.utils.Preferences
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -46,6 +47,8 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
     }
 
     fun getHashes() : Observable<HashModel>? = apiService.getHashes()?.compose(rxSchedulers.applyObservable())?.map { it.data }
+
+    fun getHashes2(string : String) : Observable<HashModel>? = apiService.getHashes2(string)?.compose(rxSchedulers.applyObservable())?.map { it.data }
 
     fun getHistory(post : OrdersKitchenPostModel) : Observable<List<HistoryModel?>?>? =
         apiService.getHistory(post)?.compose(rxSchedulers.applyObservable())?.map { it.data }

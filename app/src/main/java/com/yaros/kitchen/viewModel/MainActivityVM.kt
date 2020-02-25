@@ -11,6 +11,7 @@ import com.yaros.kitchen.repositories.ApiRepo
 import com.yaros.kitchen.repositories.Repos
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenModel
+import com.yaros.kitchen.utils.Preferences
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -91,7 +92,8 @@ class MainActivityVM (val db: RoomDb, val rxSchedulers: RxSchedulers,var apiServ
         isOrderFetched.value = false
      }
 
-    fun getHashes() {
+    fun getHashes(string : String) {
+        System.out.println("get hashes test")
         if (::countDownTimer.isInitialized)
         countDownTimer.cancel()
 

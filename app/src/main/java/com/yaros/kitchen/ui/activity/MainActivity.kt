@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
       /*          mainActivityVM.stopTimer()
                 mainActivityVM.resumeTimer()*/
                 mainActivityVM.setApiService(Api(this))
-                mainActivityVM.getHashes()
+                mainActivityVM.getHashes(Preferences.getPref("waiter_token","",this)!!)
             }
         })
 
@@ -258,7 +258,7 @@ class MainActivity : AppCompatActivity() {
  /*           mainActivityVM.stopTimer()
             mainActivityVM.resumeTimer()*/
             mainActivityVM.setApiService(Api(this))
-            mainActivityVM.getHashes()
+            mainActivityVM.getHashes(Preferences.getPref("waiter_token","",this)!!)
             mainActivityVM.setInstallation(true)
         }
         else {

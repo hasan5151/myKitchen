@@ -76,6 +76,9 @@ interface ApiService {
     @GET( "hs/MobileKitchen?cmd=get_kitchen_hashes")
     fun getHashes(): Observable<Base<HashModel>?>?
 
+    @GET( "hs/MobileKitchen?cmd=get_kitchen_hashes")
+    fun getHashes2(@Query("waiter_token") token: String): Observable<Base<HashModel>?>?
+
 
     @JvmSuppressWildcards
     @POST( "hs/MobileKitchen?cmd=dish_cooked")
