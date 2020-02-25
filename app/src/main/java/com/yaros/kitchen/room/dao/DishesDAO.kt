@@ -23,6 +23,12 @@ interface DishesDAO {
     @Query("DELETE FROM  DishesModel WHERE id= :id")
     fun deleteItem(id: String) : Completable
 
+    @Query("DELETE FROM  DishesModel")
+    fun deleteAll() : Completable
+
+    @Query("UPDATE DishesModel SET cookingTime=180")
+    fun updateCookingTime()
+
     @Query("SELECT * FROM DishesModel")
     fun getAll(): LiveData<List<DishesModel>>
 

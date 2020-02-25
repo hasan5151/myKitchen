@@ -6,8 +6,6 @@ import androidx.room.PrimaryKey;
 @Entity
 public class KitchenModel {
 
-
-
     @PrimaryKey(autoGenerate = false)
     private Integer id;
     private String number;
@@ -23,9 +21,10 @@ public class KitchenModel {
     private Integer count;
     private String waiterName;
     private Integer countDownStatus;
-    private Integer isSent= 0;
-    private Integer cancelledOrders = 0;
-
+    private Integer isSent;
+    private Integer cancelledOrders;
+    private String item_order;
+    private String item_number;
 
     public Integer getId() {
         return id;
@@ -155,9 +154,25 @@ public class KitchenModel {
         this.printerName = printerName;
     }
 
+    public String getItem_order() {
+        return item_order;
+    }
+
+    public void setItem_order(String item_order) {
+        this.item_order = item_order;
+    }
+
+    public String getItem_number() {
+        return item_number;
+    }
+
+    public void setItem_number(String item_number) {
+        this.item_number = item_number;
+    }
+
     public KitchenModel(String number, String printerId, String order_item, String name,
                         String comment, String dish, Long reqTime, String date, String dateOriginal, Integer count, String waiterName, Integer countDownStatus, String printerName,
-                        Integer isSent,Integer cancelledOrders) {
+                        Integer isSent, Integer cancelledOrders, String item_order, String item_number) {
         this.number = number;
         this.printerId = printerId;
         this.printerName = printerName;
@@ -173,5 +188,7 @@ public class KitchenModel {
         this.countDownStatus = countDownStatus;
         this.isSent= isSent;
         this.cancelledOrders= cancelledOrders;
+        this.item_number= item_number;
+        this.item_order=item_order;
     }
 }

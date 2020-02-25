@@ -1,13 +1,13 @@
 package com.yaros.kitchen.repositories
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.LiveDataReactiveStreams
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import androidx.room.Query
 import com.yaros.kitchen.api.RxSchedulers
+import com.yaros.kitchen.models.KitchenTop
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenModel
-import io.reactivex.Completable
 
 class KitchenRepo (val db: RoomDb, val rx : RxSchedulers) {
     fun insert(itemModel: KitchenModel?) {
@@ -17,6 +17,32 @@ class KitchenRepo (val db: RoomDb, val rx : RxSchedulers) {
     fun delete(id: Int) {
         db.KitchenDAO().deleteItem(id).compose(rx.applyCompletable()).subscribe()
     }
+
+    fun getAllGroupBy() : LiveData<PagedList<KitchenTop>> =
+        LivePagedListBuilder<Int, KitchenTop>(
+            db.KitchenDAO().getAllGroupBy(), 10
+        ).build()
+
+
+    fun getAllGroupByPrinter(pos : String?) : LiveData<PagedList<KitchenTop>> =
+        LivePagedListBuilder<Int, KitchenTop>(
+            db.KitchenDAO().getAllGroupByPrinter(pos), 10
+        ).build()
+
+
+    fun getItemOrders2(pos : String?) : LiveData<PagedList<KitchenModel>> =
+        LivePagedListBuilder<Int, KitchenModel>(
+            db.KitchenDAO().getItemOrders2(pos), 10
+        ).build()
+
+    fun getItemOrders(item_order : String?) : LiveData<List<KitchenModel>> =
+            db.KitchenDAO().getItemOrders(item_order)
+
+/*    fun stopCountDown() : LiveData<KitchenModel> =
+            db.KitchenDAO().stopCountDown()*/
+
+    fun stopCountDown() : LiveData<KitchenModel> =
+            LiveDataReactiveStreams.fromPublisher(db.KitchenDAO().stopCountDown())
 
     fun getAllByPrinter(printer: String) : LiveData<PagedList<KitchenModel>> =
         LivePagedListBuilder<Int, KitchenModel>(
@@ -54,7 +80,4 @@ class KitchenRepo (val db: RoomDb, val rx : RxSchedulers) {
     }
 
     fun getNewOrders() : List<KitchenModel> = db.KitchenDAO().getNewOrders()
-
-
-
 }

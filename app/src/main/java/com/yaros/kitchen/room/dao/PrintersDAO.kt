@@ -42,4 +42,9 @@ interface PrintersDAO {
     @Query("SELECT * FROM PRINTERSMODEL WHERE isChecked=:isChecked")
     fun getCheckedPrinters(isChecked: Boolean=true) : LiveData<List<PrintersModel>>
 
+
+    @Query("DELETE FROM  PRINTERSMODEL")
+    fun deleteAll() : Completable
+
+
 }

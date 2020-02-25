@@ -9,7 +9,6 @@ import com.yaros.kitchen.room.entity.ItemInfoModel
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import io.reactivex.Flowable
 
-
 class ItemRepo(val db: RoomDb, val rx : RxSchedulers) {
     fun getAll() : LiveData<PagedList<KitchenItemModel>> =
         LivePagedListBuilder<Int, KitchenItemModel>(

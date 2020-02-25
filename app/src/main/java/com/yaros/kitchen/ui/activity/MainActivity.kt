@@ -1,7 +1,13 @@
 package com.yaros.kitchen.ui.activity
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.text.Editable
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -18,7 +24,6 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
-import com.google.gson.Gson
 import com.yaros.kitchen.R
 import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.RxSchedulers
@@ -31,11 +36,11 @@ import com.yaros.kitchen.utils.CatalogWM.Companion.DISHES
 import com.yaros.kitchen.utils.CatalogWM.Companion.ORDERS
 import com.yaros.kitchen.utils.CatalogWM.Companion.PRINTERS
 import com.yaros.kitchen.utils.CatalogWM.Companion.WAITERS
+import com.yaros.kitchen.utils.DialogUtil
 import com.yaros.kitchen.utils.Preferences
 import com.yaros.kitchen.viewModel.MainActivityVM
 import com.yaros.kitchen.viewModel.factory.MainActivityFactory
 import java.util.*
-
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewPager: ViewPager
@@ -53,6 +58,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        if (isTablet()){
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+
         init()
         setViewPagerAdapter()
         setTabLayout()
@@ -75,38 +84,32 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        mainActivityVM.checkDishes()
-        mainActivityVM.checkWaiters()
-        mainActivityVM.checkPrinters()
-        mainActivityVM.getHashes()
+        mainActivityVM.waitersFetched.observe(this, Observer {
+            if (it){
+      /*          mainActivityVM.stopTimer()
+                mainActivityVM.resumeTimer()*/
+                mainActivityVM.setApiService(Api(this))
+                mainActivityVM.getHashes()
+            }
+        })
+
+        val ipStr= Preferences.getPref("ip","-1",this)
+
+        if (ipStr?.contentEquals("-1")!!)
+            showSettings()
+        else
+            checkFirstFetch()
+
         setHash()
-
-        RoomDb(this).KitchenDAO().getCancelledOrders().let {
-            System.out.println("it size1 ${it.size} ")
-        }
-        RoomDb(this).KitchenDAO().getCancelledOrders2().let {
-            System.out.println("it size2 ${it.size} ")
-        }
-
-        RoomDb(this).KitchenDAO().selectItemDecrease("9e96a039-4d50-11ea-a01c-0800271739ee","27eeb3bb-23d8-11e5-92a1-002522ec5b96",-1).let {
-            System.out.println("it size2 ${it?.date} ")
-        }
-
-        RoomDb(this).KitchenDAO().getAll2().forEach {
-            System.out.println("it size2x ${Gson().toJson(it,KitchenModel::class.java)} ")
-        }
-
-        RoomDb(this).KitchenDAO().check2("9e96a039-4d50-11ea-a01c-0800271739ee","27eeb3bb-23d8-11e5-92a1-002522ec5b96","1581661374000",-1).let {
-            System.out.println("it size22 ${it} ")
-        }
-//        RoomDb(this).KitchenDAO().changeAmountById(1,-3).compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe()
     }
 
+
     private fun setHash() {
-        mainActivityVM.getHashes()
+        System.out.println("selam")
         mainActivityVM.hash.observe(this, androidx.lifecycle.Observer {
             val oldTimeStamp = Preferences.getPref("timeStamp","",this)
             if(!oldTimeStamp!!.contentEquals(it.time_server.toString())){
+                System.out.println("selam2")
                 Preferences.savePref("timeStamp","${it.time_server}",this)
                 val diff = System.currentTimeMillis()-it.time_server
                 Preferences.savePref("diff","${diff}",this)
@@ -115,29 +118,25 @@ class MainActivity : AppCompatActivity() {
 
             val oldCatalogHash= Preferences.getPref("catalogHash","",this)
             if(!oldCatalogHash!!.contentEquals(it.catalog_hash.toString())){
+                System.out.println("selam3")
                 Preferences.savePref("catalogHash",it.catalog_hash,this)
                 System.out.println("catalogHash ${it.catalog_hash}")
-                sendToServer(PRINTERS)
                 sendToServer(DISHES)
+                sendToServer(PRINTERS)
                 sendToServer(WAITERS)
-/*                mainActivityVM.fetchPrinters()
-                mainActivityVM.fetchDishes()
-                mainActivityVM.fetchWaiters()   */
             }
 
             val oldOrderHash = Preferences.getPref("orderHash","",this)
             if(!oldOrderHash!!.contentEquals(it.orders_hash.toString())){
+                System.out.println("selam4")
                 Preferences.savePref("orderHash",it.orders_hash,this)
                 System.out.println("orderHash ${it.orders_hash}")
-                mainActivityVM.isDishesCreated.observe(this, androidx.lifecycle.Observer {dish->
-                    mainActivityVM.isWaitersCreated.observe(this, androidx.lifecycle.Observer {waiters->
-                        mainActivityVM.isPrintersCreated.observe(this, androidx.lifecycle.Observer {printers->
-                            if (dish&&waiters&&printers) {
-                                sendToServer(ORDERS)
-//                                mainActivityVM.getOrderItems() //fetch datas with Work Manager
-                            }
-                        })
-                    })
+
+                mainActivityVM.isInstallationComplete.observe(this, androidx.lifecycle.Observer {
+                    if (it) {
+                        System.out.println("selam5")
+                        sendToServer(ORDERS)
+                    }
                 })
             }
         })
@@ -214,13 +213,12 @@ class MainActivity : AppCompatActivity() {
             .build()
         val operation = WorkManager.getInstance(this).enqueue(catalogReq)
 
+//        if (type==ORDERS){
+        getStatusOfManager(catalogReq.id)
+        /*      operation.state.observe(this, Observer {
 
-        if (type==ORDERS){
-            getStatusOfManager(catalogReq.id)
-      /*      operation.state.observe(this, Observer {
-
-            })*/
-        }
+              })*/
+//        }
     }
 
     private fun getStatusOfManager(id: UUID) {
@@ -229,11 +227,11 @@ class MainActivity : AppCompatActivity() {
                 if (workInfo.state == WorkInfo.State.SUCCEEDED) {
                     val data = workInfo.outputData
                     val type= data.getInt("type",-1)
-                    if (type==ORDERS){
-                        mainActivityVM.setIsOrderFetched()
-
-
-                        //fetched finished succcessfully
+                    when(type){
+                        ORDERS -> mainActivityVM.setIsOrderFetched()
+                        PRINTERS -> mainActivityVM.setIsPrinterFetch(true)
+                        DISHES -> mainActivityVM.setIsDishFetch(true)
+                        WAITERS -> mainActivityVM.setIsWaiterFetch(true)
                     }
                 }
             })
@@ -252,9 +250,119 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun startCountDown(kitchenModel: KitchenModel) {
+    private fun startCountDown(kitchenModel: KitchenModel) {  }
 
+    private fun checkFirstFetch() {
+        val first= Preferences.getPref("first","false",this)
+        if (first!!.contentEquals("true")){
+ /*           mainActivityVM.stopTimer()
+            mainActivityVM.resumeTimer()*/
+            mainActivityVM.setApiService(Api(this))
+            mainActivityVM.getHashes()
+            mainActivityVM.setInstallation(true)
+        }
+        else {
+            sendToServer(WAITERS)
+            mainActivityVM.dishFetched.observe(this, Observer { dish ->
+                mainActivityVM.printerFetched.observe(this, Observer { printer ->
+                    mainActivityVM.waitersFetched.observe(this, Observer { waiter ->
+                        run {
+                            if (dish && printer && waiter) {
+                                if (first!!.contentEquals("false")) {
+                                    mainActivityVM.setInstallation(true)
+                   /*                 mainActivityVM.setApiService(Api(this))
+                                    mainActivityVM.getHashes()*/
+
+                                    Preferences.savePref("first", "true", this)
+                                }
+
+                            }
+                            System.out.println("init Dish ${dish} ")
+                            System.out.println("init Printer ${printer} ")
+                            System.out.println("init Waiters ${waiter} ")
+                        }
+                    })
+                })
+            })
+        }
+
+        mainActivityVM.isInstallationComplete.observe(this, Observer {
+            System.out.println(" naber lan ${it}")
+//            mainActivityVM.getHashes()
+
+
+        })
     }
 
+    fun isTablet() : Boolean {
+        return getResources().getConfiguration().smallestScreenWidthDp >= 600;
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.settings -> showSettings()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showSettings() {
+        val dialog  = DialogUtil.bottom(R.layout.settings_layout,this)
+        val ip : EditText? = dialog?.findViewById(R.id.ip)
+        val folder : EditText? = dialog?.findViewById(R.id.folder)
+        val login : EditText? = dialog?.findViewById(R.id.login)
+        val password : EditText? = dialog?.findViewById(R.id.password)
+        val ok: Button? = dialog?.findViewById(R.id.ok)
+        val cancel : Button? = dialog?.findViewById(R.id.cancel)
+
+        dialog?.show()
+
+        val ipStr= Preferences.getPref("ip","",this)
+        val folderStr= Preferences.getPref("folder","",this)
+        val loginStr= Preferences.getPref("loginStr","",this)
+        val passwordStr= Preferences.getPref("passwordStr","",this)
+
+        ip?.text = ipStr?.toEditable()
+        folder?.text = folderStr?.toEditable()
+        login?.text = loginStr?.toEditable()
+        password?.text = passwordStr?.toEditable()
+
+        cancel?.setOnClickListener { dialog.dismiss() }
+        ok?.setOnClickListener {
+            dialog.dismiss()
+
+            //  mainActivityVM.clear()
+            Preferences.savePref("ip",ip?.text.toString(),this)
+            Preferences.savePref("folder",folder?.text.toString(),this)
+            Preferences.savePref("loginStr",login?.text.toString(),this)
+            Preferences.savePref("passwordStr",password?.text.toString(),this)
+            initAll()
+        }
+    }
+
+    private fun initAll() {
+        mainActivityVM.setInstallation(false)
+        mainActivityVM.setIsDishFetch(false)
+        mainActivityVM.setIsWaiterFetch(false)
+        mainActivityVM.setIsPrinterFetch(false)
+        Preferences.savePref("first","false",this)
+        Preferences.savePref("orderHash","",this)
+        Preferences.savePref("catalogHash","",this)
+        Preferences.savePref("timeStamp","",this)
+        Preferences.savePref("waiter_token","",this)
+
+        val room = RoomDb(this)
+
+        room.DishesDAO().deleteAll().compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe()
+        room.KitchenDAO().deleteAll().compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe()
+        room.PrintersDAO().deleteAll().compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe()
+        room.WaiterDAO().deleteAll().compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe()
+        checkFirstFetch()
+    }
+
+    fun String.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this)
 }

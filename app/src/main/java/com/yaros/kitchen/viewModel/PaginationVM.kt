@@ -2,9 +2,11 @@ package com.yaros.kitchen.viewModel
 
 import androidx.lifecycle.*
 import androidx.paging.PagedList
+import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.HashModel
+import com.yaros.kitchen.models.KitchenTop
 import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.repositories.ApiRepo
 import com.yaros.kitchen.repositories.Repos
@@ -14,10 +16,14 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 
-class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiService) : ViewModel() {
+class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,var apiService: ApiService) : ViewModel() {
     var disposable = CompositeDisposable()
     var item:  LiveData<PagedList<KitchenItemModel>> = MutableLiveData()
     var itemKitchen:  LiveData<PagedList<KitchenModel>> = MutableLiveData()
+    var itemTopKitchen:  LiveData<PagedList<KitchenTop>> = MutableLiveData()
+    var itemSubKitchen:  LiveData<List<KitchenModel>> = MutableLiveData()
+    var itemSubKitchen2:  LiveData<PagedList<KitchenModel>> = MutableLiveData()
+    var stopCountDown:  LiveData<KitchenModel> = MutableLiveData()
     var order: LiveData<PagedList<KitchenOrderModel>> = MutableLiveData()
     var itemInfo: LiveData<ItemInfoModel> = MutableLiveData()
     lateinit var dishesInfo:  LiveData<List<DishesModel>>
@@ -33,6 +39,11 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
 
     val repos = Repos(db,rxSchedulers)
     val apiRepo = ApiRepo(repos,rxSchedulers,apiService,disposable)
+
+
+    fun setApiService(api: Api){
+        apiService = api.getApi()
+    }
 
     fun loadOrders() {
         order= repos.getOrderRepo().getAll()
@@ -118,9 +129,6 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
         apiRepo.getDishes()
     }
 
-    fun getOrderItems(printerList: List<String>?,date_begin: Long?=null,data_end: Long?=null){
-        apiRepo.getOrderItems(printerList,date_begin, data_end)
-    }
 
     fun getHashes(){
         disposable.add(Observable.interval(0, 5, TimeUnit.SECONDS)
@@ -137,9 +145,6 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
         printersList = repos.getPrintersRepo().getAllWithLiveData()
     }
 
-    fun login(waiterId: String,pass: String,androidID :String){
-        apiRepo.login(waiterId,pass,androidID)
-    }
 
     fun checkPrinter(isChecked : Boolean, id : String){
         repos.getPrintersRepo().checkPrinter(isChecked,id)
@@ -173,6 +178,25 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,apiService: ApiServ
 
     fun changeAmount(orderItem: String, dish: String,  count : Int){
           repos.getKitchenRepo().changeAmount(orderItem,dish,count)
+    }
+
+    fun getAllGroupBy(){
+        itemTopKitchen = repos.getKitchenRepo().getAllGroupBy()
+    }
+
+    fun getAllGroupByPrinter(pos : String?){
+        itemTopKitchen = repos.getKitchenRepo().getAllGroupByPrinter(pos)
+    }
+
+    fun getItemOrders(item_order : String?) {
+        itemSubKitchen = repos.getKitchenRepo().getItemOrders(item_order)
+    }
+
+    fun getItemOrders2(item_order : String?) {
+        itemSubKitchen2 = repos.getKitchenRepo().getItemOrders2(item_order)
+    }
+    fun stopCountDown() {
+        stopCountDown = repos.getKitchenRepo().stopCountDown()
     }
 
     override fun onCleared() {

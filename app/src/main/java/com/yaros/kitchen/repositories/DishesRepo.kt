@@ -5,7 +5,6 @@ import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.DishesModel
 import io.reactivex.Flowable
-import io.reactivex.Single
 
 class DishesRepo (val db: RoomDb, val rx: RxSchedulers) {
     fun insert(itemModel: DishesModel?) {

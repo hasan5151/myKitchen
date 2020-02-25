@@ -10,25 +10,33 @@ import androidx.core.content.ContextCompat
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.yaros.kitchen.R
-import com.yaros.kitchen.room.entity.KitchenItemModel
+import com.yaros.kitchen.models.KitchenTop
+import com.yaros.kitchen.room.entity.KitchenModel
 import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.utils.Preferences
 import com.yaros.kitchen.utils.TVDrawable
-import kotlinx.android.synthetic.main.kitchen_item_adapter.view.*
+import kotlinx.android.synthetic.main.kitchen_adapter.view.*
+import kotlinx.android.synthetic.main.kitchen_item_adapter.view.badge
+import kotlinx.android.synthetic.main.kitchen_item_adapter.view.constraint
+import kotlinx.android.synthetic.main.kitchen_item_adapter.view.elapsedTime
+import kotlinx.android.synthetic.main.kitchen_item_adapter.view.orderTime
+import kotlinx.android.synthetic.main.kitchen_item_adapter.view.subTitle
+import kotlinx.android.synthetic.main.kitchen_item_adapter.view.title
 import java.lang.NumberFormatException
 
-abstract class ItemPageAdapter (val context : Context): PagedListAdapter<KitchenItemModel, ItemPageAdapter.ItemVH>(DIFF_CALLBACK) {
+abstract class KitchenSupAdapter (val context : Context): PagedListAdapter<KitchenModel, KitchenSupAdapter.ItemVH>(DIFF_CALLBACK) {
     companion object {
-        protected val DIFF_CALLBACK: DiffUtil.ItemCallback<KitchenItemModel> =
-            object : DiffUtil.ItemCallback<KitchenItemModel>() {
-                override fun areItemsTheSame(oldItem: KitchenItemModel, newItem: KitchenItemModel) : Boolean {
+        protected val DIFF_CALLBACK: DiffUtil.ItemCallback<KitchenModel> =
+            object : DiffUtil.ItemCallback<KitchenModel>() {
+                override fun areItemsTheSame(oldItem: KitchenModel, newItem: KitchenModel) : Boolean {
                     return  oldItem.id.equals(newItem.id)
                 }
-                override fun areContentsTheSame(oldItem: KitchenItemModel, newItem: KitchenItemModel) : Boolean {
+                override fun areContentsTheSame(oldItem: KitchenModel, newItem: KitchenModel) : Boolean {
                     if (!oldItem.reqTime.equals(newItem.reqTime))
                         return true
-                    else if (!oldItem.isCountDownStarted.equals(newItem.isCountDownStarted))
+                    else if (!oldItem.countDownStatus.equals(newItem.countDownStatus))
                         return true
                     return oldItem.equals(newItem)
                 }
@@ -37,7 +45,7 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemVH {
         val view: View = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.kitchen_item_adapter, parent, false)
+            .inflate(R.layout.kitchen_adapter, parent, false)
         return ItemVH(view)
     }
 
@@ -48,15 +56,45 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
         val orderTime =  itemView.orderTime
         val elapsedTime=  itemView.elapsedTime
         val constraint=  itemView.constraint
+        val orderId=  itemView.orderId
+        val waiterName=  itemView.waiterName
+        val printerName=  itemView.printerName
+        val cancelledOrders=  itemView.cancelledOrders
+        val hideOrder=  itemView.hideOrder
     }
 
     override fun onBindViewHolder(holder: ItemVH, position: Int) {
         val tvDrawable = TVDrawable(context)
-
         val item = getItem(position)
-        holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.timecolor))
 
-         if (item!!.reqTime>0L) {
+        holder.orderTime.setTextColor(ContextCompat.getColor(context,R.color.timecolor))
+        holder.orderId.text ="№ ${item?.number}"
+        holder.waiterName.text = item?.waiterName
+        holder.printerName.text = item?.printerName
+
+        val gson = Gson()
+        System.out.println(gson.toJson(item,KitchenModel::class.java))
+
+        if (item!!.cancelledOrders>0){
+            holder.cancelledOrders.visibility = View.VISIBLE
+            holder.hideOrder.visibility = View.VISIBLE
+            holder.cancelledOrders.text = "отменено"
+
+            holder.hideOrder.setOnClickListener {
+                hideOrder(item)
+            }
+
+        }else{
+            holder.cancelledOrders.visibility = View.GONE
+            holder.hideOrder.visibility = View.GONE
+
+            holder.constraint.setOnClickListener {
+                showPopup(item,item.id)
+            }
+
+        }
+
+        if (item!!.reqTime>0L) {
             countDown(item, holder)
             holder.elapsedTime.text=""
         }
@@ -73,17 +111,16 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
         } else{
             if (DateUtil.remainCookTime(
                     item.date.replace(" ", "").toLong(),
-                    item.reqTime * item.count,
-                    0 //TODO set server diff
+                    item.reqTime,
+//                    item.reqTime * item.count,
+                    Preferences.getPref("diff", "0", context)?.toLong()!!
                 ) <1000) {
-                //   holder.elapsedTime.text = "00:00  "
                 holder.elapsedTime.setTextColor(
                     ContextCompat.getColor(
                         context,
                         R.color.red
                     )
                 )
-
                 tvDrawable.drawSize(holder.elapsedTime,R.drawable.error,0.9,false)
                 // updateRemainTime(item, 0)
             }else{
@@ -104,23 +141,27 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
             holder.orderTime.text= "${DateUtil.getHourandMinute(item.date?.replace(" ","")?.toLong())}    |    "
         }
 
-        if(item?.count!=null)
+        if(item.count!=null)
             if (item.count>1){
                 holder.badge.text = "${item?.count}"
                 holder.badge.visibility = View.VISIBLE
                 val paramsTitle =
                     holder.title.getLayoutParams() as ConstraintLayout.LayoutParams
+                paramsTitle.topToBottom = R.id.orderId
                 paramsTitle.leftToRight =R.id.badge
                 paramsTitle.leftMargin=16
                 holder.title.layoutParams =paramsTitle
             } else{
-                val params = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT
-                )
-                params.setMargins(0, 0, 0, 0)
-                holder.badge.visibility = View.INVISIBLE
-                holder.title.layoutParams =params
+
+                holder.badge.visibility = View.GONE
+
+                val paramsTitle =
+                    holder.title.getLayoutParams() as ConstraintLayout.LayoutParams
+
+                paramsTitle.topToBottom = R.id.orderId
+                paramsTitle.leftToRight= R.id.badge
+                paramsTitle.leftMargin = 0
+                holder.title.layoutParams =paramsTitle
             }
 
         holder.title.text= item.name!!
@@ -160,18 +201,17 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
             holder.elapsedTime.setLayoutParams(paramsElapsedTime)
         }
 
-        holder.constraint.setOnClickListener {
-            showPopup(item,item.id)
-        }
+
     }
 
-    private fun countDown(item : KitchenItemModel, holder: ItemVH) {
-        if (item.isCountDownStarted!=1) {
+    private fun countDown(item : KitchenModel, holder: ItemVH) {
+        if (item.countDownStatus <2) {
             try {
                 object : CountDownTimer(
                     DateUtil.remainCookTime(
                         item.date.replace(" ", "").toLong(),
-                        item.reqTime * item.count,
+                        item.reqTime,
+//                        item.reqTime * item.count,
                         Preferences.getPref("diff", "0", context)?.toLong()!!
                     ), 1000
                 ) { //TODO change this
@@ -207,7 +247,9 @@ abstract class ItemPageAdapter (val context : Context): PagedListAdapter<Kitchen
         return true
     }
 
-    abstract fun updateRemainTime(item: KitchenItemModel,milisUntilFinish : Long)
-    abstract fun startCountDown(item: KitchenItemModel, countDownTimer: CountDownTimer)
-    abstract fun showPopup(item: KitchenItemModel, orderId: Int)
+    abstract fun updateRemainTime(item: KitchenModel, milisUntilFinish : Long)
+    abstract fun startCountDown(item: KitchenModel, countDownTimer: CountDownTimer)
+    abstract fun showPopup(item: KitchenModel, orderId: Int)
+    abstract fun hideOrder(item: KitchenModel)
+
 }

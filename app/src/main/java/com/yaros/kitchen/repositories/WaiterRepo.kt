@@ -3,9 +3,7 @@ package com.yaros.kitchen.repositories
 import androidx.lifecycle.LiveData
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.room.db.RoomDb
-import com.yaros.kitchen.room.entity.DishesModel
 import com.yaros.kitchen.room.entity.WaitersModel
-import io.reactivex.Flowable
 import io.reactivex.Observable
 
 class WaiterRepo (val db: RoomDb, val rx: RxSchedulers) {
@@ -33,5 +31,4 @@ class WaiterRepo (val db: RoomDb, val rx: RxSchedulers) {
     fun isWaitersCreated(): LiveData<Boolean> {
         return db.WaiterDAO().isWaitersCreated()
     }
-
 }

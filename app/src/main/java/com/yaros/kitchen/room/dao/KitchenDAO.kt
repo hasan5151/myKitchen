@@ -1,10 +1,12 @@
 package com.yaros.kitchen.room.dao
 
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.yaros.kitchen.models.KitchenTop
 import com.yaros.kitchen.room.entity.ItemInfoModel
 import com.yaros.kitchen.room.entity.KitchenItemModel
 import com.yaros.kitchen.room.entity.KitchenModel
@@ -16,11 +18,10 @@ interface KitchenDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(itemModel: KitchenModel?) : Completable
 
-    /*@Query("DELETE FROM  KitchenModel WHERE id= :id")
-    fun deleteItem(id: Int) : Completable*/
-
     @Query("UPDATE KitchenModel SET isSent=1 WHERE id= :id")
     fun deleteItem(id: Int) : Completable
+
+
 
     @Query("SELECT * FROM KitchenModel WHERE isSent=0 and count>=0 ORDER BY number DESC")
     fun getAll(): DataSource.Factory<Int, KitchenModel>
@@ -38,7 +39,6 @@ interface KitchenDAO {
     fun updateItemTime(orderTime : String, itemID: Int) : Completable
 
     @Query("UPDATE KitchenModel SET cancelledOrders=cancelledOrders-:count WHERE id IN (SELECT id FROM KitchenModel WHERE order_item=:orderItem and dish=:dish and count-cancelledOrders>=-:count LIMIT 1)")
-//    @Query("UPDATE KitchenModel SET count=count-:count WHERE order_item=:orderItem and dish=:dish and count>:count ")
     fun changeAmount(orderItem: String ,dish: String, count: Int) : Completable
 
     @Query("UPDATE KitchenModel SET cancelledOrders=cancelledOrders-:count WHERE id=:id")
@@ -64,5 +64,24 @@ interface KitchenDAO {
 
     @Query("SELECT * FROM KitchenModel Where cancelledOrders<0 ORDER BY number DESC")
     fun getCancelledOrders2() : List<KitchenModel>
+
+    @Query("Select * From KitchenModel Where printerId=:pos and isSent=0 and count>=0 Group By dateOriginal Order By item_order DESC")
+    fun getAllGroupByPrinter(pos: String?): DataSource.Factory<Int, KitchenTop>
+
+    @Query("Select * From KitchenModel  WHERE isSent=0 and count>=0 Group By item_order Order By dateOriginal DESC")
+    fun getAllGroupBy() : DataSource.Factory<Int, KitchenTop>
+
+    @Query("Select * From KitchenModel  WHERE isSent=1 and count>=0 Group By item_order Order By dateOriginal DESC")
+    fun stopCountDown() : Flowable<KitchenModel>
+
+    @Query("Select * From KitchenModel Where item_order=:item_order and isSent=0 and count>=0")
+    fun getItemOrders(item_order : String?) : LiveData<List<KitchenModel>>
+
+    @Query("Select * From KitchenModel Where item_order=:item_order and isSent=0 and count>=0")
+    fun getItemOrders2(item_order : String?) : DataSource.Factory<Int, KitchenModel>
+
+    @Query("DELETE FROM  KitchenModel")
+    fun deleteAll() : Completable
+
 
 }

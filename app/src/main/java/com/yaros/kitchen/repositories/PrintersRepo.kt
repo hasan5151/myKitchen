@@ -45,5 +45,4 @@ class PrintersRepo (val db: RoomDb, val rx: RxSchedulers) {
     fun isPrintersCreated(): LiveData<Boolean> {
         return db.PrintersDAO().isWaitersCreated()
     }
-
 }

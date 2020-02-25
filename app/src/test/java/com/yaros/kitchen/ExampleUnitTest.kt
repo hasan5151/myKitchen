@@ -212,8 +212,14 @@ class ExampleUnitTest {
                 if  (index==x.size-1)
                     System.out.println("last item")
                 System.out.println(it.item_date)
-
             }
+    }
 
+    @Test
+    fun testFor() {
+        val it =-1
+        for (i in 0 downTo it+1) {
+              System.out.println("${i}")
+        }
     }
 }

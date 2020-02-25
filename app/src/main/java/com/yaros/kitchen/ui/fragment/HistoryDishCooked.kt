@@ -70,19 +70,11 @@ class HistoryDishCooked : BaseFragment() {
     }
 
     private fun isDataInitialize() { //if init then get orders
-        mainActivityVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
-            mainActivityVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
-                mainActivityVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
-                //    mainActivityVM.isOrderUpdated.observe(viewLifecycleOwner, Observer {
-                        if (dish&&waiters&&printers){
-                            OrdersKitchenPostModel(null,null,null).let { fetchHistory(it) } //test
-                        }else{
-                            //show loading bar
-                        }
-
-                  // })
-                })
-            })
+        mainActivityVM.isInstallationComplete.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it){
+                historyVM.setApiService(Api(context!!))
+                OrdersKitchenPostModel(null,null,null).let { fetchHistory(it) } //test
+            }
         })
 
         mainActivityVM.isHistoryUpdated.observe(viewLifecycleOwner, Observer {
@@ -92,18 +84,6 @@ class HistoryDishCooked : BaseFragment() {
                 //show loading bar
             }
         })
-
-        /*      mainActivityVM.isDishesCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {dish->
-            mainActivityVM.isWaitersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {waiters->
-                mainActivityVM.isPrintersCreated.observe(viewLifecycleOwner, androidx.lifecycle.Observer {printers->
-                    if (dish&&waiters&&printers){
-                          OrdersKitchenPostModel(null,null,null).let { fetchHistory(it) } //test
-                    }else{
-                        //show loading bar
-                    }
-                })
-            })
-        })*/
     }
 
     fun fetchHistory(post : OrdersKitchenPostModel){
@@ -111,20 +91,19 @@ class HistoryDishCooked : BaseFragment() {
         CompositeDisposable().add(historyVM.fetchHistory(post)?.subscribe({
             var historyOrderModel  : List<HistoryOrderModel>  = listOf()
             it?.groupBy { it?.order }?.forEach {order->
-                 var historyItemModel : List<HistoryItemModel> = listOf()
+                var historyItemModel : List<HistoryItemModel> = listOf()
                 order.value.forEach {item->
                     val dish = repos.getDishesRepo().getItem(item!!.dish)
                     val cookedTime = DateUtil.getHourandMinute(item?.cooking_date)
                     val startTime = DateUtil.getHourandMinute(item!!.cooking_date - (item!!.cooking_time*1000))
                     HistoryItemModel(dish.name,cookedTime,startTime,checkCookingTime(dish.cookingTime,item.cooking_time)).let {
-                         historyItemModel = historyItemModel+listOf(it)
+                        historyItemModel = historyItemModel+listOf(it)
                     }
                 }
                 HistoryOrderModel(1,"",historyItemModel).let {
-                     historyOrderModel = historyOrderModel + listOf(it)
+                    historyOrderModel = historyOrderModel + listOf(it)
                 }
             }
-
             kitchenRecyclerView.adapter=HistoryOrderAdapter(historyOrderModel,context!!)
         },{it.printStackTrace()})!!)
     }

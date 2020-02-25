@@ -1,6 +1,6 @@
 package com.yaros.kitchen.models.apiModels;
 
-public class DishCookedModel {
+public class DishCookedModel { //to send Server
     private String ticket;
     private String order;
     private String dish;

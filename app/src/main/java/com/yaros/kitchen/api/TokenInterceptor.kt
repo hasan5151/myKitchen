@@ -2,12 +2,13 @@ package com.yaros.kitchen.api
 
 import android.content.Context
 import androidx.annotation.NonNull
+import androidx.fragment.app.FragmentActivity
 import com.yaros.kitchen.repositories.TokenRepo
 import com.yaros.kitchen.utils.Preferences
 import okhttp3.Interceptor
 import okhttp3.Response
+import okhttp3.internal.http2.Header
 import java.io.IOException
-import java.net.UnknownHostException
 
 class TokenInterceptor(val waiterId: String, val password : String, val context: Context) : Interceptor {
     fun NewToken(chain: Interceptor.Chain, @NonNull accessToken: String): Response {
@@ -17,7 +18,8 @@ class TokenInterceptor(val waiterId: String, val password : String, val context:
                 .newBuilder()
                 .addQueryParameter("waiter_token", accessToken)
                 .build()
-            val request = chain.request().newBuilder().url(url).build()
+
+             val request = chain.request().newBuilder().url(url).build()
             chain.proceed(request)
         }
     }
@@ -42,9 +44,11 @@ class TokenInterceptor(val waiterId: String, val password : String, val context:
         else
             try {
                 val responseBody= response.body()?.string()
+
                 System.out.println("test ${responseBody}")
                 if (responseBody!!.contains("Сессия не найдена")) {
-                    val tokenRepo = TokenRepo(TokenService())
+                    val tokenRepo = TokenRepo(TokenService(context),context)
+                    System.out.println(" waiterId ${waiterId}")
                     val string = tokenRepo.getToken(waiterId,password)
                     System.out.println("test2 ${string}")
                     Preferences.savePref("waiter_token",string,context)
@@ -54,18 +58,17 @@ class TokenInterceptor(val waiterId: String, val password : String, val context:
 
                     //refresh token
                 } else{
-                    val string = Preferences.getPref("waiter_token","",context)
+             /*       val string = Preferences.getPref("waiter_token","",context)
                     System.out.println("test2 ${string}")
-                    return  NewToken(chain,string!!)
+                    return  NewToken(chain,string!!)*/
 
                 }
             }catch(e: Throwable) {
                 e.printStackTrace()
             }
-/*
-         if (response.code() == 401) {
-           //
-        }else
+            /*if (response.code() == 401) {
+                //
+            }else
            //
            */
 

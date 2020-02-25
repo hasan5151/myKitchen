@@ -1,27 +1,43 @@
 package com.yaros.kitchen.api
 
  import android.content.Context
- import com.yaros.kitchen.BuildConfig.API_URL
+ import com.yaros.kitchen.room.db.RoomDb
+ import com.yaros.kitchen.utils.Preferences
  import okhttp3.*
  import retrofit2.Retrofit
  import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
  import retrofit2.converter.gson.GsonConverterFactory
+ import java.lang.NullPointerException
  import java.util.concurrent.TimeUnit
-
 
 class Api(val context : Context) {
     fun getApi(): ApiService {
+        val ipStr= Preferences.getPref("ip","-1",context)
+        val folderStr= Preferences.getPref("folder","-1",context)
+        val loginStr= Preferences.getPref("loginStr","-1",context)
+        val passwordStr= Preferences.getPref("passwordStr","-1",context)
+
+        val room = RoomDb(context)
+        var waiterId = ""
+        try{
+            val waiter = room.WaiterDAO().getWaiter()
+            waiterId = waiter.id
+
+        }catch (e : NullPointerException){
+            waiterId = ""
+        }
+
         val client = OkHttpClient.Builder()
-            .addInterceptor(OauthInterceptor("mobi","123"))
-            .addInterceptor(TokenInterceptor("fa907412-a069-11e7-aa0e-002522ec5b96","123",context))
-             .connectTimeout(100, TimeUnit.SECONDS)
+            .addInterceptor(OauthInterceptor(loginStr,passwordStr))
+            .addInterceptor(TokenInterceptor(waiterId,"123",context))
+            .connectTimeout(100, TimeUnit.SECONDS)
             .readTimeout(
                 100,
                 TimeUnit.SECONDS
             )
             .build()
         val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(API_URL)
+            .baseUrl("http://${ipStr}/${folderStr}/")
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)

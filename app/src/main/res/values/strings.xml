@@ -34,4 +34,5 @@
     <string name="clearCheckCount">Очистить заканчивающиеся блюда</string>
     <string name="clearCountList">Очистить список</string>
     <string name="clearStop">Очистить приостановленые блюда</string>
+    <string name="settings">настройки</string>
 </resources>

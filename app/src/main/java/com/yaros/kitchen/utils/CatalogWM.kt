@@ -43,18 +43,35 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
 
     private fun fetchWaiters(): ListenableFuture<Result> {
         return CallbackToFutureAdapter.getFuture { callback ->
-            val tokenService = TokenService()
+            val tokenService = TokenService(appContext)
             compositeDisposable.add(
                 tokenService.getApi().getWaiterss()?.compose(RxSchedulers.DEFAULT.applyObservable())?.subscribe(
                     {
+                        System.out.println("hi url ${it?.raw()?.request()?.url()}")
+                        val bodySize= it?.body()?.data?.size
+
                         if(it?.code()!=200)
                             callback.set(Result.retry())
                         else if (!it?.body()?.meta?.status!!.contentEquals(SUCCESS)) {
                             callback.set(Result.retry())
-                        } else { it?.body()?.data?.forEach {
-                                repos.getWaiterRepo().insert(it)
+                        } else if (bodySize==0){
+                             val data: Data = Data.Builder()
+                                .putInt("type", WAITERS)
+                                .build()
+                            callback.set(Result.success(data))
+                        }
+                        else
+                            it?.body()?.data?.forEachIndexed {index,item->
+                            repos.getWaiterRepo().insert(item)
+
+                                System.out.println("cook type ${item.id}")
+                            if  (index==bodySize!!-1){
+//                                 Preferences.savePref("lastSyncTime",it.item_date,appContext)
+                                val data: Data = Data.Builder()
+                                    .putInt("type", WAITERS)
+                                    .build()
+                                callback.set(Result.success(data))
                             }
-                            callback.set(Result.success())
                         }
                     },
                     { it.printStackTrace() })!!
@@ -66,15 +83,30 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
         return CallbackToFutureAdapter.getFuture { callback ->
             compositeDisposable.add(apiService.getKitchenDataa()?.compose(RxSchedulers.DEFAULT.applyObservable())?.subscribe(
                 {
+                     val bodySize= it?.body()?.data?.dishes?.size
+
                     if(it?.code()!=200)
                         callback.set(Result.retry())
                     else if (!it?.body()?.meta?.status!!.contentEquals(SUCCESS)) {
                         callback.set(Result.retry())
-                    } else {
-                        it?.body()?.data?.dishes?.forEach {
+                    } else if (bodySize==0){
+                        val data: Data = Data.Builder()
+                            .putInt("type", DISHES)
+                            .build()
+                        callback.set(Result.success(data))
+                    }
+                    else {
+                        it?.body()?.data?.dishes?.forEachIndexed {index,it->
                             repos.getDishesRepo().insert(it)
+
+                            if  (index==bodySize!!-1){
+                                // Preferences.savePref("lastSyncTime",it.item_date,appContext)
+                                val data: Data = Data.Builder()
+                                    .putInt("type", DISHES)
+                                    .build()
+                                callback.set(Result.success(data))
+                            }
                         }
-                        callback.set(Result.success())
                     }
                 },
                 { it.printStackTrace() })!!)
@@ -85,15 +117,30 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
         return CallbackToFutureAdapter.getFuture { callback ->
             compositeDisposable.add(apiService.getPrinterss()?.compose(RxSchedulers.DEFAULT.applyObservable())?.subscribe(
                 {
+                     val bodySize= it?.body()?.data?.printers?.size
+
                     if(it?.code()!=200)
                         callback.set(Result.retry())
                     else if (!it?.body()?.meta?.status!!.contentEquals(SUCCESS)) {
                         callback.set(Result.retry())
-                    } else {
-                        it?.body()?.data?.printers?.forEach {
-                            repos.getPrintersRepo().insert(it)
+                    } else if (bodySize==0){
+                        val data: Data = Data.Builder()
+                            .putInt("type", PRINTERS)
+                            .build()
+                        callback.set(Result.success(data))
+                    }
+                    else {
+                        it?.body()?.data?.printers?.forEachIndexed {index,item->
+                            repos.getPrintersRepo().insert(item)
+
+                            if  (index==bodySize!!-1){
+                                // Preferences.savePref("lastSyncTime",it.item_date,appContext)
+                                val data: Data = Data.Builder()
+                                    .putInt("type",PRINTERS)
+                                    .build()
+                                callback.set(Result.success(data))
+                            }
                         }
-                        callback.set(Result.success())
                     }
                 },
                 { it.printStackTrace() })!!)
@@ -102,17 +149,16 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
 
     private fun fetchOrder(): ListenableFuture<Result> {
         return CallbackToFutureAdapter.getFuture { callback ->
-
             val date_begin = Preferences.getPref("lastSyncTime", null, appContext)
-             val ordersKitchenPostModel = OrdersKitchenPostModel(null, date_begin?.toLong(), null)
+            val ordersKitchenPostModel = OrdersKitchenPostModel(null, date_begin?.toLong(), null)
             compositeDisposable.add(
                 apiService.getOrderItemsNew(ordersKitchenPostModel).compose(RxSchedulers.DEFAULT.applyObservable())
                     .subscribe({base->
-                        if(base.code()!=200)
+                         if(base.code()!=200)
                             callback.set(Result.retry())
                         else{
                             base?.body()?.data?.sortedBy { it.item_date }?.forEachIndexed {index,it ->
-                                var bodySize= base?.body()?.data?.size
+                                val bodySize= base?.body()?.data?.size
                                 if (!base?.body()?.meta?.status!!.contentEquals(SUCCESS)) {
                                     callback.set(Result.retry())
                                 }else if (bodySize==0){
@@ -145,28 +191,54 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
                                     val dishesModel = repos.getDishesRepo().getItem(it.dish!!)
                                     val printerName = repos.getPrintersRepo().getPrintersById(it.printer!!)
 
-                                    KitchenModel(
-                                        it.number,
-                                        it.printer,
-                                        it.order,
-                                        dishesModel.name,
-                                        it.comment,
-                                        it.dish,
-                                        dishesModel.cookingTime,
-                                        it.item_date,
-                                        it.item_date,
-                                        it.count,
-                                        waiterName,
-                                        0,
-                                        printerName.name,
-                                        0,
-                                        0
-                                    ).let {
-                                        repos.getKitchenRepo().insert(it)
-                                    }
-                                    if (it.count < 0){ //negative count means cancelled orders
-                                        repos.getKitchenRepo().changeAmount(it.order,it.dish,it.count)
-                                    }
+                                    if (it.count>0)
+                                        for (i in 0..it.count-1) {
+                                            KitchenModel(
+                                                it.number,
+                                                it.printer,
+                                                it.order,
+                                                dishesModel.name,
+                                                it.comment,
+                                                it.dish,
+                                                dishesModel.cookingTime,
+                                                it.item_date,
+                                                it.item_date,
+                                                1,
+                                                waiterName,
+                                                0,
+                                                printerName.name,
+                                                0,
+                                                0,
+                                                it.item_order,
+                                                it.item_number
+                                            ).let {
+                                                repos.getKitchenRepo().insert(it)
+                                            }
+                                        }else
+                                        for (i in 0 downTo it.count+1) {
+                                            KitchenModel(
+                                                it.number,
+                                                it.printer,
+                                                it.order,
+                                                dishesModel.name,
+                                                it.comment,
+                                                it.dish,
+                                                dishesModel.cookingTime,
+                                                it.item_date,
+                                                it.item_date,
+                                                -1,
+                                                waiterName,
+                                                0,
+                                                printerName.name,
+                                                0,
+                                                0,
+                                                it.item_order,
+                                                it.item_number
+                                            ).let {
+                                                repos.getKitchenRepo().insert(it)
+                                            }
+                                            repos.getKitchenRepo().changeAmount(it.order,it.dish,-1)
+                                        }
                                 }
                             }
                         }

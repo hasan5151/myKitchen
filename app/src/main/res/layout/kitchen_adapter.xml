@@ -125,16 +125,34 @@
 
         <TextView
             android:id="@+id/cancelledOrders"
+            android:text="отменено"
             android:visibility="gone"
-            android:text="2 заказы отменены"
             android:duplicateParentState="true"
             android:clickable="false"
             android:focusable="false"
+            android:textStyle="bold"
             android:focusableInTouchMode="false"
             android:textColor="@color/red"
             android:layout_marginTop="10dp"
-            android:textSize="12sp"
+            android:textSize="15sp"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orderTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/hideOrder"
+            android:text="Скрыть  >"
+            android:visibility="gone"
+            android:duplicateParentState="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:textStyle="bold"
+            android:focusableInTouchMode="false"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="10dp"
+            android:textSize="15sp"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/orderTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

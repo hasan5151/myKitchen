@@ -29,4 +29,12 @@ interface WaiterDAO {
     @Query("Select COUNT(id) AS item FROM WaitersModel")
     fun isWaitersCreated(): LiveData<Boolean>
 
+    @Query("DELETE FROM  WaitersModel")
+    fun deleteAll() : Completable
+
+    @Query("Select * From WaitersModel Limit 1")
+    fun getWaiter() : WaitersModel
+
+
+
 }

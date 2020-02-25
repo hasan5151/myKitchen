@@ -1,8 +1,9 @@
 package com.yaros.kitchen.viewModel
 
-import androidx.lifecycle.LiveData
+import android.os.CountDownTimer
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.HashModel
@@ -10,29 +11,55 @@ import com.yaros.kitchen.repositories.ApiRepo
 import com.yaros.kitchen.repositories.Repos
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenModel
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
-class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: ApiService) : ViewModel() {
+
+class MainActivityVM (val db: RoomDb, val rxSchedulers: RxSchedulers,var apiService: ApiService) : ViewModel() {
 
     var isClicked: MutableLiveData<Boolean> = MutableLiveData()
     var isFullScreen: MutableLiveData<Boolean> = MutableLiveData()
     var isOrderFetched: MutableLiveData<Boolean> = MutableLiveData()
+    var isInstallationComplete: MutableLiveData<Boolean> = MutableLiveData()
 
-    lateinit var isWaitersCreated: LiveData<Boolean>
-    lateinit var isDishesCreated: LiveData<Boolean>
-    lateinit var isPrintersCreated: LiveData<Boolean>
+    var printerFetched: MutableLiveData<Boolean> = MutableLiveData() //first fetch
+    var dishFetched: MutableLiveData<Boolean> = MutableLiveData() //first fetch
+    var waitersFetched: MutableLiveData<Boolean> = MutableLiveData() //first fetch
+
     var disposable = CompositeDisposable()
 
+    lateinit var countDownTimer: CountDownTimer
 
     var isHistoryUpdated: MutableLiveData<Boolean> = MutableLiveData()
 
 
     var hash: MutableLiveData<HashModel> = MutableLiveData()
 
-    val repos = Repos(db,rxSchedulers)
-    val apiRepo = ApiRepo(repos,rxSchedulers,apiService,disposable)
+    var repos = Repos(db,rxSchedulers)
+    var apiRepo = ApiRepo(repos,rxSchedulers,apiService,disposable)
+
+    var resumed: AtomicBoolean = AtomicBoolean()
+    var stopped: AtomicBoolean = AtomicBoolean()
+
+    fun pauseTimer() {
+        resumed.set(false)
+    }
+
+    fun resumeTimer() {
+        resumed.set(true)
+    }
+
+    fun stopTimer() {
+        stopped.set(true)
+    }
+
+    fun setApiService(api: Api){
+        apiService = api.getApi()
+    }
 
     fun isStopListAddButtonClick(){
         isClicked.value =true
@@ -43,47 +70,48 @@ class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: Ap
         isFullScreen.value = isFull
     }
 
+    fun setInstallation(isFetched : Boolean){
+        disposable.add(Observable.timer(1,TimeUnit.SECONDS)
+            .compose(RxSchedulers.DEFAULT.applyObservable()).subscribe({
+            isInstallationComplete.value = isFetched
+        }))
+    }
+    fun setIsPrinterFetch(isFetched : Boolean){
+        printerFetched.value = isFetched
+    }
+    fun setIsDishFetch(isFetched : Boolean){
+        dishFetched.value = isFetched
+    }
+    fun setIsWaiterFetch(isFetched : Boolean){
+        waitersFetched.value = isFetched
+    }
+
     fun setIsOrderFetched(){
         isOrderFetched.value = true
         isOrderFetched.value = false
-    }
+     }
 
-    fun checkWaiters() {
-        isWaitersCreated= repos.getWaiterRepo().isWaitersCreated()
-    }
-    fun checkDishes() {
-        isDishesCreated= repos.getDishesRepo().isDishesCreated()
-    }
-    fun checkPrinters() {
-        isPrintersCreated= repos.getPrintersRepo().isPrintersCreated()
-    }
+    fun getHashes() {
+        if (::countDownTimer.isInitialized)
+        countDownTimer.cancel()
 
-    fun getHashes(){
-        disposable.add(
-            Observable.interval(0, 5, TimeUnit.SECONDS)
-                .compose(rxSchedulers.applyObservable())
-                .subscribe {
-                    apiRepo.getHashes()?.subscribe({
-                        hash.value= it
-                    },{it.printStackTrace()})
-                })
-    }
+        countDownTimer = object : CountDownTimer(Long.MAX_VALUE, 5000) {
+            override fun onFinish() {}
 
-    fun fetchWaiters(){
-        apiRepo.getWaiters()
-    }
+            override fun onTick(millisUntilFinished: Long) {
+                disposable.add(apiRepo.getHashes()?.subscribe({
+                    hash.value=it
+                },{it.printStackTrace()})!!)
+            }
+        }.start()
 
 
-    fun fetchPrinters(){
-        apiRepo.getPrinters()
+
     }
-    fun fetchDishes(){
-        apiRepo.getDishes()
+    private fun startTimer(id : Int){
+
     }
 
-    fun getOrderItems(printerList: List<String>?=null,date_begin: Long?=null,data_end: Long?=null){
-        apiRepo.getOrderItems(printerList,date_begin, data_end)
-    }
 
     fun setHistoryUpdate(){
         isHistoryUpdated.value = true
@@ -103,7 +131,8 @@ class MainActivityVM (db: RoomDb, val rxSchedulers: RxSchedulers, apiService: Ap
 
     override fun onCleared() {
         disposable.clear()
-        super.onCleared()
+         super.onCleared()
     }
+
 
 }

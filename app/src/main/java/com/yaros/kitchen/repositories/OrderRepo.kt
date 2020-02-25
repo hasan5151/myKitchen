@@ -3,11 +3,9 @@ package com.yaros.kitchen.repositories
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.yaros.kitchen.adapter.RoomFactoryWrapper
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenOrderModel
-
 
 class OrderRepo(val db: RoomDb,val rx: RxSchedulers) {
 
