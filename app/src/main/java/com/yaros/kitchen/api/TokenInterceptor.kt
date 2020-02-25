@@ -21,6 +21,22 @@ class TokenInterceptor(val waiterId: String, val password : String, val context:
 
         val request = chain.request().newBuilder().url(url).build()
         val response = chain.proceed(request)
+
+
+/*
+        if (response.code()==404) {
+            val tokenRepo = TokenRepo(TokenService(context),context)
+            val string = tokenRepo.getToken(waiterId,password)
+            System.out.println("test2 ${string}")
+            Preferences.savePref("waiter_token",string,context)
+            val url = chain.request()
+                .url()
+                .newBuilder()
+                .addQueryParameter("waiter_token", Preferences.getPref("waiter_token","",context))
+                .build()
+            val request = chain.request().newBuilder().url(url).build()
+            return chain.proceed(request)
+        }*/
         if (response.body()?.string()!!.contains("Сессия не найдена")) {
             val tokenRepo = TokenRepo(TokenService(context),context)
             val string = tokenRepo.getToken(waiterId,password)
@@ -34,7 +50,8 @@ class TokenInterceptor(val waiterId: String, val password : String, val context:
             val request = chain.request().newBuilder().url(url).build()
             return chain.proceed(request)
         }
-        return  null
+        return  response
     }
 
 }
+
