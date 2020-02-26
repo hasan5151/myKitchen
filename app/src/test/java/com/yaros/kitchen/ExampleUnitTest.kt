@@ -7,11 +7,14 @@ import com.yaros.kitchen.models.StopListModel
 import com.yaros.kitchen.models.apiModels.OrdersKitchen
 import com.yaros.kitchen.room.entity.PrintersModel
 import com.yaros.kitchen.utils.DateUtil
+import okhttp3.Credentials
+import okhttp3.HttpUrl
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -221,5 +224,27 @@ class ExampleUnitTest {
         for (i in 0 downTo it+1) {
               System.out.println("${i}")
         }
+    }
+    @Test
+    fun portTest() {
+        val url = HttpUrl.Builder()
+            .scheme("https")
+            .host("www.google.com").port(31)
+            .addPathSegment("search")
+            .addPathSegment("sad")
+            .addQueryParameter("q", "polar bears")
+            .build()
+        println(url)
+    }
+
+    @Test
+    fun divide() {
+        val url = HttpUrl.parse("twitter.com:8080/search?q=cute%20%23puppies&f=images")
+        println(url?.port())
+        println(url?.host())
+
+    }    @Test
+    fun credits() {
+        Credentials.basic("mobi", "123").let { print(it) }
     }
 }

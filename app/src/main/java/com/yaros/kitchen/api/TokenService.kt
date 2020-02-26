@@ -1,7 +1,6 @@
 package com.yaros.kitchen.api
 
 import android.content.Context
-import com.yaros.kitchen.BuildConfig
 import com.yaros.kitchen.utils.Preferences
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -11,14 +10,17 @@ import java.util.concurrent.TimeUnit
 
 class TokenService(val context : Context) {
     fun getApi(): ApiService {
-        val ipStr= Preferences.getPref("ip","-1",context)
+        var ipStr= Preferences.getPref("ip","-1",context)
+        if(ipStr?.contains("http://")!!)
+            ipStr = ipStr.replace("http:///","")
         val folderStr= Preferences.getPref("folder","-1",context)
+/*
         val loginStr= Preferences.getPref("loginStr","-1",context)
         val passwordStr= Preferences.getPref("passwordStr","-1",context)
-
+*/
 
         val client = OkHttpClient.Builder()
-            .addInterceptor(OauthInterceptor(loginStr,passwordStr))
+            .addInterceptor(OauthInterceptor(Preferences.getPref("loginStr","-1",context),Preferences.getPref("passwordStr","-1",context)))
             .connectTimeout(100, TimeUnit.SECONDS)
             .readTimeout(
                 100,

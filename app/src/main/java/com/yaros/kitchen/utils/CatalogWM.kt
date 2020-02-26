@@ -6,6 +6,7 @@ import androidx.work.Data
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.google.common.util.concurrent.ListenableFuture
+import com.yaros.kitchen.BuildConfig
 import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
@@ -23,7 +24,6 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
         const val DISHES = 2
         const val WAITERS = 3
         const val SUCCESS = "SUCCESS"
-        const val SUCCzESS = "SUCCESS"
     }
 
     lateinit var compositeDisposable: CompositeDisposable
@@ -155,7 +155,21 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
             compositeDisposable.add(
                 apiService.getOrderItemsNew(ordersKitchenPostModel).compose(RxSchedulers.DEFAULT.applyObservable())
                     .subscribe({base->
-                         if(base.code()!=200)
+                        if (base?.body()?.meta?.code=="10"){
+                            val waiterId = RoomDb(appContext).WaiterDAO().getWaiter().id
+                            TokenService(appContext).getApi()
+                                .login(waiterId,"123",DeviceName.get(), "mobile_kitchen",
+                                    UniqueId.get(appContext), BuildConfig.VERSION_NAME, IpAddress(appContext).fromWifi())
+                                ?.compose(RxSchedulers.DEFAULT.applyObservable())
+                                ?.filter { it?.meta?.code?.contentEquals("0")!! }
+                                ?.subscribe({
+                                    Preferences.savePref("waiter_token",it?.data?.waiter_token,appContext)
+                                    fetchOrder()
+                                },{
+                                    it.printStackTrace()
+                                })
+                        }
+                        else if(base.code()!=200)
                             callback.set(Result.retry())
                         else{
                             base?.body()?.data?.sortedBy { it.item_date }?.forEachIndexed {index,it ->

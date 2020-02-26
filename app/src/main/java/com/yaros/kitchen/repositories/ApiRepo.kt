@@ -1,17 +1,11 @@
 package com.yaros.kitchen.repositories
 
-import android.os.Build
-import com.yaros.kitchen.BuildConfig
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
-import com.yaros.kitchen.api.TokenService
 import com.yaros.kitchen.models.*
 import com.yaros.kitchen.models.apiModels.HistoryModel
 import com.yaros.kitchen.models.apiModels.OrdersKitchenPostModel
-import com.yaros.kitchen.utils.Preferences
-import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 
 class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService,val compositeDisposable: CompositeDisposable) {
@@ -48,7 +42,6 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
 
     fun getHashes() : Observable<HashModel>? = apiService.getHashes()?.compose(rxSchedulers.applyObservable())?.map { it.data }
 
-    fun getHashes2(string : String) : Observable<HashModel>? = apiService.getHashes2(string)?.compose(rxSchedulers.applyObservable())?.map { it.data }
 
     fun getHistory(post : OrdersKitchenPostModel) : Observable<List<HistoryModel?>?>? =
         apiService.getHistory(post)?.compose(rxSchedulers.applyObservable())?.map { it.data }

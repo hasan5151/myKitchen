@@ -1,13 +1,12 @@
 package com.yaros.kitchen.ui.activity
 
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.text.Editable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -29,14 +28,12 @@ import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.bottomModel.*
 import com.yaros.kitchen.room.db.RoomDb
-import com.yaros.kitchen.room.entity.KitchenModel
 import com.yaros.kitchen.ui.fragment.BaseFragment
 import com.yaros.kitchen.utils.CatalogWM
 import com.yaros.kitchen.utils.CatalogWM.Companion.DISHES
 import com.yaros.kitchen.utils.CatalogWM.Companion.ORDERS
 import com.yaros.kitchen.utils.CatalogWM.Companion.PRINTERS
 import com.yaros.kitchen.utils.CatalogWM.Companion.WAITERS
-import com.yaros.kitchen.utils.DialogUtil
 import com.yaros.kitchen.utils.Preferences
 import com.yaros.kitchen.viewModel.MainActivityVM
 import com.yaros.kitchen.viewModel.factory.MainActivityFactory
@@ -84,41 +81,40 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        mainActivityVM.waitersFetched.observe(this, Observer {
+   /*     mainActivityVM.waitersFetched.observe(this, Observer {
             if (it){
-      /*          mainActivityVM.stopTimer()
-                mainActivityVM.resumeTimer()*/
                 mainActivityVM.setApiService(Api(this))
-                mainActivityVM.getHashes(Preferences.getPref("waiter_token","",this)!!)
+                mainActivityVM.getHashes()
             }
-        })
+        })*/
 
-        val ipStr= Preferences.getPref("ip","-1",this)
-
-        if (ipStr?.contentEquals("-1")!!)
-            showSettings()
-        else
-            checkFirstFetch()
-
+        checkFirstFetch()
         setHash()
     }
 
 
     private fun setHash() {
-        System.out.println("selam")
+        System.out.println("selam Hash")
+
         mainActivityVM.hash.observe(this, androidx.lifecycle.Observer {
             val oldTimeStamp = Preferences.getPref("timeStamp","",this)
             if(!oldTimeStamp!!.contentEquals(it.time_server.toString())){
-                System.out.println("selam2")
+                System.out.println("selam2 Hash")
                 Preferences.savePref("timeStamp","${it.time_server}",this)
                 val diff = System.currentTimeMillis()-it.time_server
                 Preferences.savePref("diff","${diff}",this)
                 System.out.println("timeHash ${it.time_server}")
             }
 
+
             val oldCatalogHash= Preferences.getPref("catalogHash","",this)
+
+
+            System.out.println("selam Hash1 ${it.catalog_hash.toString()}")
+            System.out.println("selam Hash2 ${oldCatalogHash}")
+
             if(!oldCatalogHash!!.contentEquals(it.catalog_hash.toString())){
-                System.out.println("selam3")
+                System.out.println("selam3 Hash")
                 Preferences.savePref("catalogHash",it.catalog_hash,this)
                 System.out.println("catalogHash ${it.catalog_hash}")
                 sendToServer(DISHES)
@@ -213,20 +209,18 @@ class MainActivity : AppCompatActivity() {
             .build()
         val operation = WorkManager.getInstance(this).enqueue(catalogReq)
 
-//        if (type==ORDERS){
-        getStatusOfManager(catalogReq.id)
-        /*      operation.state.observe(this, Observer {
+         getStatusOfManager(catalogReq.id)
 
-              })*/
-//        }
     }
 
     private fun getStatusOfManager(id: UUID) {
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(id)
             .observe(this, Observer { workInfo: WorkInfo ->
+                System.out.println("selam napion ana1 ${workInfo.state}")
                 if (workInfo.state == WorkInfo.State.SUCCEEDED) {
                     val data = workInfo.outputData
                     val type= data.getInt("type",-1)
+                    System.out.println("selam napion ana ${type}")
                     when(type){
                         ORDERS -> mainActivityVM.setIsOrderFetched()
                         PRINTERS -> mainActivityVM.setIsPrinterFetch(true)
@@ -241,8 +235,7 @@ class MainActivity : AppCompatActivity() {
         mainActivityVM.isOrderFetched.observe(this, Observer {
             mainActivityVM.getNewOrders().forEach {
                 if(it.reqTime>0){
-                    startCountDown(it)
-                    mainActivityVM.changeCountDownStatus(it.id,STARTED)
+                     mainActivityVM.changeCountDownStatus(it.id,STARTED)
                 }else{
                     mainActivityVM.changeCountDownStatus(it.id,NOREQTIME)
                 }
@@ -250,19 +243,16 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun startCountDown(kitchenModel: KitchenModel) {  }
-
     private fun checkFirstFetch() {
         val first= Preferences.getPref("first","false",this)
         if (first!!.contentEquals("true")){
- /*           mainActivityVM.stopTimer()
-            mainActivityVM.resumeTimer()*/
-            mainActivityVM.setApiService(Api(this))
-            mainActivityVM.getHashes(Preferences.getPref("waiter_token","",this)!!)
+            System.out.println(" selam anina")
+            mainActivityVM.getHashes()
             mainActivityVM.setInstallation(true)
         }
         else {
-            sendToServer(WAITERS)
+            System.out.println(" selam anina2")
+            mainActivityVM.getHashes()
             mainActivityVM.dishFetched.observe(this, Observer { dish ->
                 mainActivityVM.printerFetched.observe(this, Observer { printer ->
                     mainActivityVM.waitersFetched.observe(this, Observer { waiter ->
@@ -270,9 +260,6 @@ class MainActivity : AppCompatActivity() {
                             if (dish && printer && waiter) {
                                 if (first!!.contentEquals("false")) {
                                     mainActivityVM.setInstallation(true)
-                   /*                 mainActivityVM.setApiService(Api(this))
-                                    mainActivityVM.getHashes()*/
-
                                     Preferences.savePref("first", "true", this)
                                 }
 
@@ -288,9 +275,6 @@ class MainActivity : AppCompatActivity() {
 
         mainActivityVM.isInstallationComplete.observe(this, Observer {
             System.out.println(" naber lan ${it}")
-//            mainActivityVM.getHashes()
-
-
         })
     }
 
@@ -311,40 +295,49 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showSettings() {
-        val dialog  = DialogUtil.bottom(R.layout.settings_layout,this)
-        val ip : EditText? = dialog?.findViewById(R.id.ip)
-        val folder : EditText? = dialog?.findViewById(R.id.folder)
-        val login : EditText? = dialog?.findViewById(R.id.login)
-        val password : EditText? = dialog?.findViewById(R.id.password)
-        val ok: Button? = dialog?.findViewById(R.id.ok)
-        val cancel : Button? = dialog?.findViewById(R.id.cancel)
+        mainActivityVM.stopCountTimer()
+        val intent = Intent(this, Splash::class.java)
+        val bundle = Bundle()
+        bundle.putBoolean("isMain", true)
+        intent.putExtras(bundle)
+        startActivity(intent)
+        finish()
 
-        dialog?.show()
+        /* val dialog  = DialogUtil.bottom(R.layout.settings_layout,this)
+           val ip : EditText? = dialog?.findViewById(R.id.ip)
+           val folder : EditText? = dialog?.findViewById(R.id.folder)
+           val login : EditText? = dialog?.findViewById(R.id.login)
+           val password : EditText? = dialog?.findViewById(R.id.password)
+           val ok: Button? = dialog?.findViewById(R.id.ok)
+           val cancel : Button? = dialog?.findViewById(R.id.cancel)
 
-        val ipStr= Preferences.getPref("ip","",this)
-        val folderStr= Preferences.getPref("folder","",this)
-        val loginStr= Preferences.getPref("loginStr","",this)
-        val passwordStr= Preferences.getPref("passwordStr","",this)
+           dialog?.show()
 
-        ip?.text = ipStr?.toEditable()
-        folder?.text = folderStr?.toEditable()
-        login?.text = loginStr?.toEditable()
-        password?.text = passwordStr?.toEditable()
+           val ipStr= Preferences.getPref("ip","",this)
+           val folderStr= Preferences.getPref("folder","",this)
+           val loginStr= Preferences.getPref("loginStr","",this)
+           val passwordStr= Preferences.getPref("passwordStr","",this)
 
-        cancel?.setOnClickListener { dialog.dismiss() }
-        ok?.setOnClickListener {
-            dialog.dismiss()
+           ip?.text = ipStr?.toEditable()
+           folder?.text = folderStr?.toEditable()
+           login?.text = loginStr?.toEditable()
+           password?.text = passwordStr?.toEditable()
 
-            //  mainActivityVM.clear()
-            Preferences.savePref("ip",ip?.text.toString(),this)
-            Preferences.savePref("folder",folder?.text.toString(),this)
-            Preferences.savePref("loginStr",login?.text.toString(),this)
-            Preferences.savePref("passwordStr",password?.text.toString(),this)
-            initAll()
-        }
+           cancel?.setOnClickListener { dialog.dismiss() }
+           ok?.setOnClickListener {
+               dialog.dismiss()
+
+               //  mainActivityVM.clear()
+               Preferences.savePref("ip",ip?.text.toString(),this)
+               Preferences.savePref("folder",folder?.text.toString(),this)
+               Preferences.savePref("loginStr",login?.text.toString(),this)
+               Preferences.savePref("passwordStr",password?.text.toString(),this)
+               initAll()
+           }*/
     }
 
     private fun initAll() {
+        WorkManager.getInstance(this).cancelAllWork()
         mainActivityVM.setInstallation(false)
         mainActivityVM.setIsDishFetch(false)
         mainActivityVM.setIsWaiterFetch(false)

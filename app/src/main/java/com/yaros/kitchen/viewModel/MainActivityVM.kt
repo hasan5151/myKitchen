@@ -43,21 +43,6 @@ class MainActivityVM (val db: RoomDb, val rxSchedulers: RxSchedulers,var apiServ
     var repos = Repos(db,rxSchedulers)
     var apiRepo = ApiRepo(repos,rxSchedulers,apiService,disposable)
 
-    var resumed: AtomicBoolean = AtomicBoolean()
-    var stopped: AtomicBoolean = AtomicBoolean()
-
-    fun pauseTimer() {
-        resumed.set(false)
-    }
-
-    fun resumeTimer() {
-        resumed.set(true)
-    }
-
-    fun stopTimer() {
-        stopped.set(true)
-    }
-
     fun setApiService(api: Api){
         apiService = api.getApi()
     }
@@ -92,8 +77,8 @@ class MainActivityVM (val db: RoomDb, val rxSchedulers: RxSchedulers,var apiServ
         isOrderFetched.value = false
      }
 
-    fun getHashes(string : String) {
-        System.out.println("get hashes test")
+    fun getHashes() {
+        System.out.println("selam hashes test")
         if (::countDownTimer.isInitialized)
         countDownTimer.cancel()
 
@@ -102,18 +87,21 @@ class MainActivityVM (val db: RoomDb, val rxSchedulers: RxSchedulers,var apiServ
 
             override fun onTick(millisUntilFinished: Long) {
                 disposable.add(apiRepo.getHashes()?.subscribe({
+                    System.out.println("selam Hash ${it}")
                     hash.value=it
                 },{it.printStackTrace()})!!)
             }
         }.start()
-
-
-
     }
+
+    fun stopCountTimer(){
+        if (::countDownTimer.isInitialized)
+        countDownTimer.cancel()
+    }
+
+
     private fun startTimer(id : Int){
-
     }
-
 
     fun setHistoryUpdate(){
         isHistoryUpdated.value = true
@@ -130,11 +118,8 @@ class MainActivityVM (val db: RoomDb, val rxSchedulers: RxSchedulers,var apiServ
 
     fun getNewOrders() : List<KitchenModel> = repos.getKitchenRepo().getNewOrders()
 
-
     override fun onCleared() {
         disposable.clear()
          super.onCleared()
     }
-
-
 }
