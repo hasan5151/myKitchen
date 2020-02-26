@@ -23,6 +23,7 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
         const val DISHES = 2
         const val WAITERS = 3
         const val SUCCESS = "SUCCESS"
+        const val SUCCzESS = "SUCCESS"
     }
 
     lateinit var compositeDisposable: CompositeDisposable
