@@ -10,14 +10,14 @@ import io.reactivex.disposables.CompositeDisposable
 
 class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService: ApiService,val compositeDisposable: CompositeDisposable) {
 
-/*    fun getWaiters(){
-        val tokenService = TokenService()
+    fun getWaiters(){
+  /*      val tokenService = TokenService()
         compositeDisposable.add(
             tokenService.getApi().getWaiters()?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it }?.subscribe({
                 System.out.println("init it ${it}")
                 repos.getWaiterRepo().insert(it)
 
-            },{it.printStackTrace()})!!)
+            },{it.printStackTrace()})!!)*/
     }
 
     fun logoutWaiter(waiterToken: String){
@@ -38,11 +38,15 @@ class ApiRepo (val repos : Repos, val rxSchedulers: RxSchedulers, val apiService
                 repos.getDishesRepo().insert(it)
             }
             ,{it.printStackTrace()})!!)
-    }*/
+    }
 
     fun getHashes() : Observable<HashModel>? = apiService.getHashes()?.compose(rxSchedulers.applyObservable())?.map { it.data }
 
+
     fun getHistory(post : OrdersKitchenPostModel) : Observable<List<HistoryModel?>?>? =
         apiService.getHistory(post)?.compose(rxSchedulers.applyObservable())?.map { it.data }
-
+/*
+    fun getHistory(post : OrdersKitchenPostModel) : Observable<GroupedObservable<String?,HistoryModel?>?>? =
+        apiService.getHistory(post)?.compose(rxSchedulers.applyObservable())?.map { it.data }?.flatMapIterable { it }?.groupBy { it.order }
+*/
 }

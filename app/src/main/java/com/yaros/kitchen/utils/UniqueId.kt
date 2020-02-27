@@ -1,7 +1,9 @@
 package com.yaros.kitchen.utils
 
+import android.app.Activity
 import android.content.Context
 import android.provider.Settings.Secure
+
 
 class UniqueId {
     companion object{

@@ -36,7 +36,7 @@ android {
 
 
 dependencies {
-    def room_version = "2.2.3"
+    def room_version = "2.2.4"
     def paging_version = "2.1.1"
     def retrofit_version = "2.6.2"
     def lifecycle_version = "2.2.0"
@@ -74,7 +74,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
 
-    implementation 'androidx.work:work-runtime-ktx:2.3.1'
+    implementation 'androidx.work:work-runtime-ktx:2.3.2'
     implementation "androidx.concurrent:concurrent-futures:1.0.0"
 
     implementation 'jp.wasabeef:recyclerview-animators:3.0.0'

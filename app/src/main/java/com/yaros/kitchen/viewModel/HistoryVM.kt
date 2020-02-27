@@ -1,14 +1,23 @@
 package com.yaros.kitchen.viewModel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
+import com.yaros.kitchen.models.HashModel
+import com.yaros.kitchen.models.HistoryItemModel
+import com.yaros.kitchen.models.HistoryOrderModel
 import com.yaros.kitchen.models.apiModels.HistoryModel
 import com.yaros.kitchen.models.apiModels.OrdersKitchenPostModel
 import com.yaros.kitchen.repositories.ApiRepo
 import com.yaros.kitchen.repositories.Repos
 import com.yaros.kitchen.room.db.RoomDb
+
+import com.yaros.kitchen.room.entity.PrintersModel
+import com.yaros.kitchen.utils.DateUtil
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 

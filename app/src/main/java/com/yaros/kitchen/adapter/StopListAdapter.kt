@@ -10,6 +10,7 @@ import com.yaros.kitchen.R
 import com.yaros.kitchen.models.StopListModel
 import kotlinx.android.synthetic.main.stop_list_adapter.view.*
 
+
 abstract class StopListAdapter(val stopList :ArrayList<StopListModel>, val context : Context) : RecyclerView.Adapter<StopListAdapter.StopListVH>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StopListVH {
         val view: View = LayoutInflater.from(parent.getContext())
@@ -34,6 +35,7 @@ abstract class StopListAdapter(val stopList :ArrayList<StopListModel>, val conte
         })
     }
 
+
     class StopListVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name = itemView.name
         val type = itemView.type
@@ -41,4 +43,6 @@ abstract class StopListAdapter(val stopList :ArrayList<StopListModel>, val conte
     }
 
     abstract fun onClick(stop: ArrayList<StopListModel>, position : Int)
+
+
 }

@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.yaros.kitchen.models.HashModel
 import com.yaros.kitchen.room.converters.Converters
 import com.yaros.kitchen.room.dao.*
 import com.yaros.kitchen.room.entity.*

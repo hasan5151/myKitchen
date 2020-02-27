@@ -1,8 +1,10 @@
 package com.yaros.kitchen.utils
 
+import android.R
 import android.content.Context
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+
 
 class TVDrawable(val context: Context) {
     fun drawSize(tv: TextView, drawableInt: Int,size :Double, isLeft : Boolean = true){
@@ -34,4 +36,6 @@ class TVDrawable(val context: Context) {
                 null //bottom
             )
     }
+
+
 }

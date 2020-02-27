@@ -2,7 +2,7 @@ package com.yaros.kitchen.room.converters;
 
 import androidx.room.TypeConverter;
 
-import com.google.gson.Gson;
+ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yaros.kitchen.models.HistoryItemModel;
 
