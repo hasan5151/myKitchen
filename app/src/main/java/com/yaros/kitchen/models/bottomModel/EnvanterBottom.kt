@@ -5,5 +5,4 @@ import com.yaros.kitchen.ui.fragment.EnvanterFragment
 
 class EnvanterBottom : BottomInterface{
     override fun getItems(): List<BaseFragment> = listOf(EnvanterFragment())
-
 }

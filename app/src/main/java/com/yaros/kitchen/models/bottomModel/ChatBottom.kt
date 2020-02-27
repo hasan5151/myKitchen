@@ -5,6 +5,4 @@ import com.yaros.kitchen.ui.fragment.ChatFragment
 
 class ChatBottom  : BottomInterface{
     override fun getItems(): List<BaseFragment> = listOf(ChatFragment())
-
-
 }

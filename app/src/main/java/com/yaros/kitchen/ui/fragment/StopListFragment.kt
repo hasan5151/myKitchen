@@ -16,7 +16,6 @@ import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.utils.DialogUtil
 import com.yaros.kitchen.viewModel.MainActivityVM
 import com.yaros.kitchen.viewModel.factory.MainActivityFactory
-import kotlinx.android.synthetic.main.stop_list_adapter.*
 
 class StopListFragment : BaseFragment() {
     override fun getName(): String = "Стоп-лист"
@@ -210,20 +209,12 @@ class StopListFragment : BaseFragment() {
                 setCountListRV(arrayListOf())
                 dialog.dismiss()
             })
-
-
         }
 
         cancel.setOnClickListener({
             dialog.dismiss()
         })
-
-
-
-
     }
-
-
 }
 
 

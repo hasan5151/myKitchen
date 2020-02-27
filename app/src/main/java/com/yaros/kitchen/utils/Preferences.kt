@@ -2,8 +2,6 @@ package com.yaros.kitchen.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.gson.Gson
-import com.yaros.kitchen.models.AuthToken
 
 class Preferences {
 

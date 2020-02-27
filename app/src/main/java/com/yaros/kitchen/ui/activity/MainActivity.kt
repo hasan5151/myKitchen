@@ -3,7 +3,6 @@ package com.yaros.kitchen.ui.activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.text.Editable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -80,18 +79,9 @@ class MainActivity : AppCompatActivity() {
                 tabLayout.setVisibility(View.GONE)
             }
         })
-
-   /*     mainActivityVM.waitersFetched.observe(this, Observer {
-            if (it){
-                mainActivityVM.setApiService(Api(this))
-                mainActivityVM.getHashes()
-            }
-        })*/
-
         checkFirstFetch()
         setHash()
     }
-
 
     private fun setHash() {
         System.out.println("selam Hash")
@@ -180,7 +170,6 @@ class MainActivity : AppCompatActivity() {
             if (viewPagerAdapter.fragmentList.get(i).getDrawable()!=0)
                 tabLayout.getTabAt(i)!!.icon = ContextCompat.getDrawable(this, viewPagerAdapter.fragmentList.get(i).getDrawable())
             tabLayout.getTabAt(i)?.text= viewPagerAdapter.getPageTitle(i)
-//            tabLayout.getTabAt(i)?.badge = ;
         }
     }
 
@@ -207,10 +196,8 @@ class MainActivity : AppCompatActivity() {
         val catalogReq= OneTimeWorkRequest.Builder(CatalogWM::class.java)
             .setInputData(data)
             .build()
-        val operation = WorkManager.getInstance(this).enqueue(catalogReq)
-
-         getStatusOfManager(catalogReq.id)
-
+//        val operation = WorkManager.getInstance(this).enqueue(catalogReq)
+        getStatusOfManager(catalogReq.id)
     }
 
     private fun getStatusOfManager(id: UUID) {
@@ -246,12 +233,10 @@ class MainActivity : AppCompatActivity() {
     private fun checkFirstFetch() {
         val first= Preferences.getPref("first","false",this)
         if (first!!.contentEquals("true")){
-            System.out.println(" selam anina")
             mainActivityVM.getHashes()
             mainActivityVM.setInstallation(true)
         }
         else {
-            System.out.println(" selam anina2")
             mainActivityVM.getHashes()
             mainActivityVM.dishFetched.observe(this, Observer { dish ->
                 mainActivityVM.printerFetched.observe(this, Observer { printer ->
@@ -272,10 +257,6 @@ class MainActivity : AppCompatActivity() {
                 })
             })
         }
-
-        mainActivityVM.isInstallationComplete.observe(this, Observer {
-            System.out.println(" naber lan ${it}")
-        })
     }
 
     fun isTablet() : Boolean {
@@ -302,60 +283,5 @@ class MainActivity : AppCompatActivity() {
         intent.putExtras(bundle)
         startActivity(intent)
         finish()
-
-        /* val dialog  = DialogUtil.bottom(R.layout.settings_layout,this)
-           val ip : EditText? = dialog?.findViewById(R.id.ip)
-           val folder : EditText? = dialog?.findViewById(R.id.folder)
-           val login : EditText? = dialog?.findViewById(R.id.login)
-           val password : EditText? = dialog?.findViewById(R.id.password)
-           val ok: Button? = dialog?.findViewById(R.id.ok)
-           val cancel : Button? = dialog?.findViewById(R.id.cancel)
-
-           dialog?.show()
-
-           val ipStr= Preferences.getPref("ip","",this)
-           val folderStr= Preferences.getPref("folder","",this)
-           val loginStr= Preferences.getPref("loginStr","",this)
-           val passwordStr= Preferences.getPref("passwordStr","",this)
-
-           ip?.text = ipStr?.toEditable()
-           folder?.text = folderStr?.toEditable()
-           login?.text = loginStr?.toEditable()
-           password?.text = passwordStr?.toEditable()
-
-           cancel?.setOnClickListener { dialog.dismiss() }
-           ok?.setOnClickListener {
-               dialog.dismiss()
-
-               //  mainActivityVM.clear()
-               Preferences.savePref("ip",ip?.text.toString(),this)
-               Preferences.savePref("folder",folder?.text.toString(),this)
-               Preferences.savePref("loginStr",login?.text.toString(),this)
-               Preferences.savePref("passwordStr",password?.text.toString(),this)
-               initAll()
-           }*/
     }
-
-    private fun initAll() {
-        WorkManager.getInstance(this).cancelAllWork()
-        mainActivityVM.setInstallation(false)
-        mainActivityVM.setIsDishFetch(false)
-        mainActivityVM.setIsWaiterFetch(false)
-        mainActivityVM.setIsPrinterFetch(false)
-        Preferences.savePref("first","false",this)
-        Preferences.savePref("orderHash","",this)
-        Preferences.savePref("catalogHash","",this)
-        Preferences.savePref("timeStamp","",this)
-        Preferences.savePref("waiter_token","",this)
-
-        val room = RoomDb(this)
-
-        room.DishesDAO().deleteAll().compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe()
-        room.KitchenDAO().deleteAll().compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe()
-        room.PrintersDAO().deleteAll().compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe()
-        room.WaiterDAO().deleteAll().compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe()
-        checkFirstFetch()
-    }
-
-    fun String.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this)
 }

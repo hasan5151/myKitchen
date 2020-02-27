@@ -5,20 +5,18 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.yaros.kitchen.models.HashModel
 import com.yaros.kitchen.room.converters.Converters
 import com.yaros.kitchen.room.dao.*
 import com.yaros.kitchen.room.entity.*
 
 @Database(
-    entities = [KitchenItemModel::class, KitchenOrderModel::class, DishesModel::class, WaitersModel::class, PrintersModel::class, KitchenModel::class],
+    entities = [DishesModel::class, WaitersModel::class, PrintersModel::class, KitchenModel::class],
     exportSchema = false,
     version = 1
 )
 @TypeConverters(Converters::class)
 abstract class RoomDb : RoomDatabase(){
-    abstract fun KitchenOrderDAO(): KitchenOrderDAO
-    abstract fun KitchenItemDAO(): KitchenItemDAO
+
     abstract fun DishesDAO(): DishesDAO
     abstract fun WaiterDAO(): WaiterDAO
     abstract fun PrintersDAO(): PrintersDAO

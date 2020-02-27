@@ -7,9 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.yaros.kitchen.models.KitchenTop
-import com.yaros.kitchen.room.entity.ItemInfoModel
-import com.yaros.kitchen.room.entity.KitchenItemModel
-import com.yaros.kitchen.room.entity.KitchenModel
+ import com.yaros.kitchen.room.entity.KitchenModel
 import io.reactivex.Completable
 import io.reactivex.Flowable
 
@@ -20,18 +18,13 @@ interface KitchenDAO {
 
     @Query("UPDATE KitchenModel SET isSent=1 WHERE id= :id")
     fun deleteItem(id: Int) : Completable
-
-
-
+ 
     @Query("SELECT * FROM KitchenModel WHERE isSent=0 and count>=0 ORDER BY number DESC")
     fun getAll(): DataSource.Factory<Int, KitchenModel>
 
     @Query("SELECT * FROM KitchenModel WHERE countDownStatus=0 ORDER BY number DESC") // NOTSTARTED
     fun getNewOrders(): List<KitchenModel>
-
-    @Query("SELECT * FROM KitchenModel ORDER BY number DESC") // NOTSTARTED
-    fun getAll2(): List<KitchenModel>
-
+ 
     @Query("SELECT * FROM KitchenModel Where printerId=:printer and isSent=0 and count>=0 ORDER BY number DESC")
     fun getAllByPrinter(printer: String): DataSource.Factory<Int, KitchenModel>
 
@@ -49,10 +42,7 @@ interface KitchenDAO {
 
     @Query("Select COUNT(order_item) AS item FROM KitchenModel WHERE order_item= :orderItem and dish=:dish and dateOriginal=:date and count=:count")
     fun check(orderItem: String, dish : String, date : String, count : Int ): Boolean
-
-    @Query("Select COUNT(order_item) AS item FROM KitchenModel WHERE order_item= :orderItem and dish=:dish and dateOriginal=:date and count=:count")
-    fun check2(orderItem: String, dish : String, date : String, count : Int ): Int
-
+ 
     @Query("UPDATE KitchenModel SET countDownStatus=:status WHERE id= :id")
     fun changeCountDownStatus(id: Int,status : Int) : Completable
 

@@ -46,7 +46,7 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
         return CallbackToFutureAdapter.getFuture { callback ->
             val tokenService = TokenService(appContext)
             compositeDisposable.add(
-                tokenService.getApi().getWaiterss()?.compose(RxSchedulers.DEFAULT.applyObservable())?.subscribe(
+                tokenService.getApi().getWaiters()?.compose(RxSchedulers.DEFAULT.applyObservable())?.subscribe(
                     {
                         System.out.println("hi url ${it?.raw()?.request()?.url()}")
                         val bodySize= it?.body()?.data?.size

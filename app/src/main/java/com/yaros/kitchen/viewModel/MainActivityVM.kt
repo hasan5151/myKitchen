@@ -3,7 +3,6 @@ package com.yaros.kitchen.viewModel
 import android.os.CountDownTimer
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.ApiService
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.HashModel
@@ -11,14 +10,9 @@ import com.yaros.kitchen.repositories.ApiRepo
 import com.yaros.kitchen.repositories.Repos
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.KitchenModel
-import com.yaros.kitchen.utils.Preferences
-import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicBoolean
-
 
 class MainActivityVM (val db: RoomDb, val rxSchedulers: RxSchedulers,var apiService: ApiService) : ViewModel() {
 
@@ -43,9 +37,6 @@ class MainActivityVM (val db: RoomDb, val rxSchedulers: RxSchedulers,var apiServ
     var repos = Repos(db,rxSchedulers)
     var apiRepo = ApiRepo(repos,rxSchedulers,apiService,disposable)
 
-    fun setApiService(api: Api){
-        apiService = api.getApi()
-    }
 
     fun isStopListAddButtonClick(){
         isClicked.value =true
@@ -100,9 +91,6 @@ class MainActivityVM (val db: RoomDb, val rxSchedulers: RxSchedulers,var apiServ
     }
 
 
-    private fun startTimer(id : Int){
-    }
-
     fun setHistoryUpdate(){
         isHistoryUpdated.value = true
         isHistoryUpdated.value= false
@@ -110,10 +98,6 @@ class MainActivityVM (val db: RoomDb, val rxSchedulers: RxSchedulers,var apiServ
 
     fun changeCountDownStatus(id: Int,status : Int) {
         repos.getKitchenRepo().changeCountDownStatus(id,status)
-    }
-
-    fun setCancelledOrders(id: Int,cancelledOrders : Int) {
-        repos.getKitchenRepo().setCancelledOrders(id,cancelledOrders)
     }
 
     fun getNewOrders() : List<KitchenModel> = repos.getKitchenRepo().getNewOrders()

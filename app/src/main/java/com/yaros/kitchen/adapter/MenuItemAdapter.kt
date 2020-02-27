@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
 import com.yaros.kitchen.room.entity.DishesModel
-import com.yaros.kitchen.room.entity.KitchenItemModel
 import kotlinx.android.synthetic.main.menu_item_adapter.view.*
 
 abstract class MenuItemAdapter(val items : List<DishesModel>)  : RecyclerView.Adapter<MenuItemAdapter.MenuItemVH>() {

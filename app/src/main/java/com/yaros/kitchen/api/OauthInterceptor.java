@@ -24,5 +24,4 @@ public class OauthInterceptor implements Interceptor {
                 .header("Authorization", credentials).build();
         return chain.proceed(authenticatedRequest);
     }
-
 }

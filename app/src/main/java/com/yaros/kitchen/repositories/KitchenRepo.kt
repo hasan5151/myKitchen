@@ -38,16 +38,8 @@ class KitchenRepo (val db: RoomDb, val rx : RxSchedulers) {
     fun getItemOrders(item_order : String?) : LiveData<List<KitchenModel>> =
             db.KitchenDAO().getItemOrders(item_order)
 
-/*    fun stopCountDown() : LiveData<KitchenModel> =
-            db.KitchenDAO().stopCountDown()*/
-
     fun stopCountDown() : LiveData<KitchenModel> =
             LiveDataReactiveStreams.fromPublisher(db.KitchenDAO().stopCountDown())
-
-    fun getAllByPrinter(printer: String) : LiveData<PagedList<KitchenModel>> =
-        LivePagedListBuilder<Int, KitchenModel>(
-            db.KitchenDAO().getAllByPrinter(printer), 10
-        ).build()
 
     fun getAll() : LiveData<PagedList<KitchenModel>> =
         LivePagedListBuilder<Int, KitchenModel>(

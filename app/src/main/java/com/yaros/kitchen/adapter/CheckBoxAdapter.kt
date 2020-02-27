@@ -53,6 +53,4 @@ abstract class CheckBoxAdapter (val printersModel:  List<PrintersModel>, val con
     }
 
     abstract fun getSelectItems(isChecked : Boolean, printersModel: PrintersModel)
-
-
 }

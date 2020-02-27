@@ -1,10 +1,8 @@
 package com.yaros.kitchen.ui.activity
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
-import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -16,14 +14,10 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.yaros.kitchen.BuildConfig
 import com.yaros.kitchen.R
-import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.api.TokenService
-import com.yaros.kitchen.repositories.TokenRepo
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.utils.*
-import com.yaros.kitchen.utils.CatalogWM.Companion.DISHES
-import com.yaros.kitchen.utils.CatalogWM.Companion.PRINTERS
 import com.yaros.kitchen.utils.CatalogWM.Companion.WAITERS
 import java.util.*
 
@@ -111,12 +105,7 @@ class Splash : AppCompatActivity() {
             .build()
         val operation = WorkManager.getInstance(this).enqueue(catalogReq)
 
-//        if (type==ORDERS){
         getStatusOfManager(catalogReq.id)
-        /*      operation.state.observe(this, Observer {
-
-              })*/
-//        }
     }
 
     private fun getStatusOfManager(id: UUID) {
@@ -153,8 +142,6 @@ class Splash : AppCompatActivity() {
                 }
             })
     }
-
-
 
     private fun goMain(){
         startActivity(Intent(this,MainActivity::class.java))

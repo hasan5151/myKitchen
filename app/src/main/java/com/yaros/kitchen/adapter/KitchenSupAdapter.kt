@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.yaros.kitchen.R
-import com.yaros.kitchen.models.KitchenTop
 import com.yaros.kitchen.room.entity.KitchenModel
 import com.yaros.kitchen.utils.DateUtil
 import com.yaros.kitchen.utils.Preferences
@@ -91,7 +90,6 @@ abstract class KitchenSupAdapter (val context : Context): PagedListAdapter<Kitch
             holder.constraint.setOnClickListener {
                 showPopup(item,item.id)
             }
-
         }
 
         if (item!!.reqTime>0L) {
@@ -200,8 +198,6 @@ abstract class KitchenSupAdapter (val context : Context): PagedListAdapter<Kitch
             holder.orderTime.setLayoutParams(paramsOrderTime)
             holder.elapsedTime.setLayoutParams(paramsElapsedTime)
         }
-
-
     }
 
     private fun countDown(item : KitchenModel, holder: ItemVH) {

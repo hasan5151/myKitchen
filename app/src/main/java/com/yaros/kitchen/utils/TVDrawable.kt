@@ -1,6 +1,5 @@
 package com.yaros.kitchen.utils
 
-import android.R
 import android.content.Context
 import android.widget.TextView
 import androidx.core.content.ContextCompat

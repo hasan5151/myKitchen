@@ -7,24 +7,24 @@ import androidx.room.PrimaryKey;
 public class KitchenModel {
 
     @PrimaryKey(autoGenerate = false)
-    private Integer id;
-    private String number;
-    private String printerId;
-    private String printerName;
-    private String order_item;
-    private String name;
-    private String comment;
-    private String dish;
-    private Long reqTime;
-    private String date;
-    private String dateOriginal;
-    private Integer count;
-    private String waiterName;
-    private Integer countDownStatus;
-    private Integer isSent;
-    private Integer cancelledOrders;
-    private String item_order;
-    private String item_number;
+    public Integer id;
+    public String number;
+    public String printerId;
+    public String printerName;
+    public String order_item;
+    public String name;
+    public String comment;
+    public String dish;
+    public Long reqTime;
+    public String date;
+    public String dateOriginal;
+    public Integer count;
+    public String waiterName;
+    public Integer countDownStatus;
+    public Integer isSent;
+    public Integer cancelledOrders;
+    public String item_order;
+    public String item_number;
 
     public Integer getId() {
         return id;

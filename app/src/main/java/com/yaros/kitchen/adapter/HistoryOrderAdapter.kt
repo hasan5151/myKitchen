@@ -10,7 +10,6 @@ import com.yaros.kitchen.models.HistoryOrderModel
 import com.yaros.kitchen.models.OrderModel
 import kotlinx.android.synthetic.main.kitchen_order_adapter.view.*
 
-
 open class HistoryOrderAdapter(val orders: List<HistoryOrderModel>, val context: Context): RecyclerView.Adapter<HistoryOrderAdapter.KitchenVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KitchenVH {

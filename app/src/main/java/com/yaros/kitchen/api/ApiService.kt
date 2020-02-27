@@ -3,10 +3,8 @@ package com.yaros.kitchen.api
 import com.yaros.kitchen.models.*
 import com.yaros.kitchen.models.apiModels.*
 import com.yaros.kitchen.room.entity.WaitersModel
-import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -16,11 +14,9 @@ import retrofit2.http.Query
 
 @JvmSuppressWildcards
 interface ApiService {
-    @GET("hs/MobileKitchen?cmd=get_waiters")
-    fun getWaiters(): Observable<BaseList<WaitersModel>?>?
 
     @GET("hs/MobileKitchen?cmd=get_waiters")
-    fun getWaiterss(): Observable<Response<BaseList<WaitersModel>?>?>?
+    fun getWaiters(): Observable<Response<BaseList<WaitersModel>?>?>?
 
     @GET("hs/MobileKitchen?cmd=login_waiter")
     fun loginWaiter(
@@ -68,17 +64,10 @@ interface ApiService {
     fun getKitchenDataa(): Observable<Response<Base<BaseType>?>?>?
 
     @POST("hs/MobileKitchen?cmd=get_orders_kitchen")
-    fun getOrderItems(@Body ordersKitchenPostModel: OrdersKitchenPostModel): Observable<BaseList<GetOrderItems>>
-
-    @POST("hs/MobileKitchen?cmd=get_orders_kitchen")
     fun getOrderItemsNew(@Body ordersKitchenPostModel: OrdersKitchenPostModel): Observable<Response<BaseList<OrdersKitchen>>>
 
     @GET( "hs/MobileKitchen?cmd=get_kitchen_hashes")
     fun getHashes(): Observable<Base<HashModel>?>?
-
-    @GET( "hs/MobileKitchen?cmd=get_kitchen_hashes")
-    fun getHashes2(@Query("waiter_token") token: String): Observable<Base<HashModel>?>?
-
 
     @JvmSuppressWildcards
     @POST( "hs/MobileKitchen?cmd=dish_cooked")

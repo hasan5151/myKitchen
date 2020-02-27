@@ -9,7 +9,6 @@ import com.yaros.kitchen.R
 import com.yaros.kitchen.room.entity.PrintersModel
 import kotlinx.android.synthetic.main.menu_adapter.view.*
 
-
 abstract class MenuAdapter (val printers : List<PrintersModel>,val context : Context)  : RecyclerView.Adapter<MenuAdapter.MenuVH>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuVH {
         val view: View = LayoutInflater.from(parent.getContext())
@@ -29,11 +28,9 @@ abstract class MenuAdapter (val printers : List<PrintersModel>,val context : Con
         })
     }
 
-
     class MenuVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val button = itemView.button
     }
 
     abstract fun onClick(printer: PrintersModel)
-
 }

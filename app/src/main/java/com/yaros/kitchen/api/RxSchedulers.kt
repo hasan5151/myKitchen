@@ -4,7 +4,6 @@ import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-
 interface RxSchedulers {
     fun <T> applySingle(): SingleTransformer<T, T>?
     fun <T> applyObservable(): ObservableTransformer<T, T>

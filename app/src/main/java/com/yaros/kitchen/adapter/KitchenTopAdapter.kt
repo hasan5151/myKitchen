@@ -9,8 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
 import com.yaros.kitchen.models.KitchenTop
-import com.yaros.kitchen.room.entity.KitchenModel
-  import kotlinx.android.synthetic.main.kitchen_adapter.view.orderId
+import kotlinx.android.synthetic.main.kitchen_adapter.view.orderId
 import kotlinx.android.synthetic.main.kitchen_adapter.view.waiterName
 import kotlinx.android.synthetic.main.kitchen_order_adapter.view.*
 
@@ -57,5 +56,4 @@ abstract class KitchenTopAdapter(val context : Context): PagedListAdapter<Kitche
     }
 
     abstract fun setItemAdapter(recyclerView: RecyclerView?,item_order : String?)
-
 }

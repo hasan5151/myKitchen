@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
 import com.yaros.kitchen.room.entity.PrintersModel
-import kotlinx.android.synthetic.main.chip_adapter.view.*
 import kotlinx.android.synthetic.main.search_adapter.view.*
 
 abstract class SearchAdapter(val breadcrumbs : List<PrintersModel>) : RecyclerView.Adapter<SearchAdapter.SearchVH>() {
@@ -25,7 +24,6 @@ abstract class SearchAdapter(val breadcrumbs : List<PrintersModel>) : RecyclerVi
         holder.textView.setOnClickListener({
             onClick(breadcrumb,position)
         })
-        //
     }
 
     class SearchVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -33,6 +31,4 @@ abstract class SearchAdapter(val breadcrumbs : List<PrintersModel>) : RecyclerVi
     }
 
     abstract fun onClick(printersModel: PrintersModel,pos : Int)
-
-
 }

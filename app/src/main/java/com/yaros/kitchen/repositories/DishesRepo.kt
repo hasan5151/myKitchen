@@ -29,11 +29,5 @@ class DishesRepo (val db: RoomDb, val rx: RxSchedulers) {
     fun getAll(): LiveData<List<DishesModel>> {
         return db.DishesDAO().getAll()
     }
-    fun getAllList(): List<DishesModel> {
-        return db.DishesDAO().getAllList()
-    }
 
-    fun isDishesCreated(): LiveData<Boolean> {
-        return db.DishesDAO().isDishesCreated()
-    }
 }

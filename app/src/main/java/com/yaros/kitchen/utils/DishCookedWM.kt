@@ -11,9 +11,6 @@ import com.yaros.kitchen.api.Api
 import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.apiModels.DishCookedModel
 import io.reactivex.disposables.CompositeDisposable
-import okhttp3.internal.http2.Header
-import retrofit2.adapter.rxjava2.Result.response
-import retrofit2.http.Headers
 import java.util.*
 
 
