@@ -8,7 +8,6 @@ import androidx.room.Query
 import com.yaros.kitchen.room.entity.PrintersModel
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 
 @Dao
 interface PrintersDAO {
@@ -42,9 +41,6 @@ interface PrintersDAO {
     @Query("SELECT * FROM PRINTERSMODEL WHERE isChecked=:isChecked")
     fun getCheckedPrinters(isChecked: Boolean=true) : LiveData<List<PrintersModel>>
 
-
     @Query("DELETE FROM  PRINTERSMODEL")
     fun deleteAll() : Completable
-
-
 }

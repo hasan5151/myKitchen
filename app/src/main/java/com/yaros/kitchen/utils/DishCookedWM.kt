@@ -1,7 +1,6 @@
 package com.yaros.kitchen.utils
 
 import android.content.Context
-import android.widget.Toast
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
@@ -12,7 +11,6 @@ import com.yaros.kitchen.api.RxSchedulers
 import com.yaros.kitchen.models.apiModels.DishCookedModel
 import io.reactivex.disposables.CompositeDisposable
 import java.util.*
-
 
 @JvmSuppressWildcards
 class DishCookedWM(val appContext: Context, val workerParams: WorkerParameters) : ListenableWorker(appContext, workerParams) {

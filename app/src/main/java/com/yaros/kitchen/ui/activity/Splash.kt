@@ -64,7 +64,6 @@ class Splash : AppCompatActivity() {
         }
         ok?.setOnClickListener {
             //  mainActivityVM.clear()
-
             progressBar?.visibility = View.VISIBLE
             Preferences.savePref("ip",ip?.text.toString(),this)
             Preferences.savePref("folder",folder?.text.toString(),this)
@@ -90,7 +89,6 @@ class Splash : AppCompatActivity() {
         room.WaiterDAO().deleteAll().compose(RxSchedulers.DEFAULT.applyCompletable()).subscribe({
                 sendToServer(WAITERS)
         },{})
-
     }
 
     fun String.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this)

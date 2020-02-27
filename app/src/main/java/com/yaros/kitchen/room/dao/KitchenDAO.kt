@@ -7,7 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.yaros.kitchen.models.KitchenTop
- import com.yaros.kitchen.room.entity.KitchenModel
+import com.yaros.kitchen.room.entity.KitchenModel
 import io.reactivex.Completable
 import io.reactivex.Flowable
 
@@ -72,6 +72,4 @@ interface KitchenDAO {
 
     @Query("DELETE FROM  KitchenModel")
     fun deleteAll() : Completable
-
-
 }

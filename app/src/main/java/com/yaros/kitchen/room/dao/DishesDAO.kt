@@ -1,7 +1,6 @@
 package com.yaros.kitchen.room.dao
 
 import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -9,8 +8,6 @@ import androidx.room.Query
 import com.yaros.kitchen.room.entity.DishesModel
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.Single
 
 @Dao
 interface DishesDAO {

@@ -98,8 +98,6 @@ class MainActivity : AppCompatActivity() {
 
 
             val oldCatalogHash= Preferences.getPref("catalogHash","",this)
-
-
             System.out.println("selam Hash1 ${it.catalog_hash.toString()}")
             System.out.println("selam Hash2 ${oldCatalogHash}")
 

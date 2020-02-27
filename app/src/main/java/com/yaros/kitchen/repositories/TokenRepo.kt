@@ -9,7 +9,6 @@ import com.yaros.kitchen.api.TokenService
 import com.yaros.kitchen.utils.IpAddress
 import com.yaros.kitchen.utils.UniqueId
 
-
 class TokenRepo  (val tokenService: TokenService, val context : Context) {
     fun getToken(waiterId: String,password : String): String? {
         System.out.println("waiterId2 ${waiterId}")

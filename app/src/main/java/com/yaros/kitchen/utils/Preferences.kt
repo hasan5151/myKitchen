@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 
 class Preferences {
-
     companion object{
         val USER_PREFERENCES = "user_preferences"
         @Synchronized

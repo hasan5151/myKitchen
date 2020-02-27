@@ -30,8 +30,6 @@ public class DishesModel {
         this.name = name;
     }
 
-
-
     public Boolean getChecked() {
         return isChecked;
     }
