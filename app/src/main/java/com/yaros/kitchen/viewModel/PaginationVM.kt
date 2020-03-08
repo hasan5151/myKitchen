@@ -23,7 +23,7 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,var apiService: Api
     var itemSubKitchen:  LiveData<List<KitchenModel>> = MutableLiveData()
     var itemSubKitchen2:  LiveData<PagedList<KitchenModel>> = MutableLiveData()
     var stopCountDown:  LiveData<KitchenModel> = MutableLiveData()
-    var itemInfo: LiveData<ItemInfoModel> = MutableLiveData()
+     var itemInfo: LiveData<ItemInfoModel> = MutableLiveData()
     lateinit var dishesInfo:  LiveData<List<DishesModel>>
 
     var printersList: LiveData<List<PrintersModel>> = MutableLiveData()
@@ -60,6 +60,8 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,var apiService: Api
     fun getCheckedPrinters(){
         printerChipList = repos.getPrintersRepo().getCheckedPrinters()
     }
+
+    fun getAllList() : List<PrintersModel> = repos.getPrintersRepo().getAllList()
 
     //-----------------------------------------------------
 
@@ -101,6 +103,9 @@ class PaginationVM(db: RoomDb,val rxSchedulers: RxSchedulers,var apiService: Api
 
     fun getItemOrders2(item_order : String?) {
         itemSubKitchen2 = repos.getKitchenRepo().getItemOrders2(item_order)
+    }
+    fun getItemOrders3(item_order : String?, pos : String?) {
+        itemSubKitchen2 = repos.getKitchenRepo().getItemOrders3(item_order,pos)
     }
     fun stopCountDown() {
         stopCountDown = repos.getKitchenRepo().stopCountDown()

@@ -26,7 +26,7 @@ interface DishesDAO {
     @Query("DELETE FROM  DishesModel")
     fun deleteAll() : Completable
 
-    @Query("UPDATE DishesModel SET cookingTime=180")
+    @Query("UPDATE DishesModel SET cooking_time=180")
     fun updateCookingTime()
 
     @Query("SELECT * FROM DishesModel")

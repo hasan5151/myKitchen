@@ -5,12 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.yaros.kitchen.R
+import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.PrintersModel
 import kotlinx.android.synthetic.main.checkbox_layout.view.*
+import java.lang.NullPointerException
 
-abstract class CheckBoxAdapter (val printersModel:  List<PrintersModel>, val context : Context) : RecyclerView.Adapter<CheckBoxAdapter.CheckBoxVH>() {
+abstract class CheckBoxAdapter (val printersModel:  List<PrintersModel>, val context : Context ) : RecyclerView.Adapter<CheckBoxAdapter.CheckBoxVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CheckBoxVH {
         val view: View = LayoutInflater.from(parent.getContext())
@@ -21,6 +25,7 @@ abstract class CheckBoxAdapter (val printersModel:  List<PrintersModel>, val con
     override fun getItemCount(): Int = printersModel.size
 
     override fun onBindViewHolder(holder: CheckBoxVH, position: Int) {
+
         holder.checkBox.isChecked = printersModel.get(position).isChecked
 
         if (holder.checkBox.isChecked){

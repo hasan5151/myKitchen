@@ -234,6 +234,8 @@ class MainActivity : AppCompatActivity() {
     private fun orderFetched() {
         mainActivityVM.isOrderFetched.observe(this, Observer {
             mainActivityVM.getNewOrders().forEach {
+
+                println("$it kitchenModel")
                 if(it.reqTime>0){
                      mainActivityVM.changeCountDownStatus(it.id,STARTED)
                 }else{

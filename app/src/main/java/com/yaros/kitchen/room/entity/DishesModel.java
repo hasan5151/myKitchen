@@ -11,7 +11,7 @@ public class DishesModel {
     @PrimaryKey(autoGenerate = false)
     public String id;
     public String name;
-    public Long cookingTime;
+    public Long cooking_time;
     public Boolean isChecked = false;
 
     public String getId() {
@@ -38,10 +38,10 @@ public class DishesModel {
         isChecked = checked;
     }
 
-    public DishesModel(String id, String name, Long cookingTime, Boolean isChecked) {
+    public DishesModel(String id, String name, Long cooking_time, Boolean isChecked) {
         this.id = id;
         this.name = name;
-        this.cookingTime = cookingTime;
+        this.cooking_time = cooking_time;
         this.isChecked = isChecked;
     }
 }

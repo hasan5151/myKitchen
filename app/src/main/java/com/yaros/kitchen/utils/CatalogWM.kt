@@ -98,7 +98,7 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
                     }
                     else {
                         it?.body()?.data?.dishes?.forEachIndexed {index,it->
-                            repos.getDishesRepo().insert(it)
+                             repos.getDishesRepo().insert(it)
 
                             if  (index==bodySize!!-1){
                                 // Preferences.savePref("lastSyncTime",it.item_date,appContext)
@@ -205,8 +205,7 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
 
                                     val dishesModel = repos.getDishesRepo().getItem(it.dish!!)
                                     val printerName = repos.getPrintersRepo().getPrintersById(it.printer!!)
-
-                                    if (it.count>0)
+                                     if (it.count>0)
                                         for (i in 0..it.count-1) {
                                             KitchenModel(
                                                 it.number,
@@ -215,7 +214,8 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
                                                 dishesModel.name,
                                                 it.comment,
                                                 it.dish,
-                                                dishesModel.cookingTime,
+//                                                1000,
+                                                dishesModel.cooking_time,
                                                 it.item_date,
                                                 it.item_date,
                                                 1,
@@ -238,7 +238,7 @@ class CatalogWM  (val appContext: Context, val workerParams: WorkerParameters) :
                                                 dishesModel.name,
                                                 it.comment,
                                                 it.dish,
-                                                dishesModel.cookingTime,
+                                                dishesModel.cooking_time,
                                                 it.item_date,
                                                 it.item_date,
                                                 -1,

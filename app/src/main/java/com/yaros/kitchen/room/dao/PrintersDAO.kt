@@ -1,10 +1,12 @@
 package com.yaros.kitchen.room.dao
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.yaros.kitchen.models.KitchenTop
 import com.yaros.kitchen.room.entity.PrintersModel
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -25,6 +27,9 @@ interface PrintersDAO {
     fun getAll(): Observable<PrintersModel>
 
     @Query("SELECT * FROM PrintersModel")
+    fun getAllList(): List<PrintersModel>
+
+    @Query("SELECT * FROM PrintersModel")
     fun getAllWithLiveData(): LiveData<List<PrintersModel>>
 
     @Query("SELECT * FROM PrintersModel Where id=:id")
@@ -39,11 +44,10 @@ interface PrintersDAO {
     @Query("UPDATE PrintersModel  SET isChecked=:isChecked  Where id=:id")
     fun checkPrinter(isChecked: Boolean, id: String ): Completable
 
-    @Query("SELECT * FROM PRINTERSMODEL WHERE isChecked=:isChecked")
+    @Query("SELECT * FROM PrintersModel WHERE isChecked=:isChecked")
     fun getCheckedPrinters(isChecked: Boolean=true) : LiveData<List<PrintersModel>>
 
-
-    @Query("DELETE FROM  PRINTERSMODEL")
+    @Query("DELETE FROM  PrintersModel")
     fun deleteAll() : Completable
 
 

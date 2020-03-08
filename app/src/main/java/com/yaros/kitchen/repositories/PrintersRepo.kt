@@ -1,7 +1,11 @@
 package com.yaros.kitchen.repositories
 
 import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.yaros.kitchen.api.RxSchedulers
+import com.yaros.kitchen.models.KitchenTop
 import com.yaros.kitchen.room.db.RoomDb
 import com.yaros.kitchen.room.entity.PrintersModel
 import io.reactivex.Observable
@@ -45,4 +49,10 @@ class PrintersRepo (val db: RoomDb, val rx: RxSchedulers) {
     fun isPrintersCreated(): LiveData<Boolean> {
         return db.PrintersDAO().isWaitersCreated()
     }
+    fun getAllList(): List<PrintersModel> {
+        return db.PrintersDAO().getAllList()
+    }
+
+
+
 }

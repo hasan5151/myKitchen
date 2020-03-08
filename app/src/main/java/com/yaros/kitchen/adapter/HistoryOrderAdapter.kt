@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.kitchen_order_adapter.view.*
 open class HistoryOrderAdapter(val orders: List<HistoryOrderModel>, val context: Context): RecyclerView.Adapter<HistoryOrderAdapter.KitchenVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KitchenVH {
-        val view: View = LayoutInflater.from(parent.getContext())
+        val view: View = LayoutInflater.from(parent.context)
             .inflate(R.layout.kitchen_order_adapter, parent, false)
         return KitchenVH(view)
     }
@@ -22,7 +22,8 @@ open class HistoryOrderAdapter(val orders: List<HistoryOrderModel>, val context:
     override fun getItemCount(): Int = orders.size
 
     override fun onBindViewHolder(holder: KitchenVH, position: Int) {
-        val order: HistoryOrderModel = orders.get(position)
+        System.out.println("sikerim histroy2 ")
+        val order: HistoryOrderModel = orders[position]
         holder.orderId.text ="№ ${order.id}"
         holder.waiterName.text = order.waiterName
 

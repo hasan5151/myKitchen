@@ -43,6 +43,7 @@ class OrderFragment  : BaseFragment(){
     val printersHash: HashMap<String, PrintersModel> = HashMap()
     lateinit var paginationVM: PaginationVM
     lateinit var mainActivityVM: MainActivityVM
+    lateinit var printerList: List<PrintersModel>
     val countDownHash: HashMap<Int, CountDownTimer> = HashMap()
     lateinit var progressBar: ProgressBar
     override fun onCreateView(
@@ -108,12 +109,12 @@ class OrderFragment  : BaseFragment(){
 
                 setPrinters()
                 setPrinterChips()
+
             }else{
                 progressBar.visibility = View.VISIBLE
                 chips.visibility = View.GONE
             }
         })
-
     }
 
     private fun setPrinterChips() {
@@ -138,11 +139,12 @@ class OrderFragment  : BaseFragment(){
 
                 val kitchenAdapter  = object : KitchenTopAdapter(context!!){
                     override fun setItemAdapter(recyclerView: RecyclerView?,item_order : String?) {
-                        setSubAdapter(recyclerView,item_order)
+                        setSubAdapter(recyclerView,item_order,pos)
                     }
                 }
 
                 if (!pos.contentEquals("-2")) {
+                    System.out.println("pos ne la $pos")
                     paginationVM.getAllGroupByPrinter(pos)
                 }else{
                     paginationVM.getAllGroupBy()
@@ -174,7 +176,7 @@ class OrderFragment  : BaseFragment(){
         chips.adapter = chipAdapter
     }
 
-    private fun setSubAdapter(recyclerView: RecyclerView?, item_order : String?){
+    private fun setSubAdapter(recyclerView: RecyclerView?, item_order : String?, pos : String){
 
         val kitchenSupAdapter = object : KitchenSupAdapter(context!!){
             override fun updateRemainTime(item: KitchenModel, milisUntilFinish: Long) {
@@ -214,7 +216,7 @@ class OrderFragment  : BaseFragment(){
                     paginationVM.updateItemTimeKitchen(context.resources.getString(R.string.cancel),item.id)
                 }
 
-                ok.setOnClickListener({
+                ok.setOnClickListener {
                     dialog.dismiss()
                     stopReqCountDown(item.id)
                     destroyCountDown(item.id)
@@ -232,7 +234,7 @@ class OrderFragment  : BaseFragment(){
                         )
                     sendDishToServer(dishCookedModel)
                     paginationVM.updateItemTimeKitchen(context.resources.getString(R.string.ready),item.id)
-                })
+                }
             }
 
             override fun hideOrder(item: KitchenModel) {
@@ -240,8 +242,14 @@ class OrderFragment  : BaseFragment(){
             }
         }
 
+        if (!pos.contentEquals("-2")) {
+            System.out.println("pos ne la $pos")
+            paginationVM.getItemOrders3(item_order,pos)
+        }else{
+            paginationVM.getItemOrders2(item_order)
+        }
 
-        paginationVM.getItemOrders2(item_order)
+
         paginationVM.itemSubKitchen2.observe(viewLifecycleOwner, Observer {
             kitchenSupAdapter.submitList(it)
         })
@@ -290,19 +298,21 @@ class OrderFragment  : BaseFragment(){
         val button : Button = dialog.findViewById(R.id.button)
         val valueList: List<PrintersModel> = ArrayList(printersHash.values)
 
-        ArrayList(printersHash.values).filter { x->x.isChecked }.size.let {
-            if(it>0){
-                button.text = String.format("${context!!.resources.getString(R.string.select)} (${it})")
+        System.out.println("${valueList.get(0).isChecked} isChecked baby");
+
+        paginationVM.printerChipList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if(it.size>0){
+                button.text = String.format("${context!!.resources.getString(R.string.select)} (${it.size})")
             }else
                 button.text = context!!.resources.getString(R.string.select)
-        }
+            printerList = it
 
-        val check =  object: CheckBoxAdapter(valueList,context!!){
+        })
+
+        val check =  object: CheckBoxAdapter(paginationVM.getAllList(),context!!){
             override fun getSelectItems(isChecked: Boolean, printersModel: PrintersModel) {
-
                 paginationVM.checkPrinter(isChecked,printersModel.id)
-
-                printersHash.put(printersModel.id,printersModel)
+                 printersHash[printersModel.id] = printersModel
                 ArrayList(printersHash.values).filter { x->x.isChecked }.size.let {
                     if(it>0){
                         button.text = String.format("${context.resources.getString(R.string.select)} (${it})")
@@ -313,15 +323,16 @@ class OrderFragment  : BaseFragment(){
         }
 
         button.setOnClickListener {
-            ArrayList(printersHash.values).filter { x->x.isChecked }.plus(checkBoxAll()).plus(checkBoxAdd()).let {
-                setPrinterAdapter(it.distinct())
+            paginationVM.printerChipList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                setPrinterAdapter(it.plus(checkBoxAll()).plus(checkBoxAdd()).distinct())
                 showEmpty(it.size>1,resources.getString(R.string.selectKitchen))
-            }
+
+            })
+
             dialog.dismiss()
         }
-        recyclerView.adapter = check
         recyclerView.layoutManager = GridLayoutManager(context,1)
-
+        recyclerView.adapter = check
         dialog.show()
     }
 

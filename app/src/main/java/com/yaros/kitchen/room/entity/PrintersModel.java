@@ -39,6 +39,9 @@ public class PrintersModel {
     public PrintersModel(String id, String name, Boolean isChecked) {
         this.id = id;
         this.name = name;
-        this.isChecked = isChecked;
+        if (isChecked==null)
+            this.isChecked = false;
+        else
+            this.isChecked = isChecked;
     }
 }

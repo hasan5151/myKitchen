@@ -89,31 +89,37 @@ class HistoryDishCooked : BaseFragment() {
     fun fetchHistory(post : OrdersKitchenPostModel){
         val repos = Repos(RoomDb(context!!), RxSchedulers.DEFAULT)
         CompositeDisposable().add(historyVM.fetchHistory(post)?.subscribe({
-            var historyOrderModel  : List<HistoryOrderModel>  = listOf()
+             var historyOrderModel  : List<HistoryOrderModel>  = listOf()
             it?.groupBy { it?.order }?.forEach {order->
+
+
+
                 var historyItemModel : List<HistoryItemModel> = listOf()
                 order.value.forEach {item->
                     val dish = repos.getDishesRepo().getItem(item!!.dish)
+
+
                     val cookedTime = DateUtil.getHourandMinute(item?.cooking_date)
                     val startTime = DateUtil.getHourandMinute(item!!.cooking_date - (item!!.cooking_time*1000))
-                    HistoryItemModel(dish.name,cookedTime,startTime,checkCookingTime(dish.cookingTime,item.cooking_time)).let {
+//                    HistoryItemModel(dish.name,cookedTime,startTime,checkCookingTime(500,item.cooking_time)).let {
+                    HistoryItemModel(dish.name,cookedTime,startTime,checkCookingTime(dish.cooking_time,item.cooking_time)).let {
                         historyItemModel = historyItemModel+listOf(it)
                     }
                 }
-                HistoryOrderModel(1,"",historyItemModel).let {
-                    historyOrderModel = historyOrderModel + listOf(it)
+                HistoryOrderModel(1,"",historyItemModel).let {his->
+                    historyOrderModel = historyOrderModel + listOf(his)
+                    kitchenRecyclerView.adapter=HistoryOrderAdapter(historyOrderModel,context!!)
+
+
                 }
             }
-            kitchenRecyclerView.adapter=HistoryOrderAdapter(historyOrderModel,context!!)
         },{it.printStackTrace()})!!)
     }
 
-    fun checkCookingTime(dishCookTime : Long, itemCookTime : Long) : Boolean{
+    private fun checkCookingTime(dishCookTime : Long, itemCookTime : Long) : Boolean =
         if (dishCookTime>0){
-            if (dishCookTime>=itemCookTime ){
-                return true
-            } else return false
+            dishCookTime>=itemCookTime
         }else
-            return true
-    }
+            true
+
 }

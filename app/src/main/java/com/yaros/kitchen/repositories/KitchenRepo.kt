@@ -30,9 +30,14 @@ class KitchenRepo (val db: RoomDb, val rx : RxSchedulers) {
         ).build()
 
 
-    fun getItemOrders2(pos : String?) : LiveData<PagedList<KitchenModel>> =
+    fun getItemOrders2(id : String?) : LiveData<PagedList<KitchenModel>> =
         LivePagedListBuilder<Int, KitchenModel>(
-            db.KitchenDAO().getItemOrders2(pos), 10
+            db.KitchenDAO().getItemOrders2(id), 10
+        ).build()
+
+    fun getItemOrders3(id : String?, pos : String?) : LiveData<PagedList<KitchenModel>> =
+        LivePagedListBuilder<Int, KitchenModel>(
+            db.KitchenDAO().getItemOrders3(id,pos), 10
         ).build()
 
     fun getItemOrders(item_order : String?) : LiveData<List<KitchenModel>> =

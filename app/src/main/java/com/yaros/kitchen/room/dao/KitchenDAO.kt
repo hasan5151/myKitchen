@@ -63,7 +63,7 @@ interface KitchenDAO {
     @Query("SELECT * FROM KitchenModel Where cancelledOrders<0 ORDER BY number DESC")
     fun getCancelledOrders2() : List<KitchenModel>
 
-    @Query("Select * From KitchenModel Where printerId=:pos and isSent=0 and count>=0 Group By dateOriginal Order By item_order DESC")
+    @Query("Select * From KitchenModel Where printerId=:pos and isSent=0 and count>=0 Group By item_order  HAVING printerId =:pos Order By dateOriginal DESC")
     fun getAllGroupByPrinter(pos: String?): DataSource.Factory<Int, KitchenTop>
 
     @Query("Select * From KitchenModel  WHERE isSent=0 and count>=0 Group By item_order Order By dateOriginal DESC")
@@ -77,6 +77,9 @@ interface KitchenDAO {
 
     @Query("Select * From KitchenModel Where item_order=:item_order and isSent=0 and count>=0")
     fun getItemOrders2(item_order : String?) : DataSource.Factory<Int, KitchenModel>
+
+    @Query("Select * From KitchenModel Where item_order=:item_order and isSent=0 and count>=0 and printerId=:pos")
+    fun getItemOrders3(item_order : String?, pos : String?) : DataSource.Factory<Int, KitchenModel>
 
     @Query("DELETE FROM  KitchenModel")
     fun deleteAll() : Completable
